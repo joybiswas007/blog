@@ -5,10 +5,10 @@ COPY --chown=65532:65532 . /app
 RUN ["templ", "generate"]
 
 # Stage 2: Build stage
-FROM golang:1.24.3-alpine3.21 AS builder
+FROM golang:1.24.3-bullseye AS builder
 
 # Install system dependencies
-RUN apk update && apk add --no-cache make
+RUN apt-get update && apt-get install -y make
 
 # Download TailwindCSS using ADD (better cacheable)
 ADD https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 /usr/local/bin/tailwindcss
@@ -40,7 +40,7 @@ RUN --mount=type=cache,target=/gomod-cache --mount=type=cache,target=/go-cache \
 	make build
 
 # Stage 3: Minimal runtime image
-FROM alpine:latest
+FROM debian:bullseye-slim
 
 # User name
 ARG user=blogger
