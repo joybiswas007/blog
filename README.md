@@ -34,7 +34,7 @@ You can run this blog either manually or using Docker.
 
 ### Manual Installation
 
-#### **Backend & Blog (Go Application)**
+#### **Backend (Go Application)**
 
 1. **Go**: Install Go version 1.23.0 or higher and ensure `go` is in your PATH.
 2. **Configuration File**: Copy and edit the example config:
@@ -56,7 +56,7 @@ You can run this blog either manually or using Docker.
    ```
    > **If you have a custom favicon:**  
    > After running `make gen` and `make gen-css`, place your `favicon.ico` inside the `cmd/web/assets` directory.
-6. **Build the API & Blog**:
+6. **Build the Blog**:
    ```bash
    make build
    ```
@@ -64,13 +64,13 @@ You can run this blog either manually or using Docker.
    ```bash
    make build-cli
    ```
-8. **Run the API & Blog**:
+8. **Run the Blog**:
    ```bash
    ./blog
    # Or with custom config:
    ./blog --conf .blog.yaml
    ```
-9. **User Registration & Password Management**:  
+9. **User Registration**:  
    Use the CLI to manage users (required for logging in to the frontend):
    ```bash
    ./blog_cli --help

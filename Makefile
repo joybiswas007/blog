@@ -29,9 +29,9 @@ gen-css:
 	@echo "Generating CSS with Tailwind CSS: $(TAILWIND_INPUT) -> $(TAILWIND_OUTPUT)"
 	@tailwindcss -i $(TAILWIND_INPUT) -o $(TAILWIND_OUTPUT) --minify
 
-# Build the main API binary
+# Build the main blog binary
 build:
-	@echo "Building blog & api binary: $(BINARY_NAME)"
+	@echo "Building blog binary: $(BINARY_NAME)"
 	@go build -ldflags="-s -w" -o $(BINARY_NAME) $(API_ENTRY)
 
 # Build CLI binary
@@ -57,12 +57,12 @@ run-docker:
 
 # Run the API application
 run:
-	@echo "Running API and Blog from $(API_ENTRY)..."
+	@echo "Running blog from $(API_ENTRY)..."
 	@go run $(API_ENTRY)
 
 # Run the CLI application
 run-cli:
-	@echo "Running CLI from $(CLI_ENTRY)..."
+	@echo "Running cli from $(CLI_ENTRY)..."
 	@go run $(CLI_ENTRY)
 
 # Run tests
@@ -105,11 +105,11 @@ help:
 	@echo ""
 	@echo "Common targets:"
 	@echo "  all           - Build and test"
-	@echo "  build         - Build API binary"
+	@echo "  build         - Build Blog binary"
 	@echo "  build-cli     - Build CLI binary"
 	@echo "  build-docker  - Build the Docker image"
 	@echo "  run-docker    - Run the Docker image"
-	@echo "  run           - Run API application"
+	@echo "  run           - Run Blog application"
 	@echo "  run-cli       - Run CLI application"
 	@echo "  gen           - Generate Go code from Templ templates"
 	@echo "  gen-css       - Generate CSS with Tailwind CSS"

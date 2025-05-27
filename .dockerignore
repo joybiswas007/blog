@@ -10,6 +10,7 @@ blog_cli
 # Dependency directories
 vendor/
 dashboard/
+migrations/
 node_modules/
 *.md
 
@@ -32,6 +33,9 @@ Thumbs.db
 # IDE/editor config
 .vscode/
 .idea/
+
+# blog config
+.blog.yaml
 
 # Build artifacts and output
 *templ.go
