@@ -25,11 +25,14 @@ These instructions will get you a copy of the project up and running on your loc
    make gen
    ```
 6. **Tailwind CSS** (for CSS generation):  
-   Install [Tailwind CSS CLI](https://tailwindcss.com/blog/standalone-cli) globally:
+   Install [Tailwind CSS CLI](https://tailwindcss.com/blog/standalone-cli).
    To generate CSS, run:
    ```bash
    make gen-css
    ```
+   > **If you have a custom favicon:**  
+   > After running `make gen` and `make gen-css`, place your `favicon.ico` inside the `cmd/web/assets` directory.
+
 7. **Migrate**: Install [migrate](https://github.com/golang-migrate/migrate)
 8. **Apply Database Migrations**: Run:
    ```bash
