@@ -19,6 +19,7 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 )
 
+// StripSchema removes the schema from a URL and returns the host and path.
 func StripSchema(rawURL string) string {
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
@@ -28,7 +29,7 @@ func StripSchema(rawURL string) string {
 	return parsedURL.Host + parsedURL.Path
 }
 
-// Helper to convert markdown to HTML
+// MarkdownToHTML converts a Markdown string to HTML with syntax highlighting.
 func MarkdownToHTML(content string) string {
 	theme := viper.GetString("blog.md_theme")
 	if theme == "" {
@@ -57,6 +58,7 @@ func MarkdownToHTML(content string) string {
 	return buf.String()
 }
 
+// Unsafe wraps a raw HTML string as a templ.Component for rendering.
 func Unsafe(html string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
 		_, err = io.WriteString(w, html)
@@ -64,6 +66,7 @@ func Unsafe(html string) templ.Component {
 	})
 }
 
+// CalculateReadTime returns an estimated read time for a text string.
 func CalculateReadTime(text string) string {
 	if len(strings.TrimSpace(text)) == 0 {
 		return "0 min read"
