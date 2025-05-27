@@ -60,16 +60,17 @@ You can run this blog either manually or using Docker.
    ```bash
    make build
    ```
-7. **Build the CLI Tool**:
-   ```bash
-   make build-cli
-   ```
-8. **Run the Blog**:
+7. **Run the Blog**:
    ```bash
    ./blog
    # Or with custom config:
    ./blog --conf .blog.yaml
    ```
+8. **Build the CLI Tool**:
+   ```bash
+   make build-cli
+   ```
+
 9. **User Registration**:  
    Use the CLI to manage users (required for logging in to the frontend):
    ```bash
