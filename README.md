@@ -4,66 +4,82 @@ A personal blog built with Go, inspired by the aesthetics and simplicity of the 
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+Follow these steps to get a copy of the project up and running for development or production.
 
-## Prerequisites
+---
 
-### Backend & Blog
+## 1. Database Setup (Required for All Installations)
 
-1. **Go**: Install Go version 1.23.0 or higher and make sure `go` is in your system PATH.
-2. **PostgreSQL**: Install PostgreSQL and create a database for your blog.
-3. **Configuration File**: Copy the example configuration file and customize as needed:
+1. **Install PostgreSQL**  
+
+2. **Create a Database**  
+
+3. **Apply Migrations**  
+   Install [migrate](https://github.com/golang-migrate/migrate) and run:
+   ```bash
+   migrate -path=./migrations -database="postgres://bloguser:yourpassword@localhost:5432/blogdb?sslmode=disable" up
+   ```
+   *If you want to roll back (down) the database migrations, simply run:*
+   ```bash
+   migrate -path=./migrations -database="postgres://bloguser:yourpassword@localhost:5432/blogdb?sslmode=disable" down
+   ```
+
+---
+
+## 2. Installation Methods
+
+You can run this blog either manually or using Docker.
+
+---
+
+### Manual Installation
+
+#### **Backend & Blog (Go Application)**
+
+1. **Go**: Install Go version 1.23.0 or higher and ensure `go` is in your PATH.
+2. **Configuration File**: Copy and edit the example config:
    ```bash
    cp example.blog.yaml .blog.yaml
    ```
-4. **Templ**: Install [templ](https://github.com/a-h/templ) by running:
+3. **Templ**: Install [templ](https://github.com/a-h/templ):
    ```bash
    go install github.com/a-h/templ/cmd/templ@latest
    ```
-5. **Generate Templ Files**: Run the following command in your backend directory to generate templ files:
+4. **Generate Templ Files**:
    ```bash
    make gen
    ```
-6. **Tailwind CSS** (for CSS generation):  
-   Install [Tailwind CSS CLI](https://tailwindcss.com/blog/standalone-cli).
-   To generate CSS, run:
+5. **Tailwind CSS** (for CSS generation):  
+   Install [Tailwind CSS CLI](https://tailwindcss.com/blog/standalone-cli). Then generate CSS:
    ```bash
    make gen-css
    ```
    > **If you have a custom favicon:**  
    > After running `make gen` and `make gen-css`, place your `favicon.ico` inside the `cmd/web/assets` directory.
-
-7. **Migrate**: Install [migrate](https://github.com/golang-migrate/migrate)
-8. **Apply Database Migrations**: Run:
+6. **Build the API & Blog**:
    ```bash
-   migrate -path=./migrations -database="postgres://user:pass@localhost:port/dbName?sslmode=disable" up
+   make build
    ```
-   If you want to roll back (down) the database migrations, simply run:
+7. **Build the CLI Tool**:
    ```bash
-   migrate -path=./migrations -database="postgres://user:pass@localhost:port/dbName?sslmode=disable" down
+   make build-cli
+   ```
+8. **Run the API & Blog**:
+   ```bash
+   ./blog
+   # Or with custom config:
+   ./blog --conf .blog.yaml
    ```
 9. **User Registration & Password Management**:  
-   The backend provides a CLI tool for user account management, which is required for logging in to the frontend.  
-   > There is no sign up or forgot password option in the frontend; you must generate users via the backend CLI.
-
-   **CLI Usage:**
-    
-    Run: `./blog_cli --help` for usage
-
-   **Register a user:**
+   Use the CLI to manage users (required for logging in to the frontend):
    ```bash
+   ./blog_cli --help
    ./blog_cli --name 'Your Name' --email yourmail@gmail.com --pass "Pass"
-   ```
-
-   **Reset password:**
-   ```bash
    ./blog_cli --email yourmail@gmail.com --pass "newPass"
    ```
-
    *Password is optional. If not provided, a secure password will be generated automatically.*
 
-
-### Admin Dashboard
+#### **Admin Dashboard**
 
 1. **Node.js and npm**: Make sure both Node.js and npm are installed.
 2. Navigate to the `dashboard` directory:
@@ -89,95 +105,29 @@ These instructions will get you a copy of the project up and running on your loc
 > The frontend only supports login; there are no sign up or forgot password options.  
 > **You need to run the React dashboard separately from the Go application.** The Go backend and the React dashboard are separate services and must be started and managed independently.
 
+---
+
+### Docker Installation
+
+1. **Build the Docker Image**:
+   ```bash
+   make build-docker
+   ```
+2. **Run the Container**:
+   ```bash
+   make run-docker
+   ```
+   - Adjust the ports and config path as needed for your setup.
+   - Make sure `.blog.yaml` is available in your working directory and is mounted into the container.
+
+> **Note:**  
+> You still need to have PostgreSQL running and your database migrated before running the Docker container.
+
+---
+
 ## Makefile Usage
 
-This project includes a `Makefile` for managing common Go project tasks.
-
-### Build and Test All
-
-Run build and tests:
-```bash
-make all
-```
-
-### Build the API & Blog 
-
-Build the main API application:
-```bash
-make build
-```
-
-### Run the API & Blog 
-
-Run the server:
-```bash
-./blog
-```
-or you can also pass the config file from a custom location:
-```bash
-./blog --conf .blog.yaml
-```
-
-### Build the CLI
-
-Build the CLI tool:
-```bash
-make build-cli
-```
-
-### Run the CLI
-
-Run the CLI tool (shows help):
-```bash
-./blog_cli --help
-```
-
-### Generate Code (e.g., Templates)
-
-Generate Go code from templates or other files:
-```bash
-make gen
-```
-
-### Lint the Codebase
-
-Run the linter:
-```bash
-make lint
-```
-
-### Run Tests
-
-Run all tests:
-```bash
-make test
-```
-
-### Clean Up Binaries
-
-Remove compiled binaries:
-```bash
-make clean
-```
-
-### Build the Docker Image
-
-Build the Docker image for your project:
-```bash
-make build-docker
-```
-
-After building the Docker image, you can run the container with:
-```bash
-make run-docker
-```
-- Adjust the ports and config path as needed for your setup.
-- Make sure `.blog.yaml` is available in your working directory and is mounted into the container.
-
-
-### Help
-
-Show all available make targets:
+This project includes a `Makefile` for managing common Go project tasks. 
 ```bash
 make help
 ```
