@@ -29,12 +29,12 @@ gen-css:
 
 # Build the main API binary
 build:
-	@echo "Building API binary: $(BINARY_NAME)"
+	@echo "Building blog & api binary: $(BINARY_NAME)"
 	@go build -ldflags="-s -w" -o $(BINARY_NAME) $(API_ENTRY)
 
 # Build CLI binary
 build-cli:
-	@echo "Building CLI binary: $(CLI_BINARY_NAME)"
+	@echo "Building cli binary: $(CLI_BINARY_NAME)"
 	@go build -ldflags="-s -w" -o $(CLI_BINARY_NAME) $(CLI_ENTRY)
 
 # Build the docker image
