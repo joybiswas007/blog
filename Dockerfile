@@ -16,9 +16,15 @@ RUN chmod +x /usr/local/bin/tailwindcss
 
 WORKDIR /app
 
+# Set Go proxy to direct
+ENV GOPROXY=direct
+
 # Copy Go mod files and download dependencies
 COPY go.mod go.sum ./
-RUN go mod download
+
+# Set cache
+ENV GOCACHE=/go-cache
+ENV GOMODCACHE=/gomod-cache 
 
 # Copy the rest of the source code
 COPY . .
@@ -30,10 +36,11 @@ COPY --from=templgen /app /app
 RUN make gen-css 
 
 # Build statically linked, optimized binary
-RUN make build 
+RUN --mount=type=cache,target=/gomod-cache --mount=type=cache,target=/go-cache \
+	make build
 
 # Stage 3: Minimal runtime image
-FROM debian:bullseye-slim
+FROM alpine:latest
 
 # Create non-root user
 RUN adduser --disabled-password appuser
@@ -44,7 +51,6 @@ WORKDIR /app
 # Copy compiled binary and assets from builder
 COPY --from=builder /app/blog /app/blog
 COPY --from=builder /app/cmd/web/assets /app/cmd/web/assets
-COPY --from=builder /app/.blog.yaml /app/
 
 # Ensure correct permissions
 RUN chown -R appuser:appuser /app

@@ -169,7 +169,7 @@ make build-docker
 
 After building the Docker image, you can run the container with:
 ```bash
-docker run -p 8080:8080 -v $(pwd)/.blog.yaml:/app/.blog.yaml myblog --conf /app/.blog.yaml
+make run-docker
 ```
 - Adjust the ports and config path as needed for your setup.
 - Make sure `.blog.yaml` is available in your working directory and is mounted into the container.

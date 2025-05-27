@@ -9,6 +9,8 @@ TEMPLATE_DIR = ./cmd/web/templates
 TAILWIND_INPUT = ./cmd/web/styles/input.css
 TAILWIND_OUTPUT = ./cmd/web/assets/css/output.css
 DOCKER_IMG_NAME = myblog
+CONFIG_FILE = .blog.yaml
+CONTAINER_CONFIG_PATH = /app/.blog.yaml
 
 .PHONY: all build build-cli run run-cli gen gen-css lint test clean help build-docker watch
 
@@ -42,6 +44,16 @@ build-docker:
 	@command -v docker >/dev/null 2>&1 || { echo >&2 "Docker is not installed. Aborting."; exit 1; }
 	@echo "Building Docker image: $(DOCKER_IMG_NAME)"
 	@docker build -t $(DOCKER_IMG_NAME) .
+
+# Run the Docker container with mounted config file
+run-docker:
+	@command -v docker >/dev/null 2>&1 || { echo >&2 "Docker is not installed. Aborting."; exit 1; }
+	@if [ ! -f $(CONFIG_FILE) ]; then \
+		echo "Config file '$(CONFIG_FILE)' not found. Aborting."; \
+		exit 1; \
+	fi
+	@echo "Running Docker container with config file: $(CONFIG_FILE)"
+	@docker run -p 8080:8080 -v $(shell pwd)/$(CONFIG_FILE):$(CONTAINER_CONFIG_PATH) $(DOCKER_IMG_NAME) --conf $(CONTAINER_CONFIG_PATH)
 
 # Run the API application
 run:
@@ -96,6 +108,7 @@ help:
 	@echo "  build         - Build API binary"
 	@echo "  build-cli     - Build CLI binary"
 	@echo "  build-docker  - Build the Docker image"
+	@echo "  run-docker    - Run the Docker image"
 	@echo "  run           - Run API application"
 	@echo "  run-cli       - Run CLI application"
 	@echo "  gen           - Generate Go code from Templ templates"
