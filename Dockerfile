@@ -5,10 +5,10 @@ COPY --chown=65532:65532 . /app
 RUN ["templ", "generate"]
 
 # Stage 2: Build stage
-FROM golang:1.24.3-bullseye AS builder
+FROM golang:1.24.3-alpine3.21 AS builder
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y make
+RUN apk update && apk add --no-cache make
 
 # Download TailwindCSS using ADD (better cacheable)
 ADD https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 /usr/local/bin/tailwindcss
@@ -42,8 +42,11 @@ RUN --mount=type=cache,target=/gomod-cache --mount=type=cache,target=/go-cache \
 # Stage 3: Minimal runtime image
 FROM alpine:latest
 
+# User name
+ARG user=blogger
+
 # Create non-root user
-RUN adduser --disabled-password appuser
+RUN adduser --disabled-password ${user}
 
 # Set working directory
 WORKDIR /app
@@ -53,13 +56,14 @@ COPY --from=builder /app/blog /app/blog
 COPY --from=builder /app/cmd/web/assets /app/cmd/web/assets
 
 # Ensure correct permissions
-RUN chown -R appuser:appuser /app
+RUN chown -R ${user}:${user} /app
 
 # Switch to the non-root user
-USER appuser
+USER ${user} 
 
 # Expose port
 EXPOSE 8080
 
 # Start the application
-CMD ["./blog"]
+ENTRYPOINT [ "/app/blog" ]
+CMD [ "--conf", "/app/.blog.yaml" ]
