@@ -1,0 +1,99 @@
+package template 
+
+import (
+	"fmt"
+	"github.com/joybiswas007/blog/cmd/web"
+	"github.com/joybiswas007/blog/config"
+)
+
+templ About(author config.Author) {
+	@Base("about") {
+		<div class="space-y-6">
+			<div class="flex items-baseline gap-2">
+				<span class="text-green-500">$</span>
+				<p>cat ./about.md</p>
+			</div>
+			<div class="border-l-2 border-green-800 pl-4 ml-2 space-y-6">
+				<section class="space-y-4">
+					<h2 class="text-lg text-green-300">$ whoami</h2>
+					<p>{ author.Name } - { author.Profession }</p>
+				</section>
+				<section class="space-y-4">
+					<h2 class="text-lg text-green-300">$ message --greeting</h2>
+					<div class="bg-green-900/20 p-4 rounded border border-green-800">
+						<p>If you want to talk about technology, collaborate on a project, or just say hello,</p>
+						<p>I'd love to hear from you! Feel free to reach out through any of these channels:</p>
+					</div>
+				</section>
+				<section class="space-y-4">
+					<h2 class="text-lg text-green-300">$ contact --primary</h2>
+					<div class="flex items-center gap-4 p-3 bg-green-900/30 rounded border border-green-800">
+						<span class="text-green-500">></span>
+						<a
+							href={ templ.URL(fmt.Sprintf("mailto:%s", author.Social.Email)) }
+							target="_blank"
+							class="hover:text-green-300"
+						>
+							{ author.Social.Email }
+						</a>
+					</div>
+				</section>
+				<section class="space-y-4">
+					<h2 class="text-lg text-green-300">$ contact --social</h2>
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+						if author.Social.Github != "" {
+							<a
+								href={ templ.URL(author.Social.Github) }
+								target="_blank"
+								class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
+							>
+								<span class="text-green-500">></span>
+								<span>{ web.StripSchema(author.Social.Github) }</span>
+							</a>
+						}
+						if author.Social.LinkedIn!= "" {
+							<a
+								href={ templ.URL(author.Social.LinkedIn) }
+								target="_blank"
+								class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
+							>
+								<span class="text-green-500">></span>
+								<span>{ web.StripSchema(author.Social.LinkedIn) }</span>
+							</a>
+						}
+						if author.Social.Twitter != "" {
+							<a
+								href={ templ.URL(author.Social.Twitter) }
+								target="_blank"
+								class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
+							>
+								<span class="text-green-500">></span>
+								<span>{ web.StripSchema(author.Social.Twitter) }</span>
+							</a>
+						}
+						if author.Social.Fiverr != "" {
+							<a
+								href={ templ.URL(author.Social.Fiverr) }
+								target="_blank"
+								class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
+							>
+								<span class="text-green-500">></span>
+								<span>{ web.StripSchema(author.Social.Fiverr) }</span>
+							</a>
+						}
+						if author.Social.Upwork != "" {
+							<a
+								href={ templ.URL(author.Social.Upwork) }
+								target="_blank"
+								class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
+							>
+								<span class="text-green-500">></span>
+								<span>{ web.StripSchema(author.Social.Upwork) }</span>
+							</a>
+						}
+					</div>
+				</section>
+			</div>
+		</div>
+	}
+}

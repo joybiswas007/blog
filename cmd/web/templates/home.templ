@@ -1,0 +1,114 @@
+package template 
+
+import (
+	"fmt"
+	"github.com/joybiswas007/blog/cmd/web"
+	"github.com/joybiswas007/blog/internal/database"
+	"math"
+)
+
+templ Home(posts []*database.Post, totalPosts int, filter database.Filter) {
+	@Base("home") {
+		<div class="space-y-8">
+			<div class="flex items-baseline gap-2">
+				<span class="text-green-500">$</span>
+				<p>ls -la ./posts</p>
+			</div>
+			<!-- Sorting controls -->
+			<div class="border-l-2 border-green-800 pl-4 ml-2">
+				<div class="flex items-baseline gap-2">
+					<span class="text-green-500">></span>
+					<p>sort --{ filter.OrderBy } --order { filter.Sort }</p>
+				</div>
+				<div class="flex flex-wrap gap-2 mt-2 ml-4">
+					<a
+						href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=0&order_by=created_at&sort=DESC", filter.Limit)) }
+						class={ `px-2 py-1 ${orderBy == "created_at" && sort == "DESC" ? "bg-green-900 text-green-200" : "hover:bg-green-900/50"}` }
+					>
+						--newest
+					</a>
+					<a
+						href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=0&order_by=created_at&sort=ASC", filter.Limit)) }
+						class={ `px-2 py-1 ${orderBy == "created_at" && sort == "ASC" ? "bg-green-900 text-green-200" : "hover:bg-green-900/50"}` }
+					>
+						--oldest
+					</a>
+					<a
+						href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=0&order_by=title&sort=ASC", filter.Limit)) }
+						class={ `px-2 py-1 ${orderBy == "title" ? "bg-green-900 text-green-200" : "hover:bg-green-900/50"}` }
+					>
+						--alphabetical
+					</a>
+				</div>
+			</div>
+			<!-- Posts list -->
+			<div class="border-l-2 border-green-800 pl-4 ml-2 space-y-6">
+				if len(posts) > 0 {
+					for _, post := range posts {
+						<article class="group">
+							<div class="flex items-baseline gap-2">
+								<span class="text-green-500">></span>
+								<a
+									href={ templ.URL(fmt.Sprintf("/posts/%s", post.Slug)) }
+									class="hover:text-green-300 hover:underline"
+								>
+									{ post.Title }
+								</a>
+							</div>
+							<div class="ml-4 mt-1 text-green-600 text-xs flex flex-wrap gap-2 items-center">
+								<time>{ post.CreatedAt.Format("2006-01-02 15:04") }</time>
+								<span>|</span>
+								<span>{ web.CalculateReadTime(post.Content) }</span>
+								if len(post.Tags) > 0 {
+									<span>|</span>
+									for _, tag := range post.Tags {
+										<a
+											href={ templ.URL(fmt.Sprintf("/?tag=%s", tag)) }
+											class="hover:text-green-400"
+										>
+											#{ tag }
+										</a>
+									}
+								}
+							</div>
+						</article>
+					}
+				} else {
+					<div class="flex items-baseline gap-2 text-green-600">
+						<span class="text-green-500">></span>
+						<p>No posts found in directory</p>
+					</div>
+				}
+			</div>
+			<!-- Pagination -->
+			if totalPosts > filter.Limit {
+				<div class="border-l-2 border-green-800 pl-4 ml-2">
+					<div class="flex items-baseline gap-2">
+						<span class="text-green-500">></span>
+						<p>navigate --page { (filter.Offset/filter.Limit)+1 }/{ int(math.Ceil(float64(totalPosts)/float64(filter.Limit))) }</p>
+					</div>
+					<div class="flex gap-2 mt-2 ml-4">
+						if filter.Offset > 0 {
+							<a
+								href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=%d&order_by=%s&sort=%s", filter.Limit, max(0, filter.Offset-filter.Limit), filter.OrderBy, filter.Sort)) }
+								class="px-2 py-1 hover:bg-green-900/50 flex items-center gap-1"
+							>
+								<span class="text-green-500">&lt;</span>
+								prev
+							</a>
+						}
+						if filter.Offset+filter.Limit < totalPosts {
+							<a
+								href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=%d&order_by=%s&sort=%s", filter.Limit, filter.Offset+filter.Limit, filter.OrderBy, filter.Sort)) }
+								class="px-2 py-1 hover:bg-green-900/50 flex items-center gap-1"
+							>
+								next
+								<span class="text-green-500">&gt;</span>
+							</a>
+						}
+					</div>
+				</div>
+			}
+		</div>
+	}
+}

@@ -1,0 +1,10 @@
+CREATE TABLE tokens (
+	id serial NOT NULL UNIQUE, 
+	user_id int NOT NULL,
+	access_token TEXT NOT NULL,
+	refresh_token TEXT NOT NULL UNIQUE,
+	revoked BOOLEAN NOT NULL DEFAULT FALSE,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	PRIMARY KEY("id")
+);

@@ -1,0 +1,177 @@
+package template 
+
+import (
+	"fmt"
+	"github.com/joybiswas007/blog/cmd/web"
+	"github.com/joybiswas007/blog/internal/database"
+)
+
+templ Post(post *database.Post) {
+	@Base(post.Title) {
+		<div class="space-y-6">
+			<div class="flex items-baseline gap-2">
+				<span class="text-green-500">$</span>
+				<p>cat ./posts/{ post.Slug }.md</p>
+			</div>
+			<article class="border-l-2 border-green-800 pl-4 ml-2 space-y-6">
+				<header class="space-y-3">
+					<h1 class="text-xl text-green-300">{ post.Title }</h1>
+					<div class="text-green-600 text-xs flex flex-wrap gap-2 items-center">
+						<time>{ post.CreatedAt.Format("2006-01-02 15:04") }</time>
+						<span>|</span>
+						<span>{ web.CalculateReadTime(post.Content) }</span>
+						<span>|</span>
+						<span>{ post.Author }</span>
+					</div>
+					if len(post.Tags) > 0 {
+						<div class="flex flex-wrap gap-2 text-xs">
+							for _, tag := range post.Tags {
+								<a
+									href={ templ.URL(fmt.Sprintf("/?tag=%s", tag)) }
+									class="text-green-500 hover:text-green-400 bg-green-900/30 px-2 py-1 rounded"
+								>
+									#{ tag }
+								</a>
+							}
+						</div>
+					}
+				</header>
+				<div class="prose prose-invert max-w-none">
+					@web.Unsafe(web.MarkdownToHTML(post.Content))
+				</div>
+				<div class="pt-4 border-t border-green-800/50">
+					<a href="/" class="inline-flex items-center text-green-300 hover:text-green-200">
+						<span class="text-green-500 mr-2">cd ..</span>
+						Return to posts directory
+					</a>
+				</div>
+			</article>
+		</div>
+	}
+}
+
+templ Tags(tags []*database.Tag) {
+	@Base("tags") {
+		<div class="space-y-6">
+			<div class="flex items-baseline gap-2">
+				<span class="text-green-500">$</span>
+				<p>ls ./tags</p>
+			</div>
+			<div class="border-l-2 border-green-800 pl-4 ml-2">
+				if len(tags) > 0 {
+					<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+						for _, tag := range tags {
+							<a
+								href={ templ.URL(fmt.Sprintf("/?tag=%s", tag.Name)) }
+								class="group flex flex-col hover:bg-green-900/30 p-2 rounded"
+							>
+								<span class="text-green-300 group-hover:text-green-200">#{ tag.Name }</span>
+								<span class="text-green-600 text-xs">{ tag.PostCount } entries</span>
+							</a>
+						}
+					</div>
+				} else {
+					<div class="flex items-baseline gap-2 text-green-600">
+						<span class="text-green-500">></span>
+						<p>No tags found</p>
+					</div>
+				}
+			</div>
+		</div>
+	}
+}
+
+templ Archives(lists []database.YearlyStats) {
+	@Base("archives") {
+		<div class="space-y-6">
+			<div class="flex items-baseline gap-2">
+				<span class="text-green-500">$</span>
+				<p>ls ./archives</p>
+			</div>
+			<div class="border-l-2 border-green-800 pl-4 ml-2 space-y-6">
+				<section class="space-y-4">
+					<h2 class="text-lg text-green-300">$ cat rss.xml</h2>
+					<div class="flex items-baseline gap-2">
+						<span class="text-green-500">></span>
+						<p>Blog feed available at:</p>
+					</div>
+					<a
+						target="_blank"
+						href="/rss.xml"
+						class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
+					>
+						<span class="text-green-500">></span>
+						<span class="underline">/rss.xml</span>
+					</a>
+				</section>
+				<section class="space-y-4">
+					<h2 class="text-lg text-green-300">$ ls --by-year</h2>
+					<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+						for _, list := range lists {
+							<a
+								href={ templ.URL(fmt.Sprintf("/archives/%d", list.Year)) }
+								class="flex items-baseline gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
+							>
+								<span class="text-green-500">></span>
+								<span>
+									{ fmt.Sprintf("%d", list.Year) }
+									<span class="text-green-600 text-xs ml-1">({ list.PostCount })</span>
+								</span>
+							</a>
+						}
+					</div>
+				</section>
+			</div>
+		</div>
+	}
+}
+
+templ ArchiveByYear(year int, posts []database.Post) {
+	@Base(fmt.Sprintf("archives - %d", year)) {
+		<div class="space-y-6">
+			<div class="flex items-baseline gap-2">
+				<span class="text-green-500">$</span>
+				<p>ls ./archives/{ year }</p>
+			</div>
+			<div class="border-l-2 border-green-800 pl-4 ml-2 space-y-4">
+				if len(posts) == 0 {
+					<div class="flex items-baseline gap-2 text-green-600">
+						<span class="text-green-500">></span>
+						<p>No posts found in archives directory</p>
+					</div>
+				} else {
+					<div class="space-y-2">
+						<div class="flex items-baseline gap-2 text-green-500 text-xs">
+							<span>></span>
+							<span class="w-[28rem]">TITLE</span>
+							<span class="w-32">DATE</span>
+						</div>
+						for _, post := range posts {
+							<a
+								href={ templ.URL(fmt.Sprintf("/posts/%s", post.Slug)) }
+								class="flex items-baseline gap-2 hover:bg-green-900/30 p-2 rounded group"
+							>
+								<span class="text-green-500">></span>
+								<span class="w-[28rem] truncate group-hover:text-green-300">
+									{ post.Title }
+								</span>
+								<span class="text-green-600 text-xs w-32">
+									{ post.CreatedAt.Format("2006-01-02") }
+								</span>
+							</a>
+						}
+					</div>
+				}
+			</div>
+			<div class="border-l-2 border-green-800 pl-4 ml-2 pt-4">
+				<a
+					href="/archives"
+					class="flex items-center gap-2 text-green-500 hover:text-green-300"
+				>
+					<span class="text-green-500">cd ..</span>
+					<span>Back to archives</span>
+				</a>
+			</div>
+		</div>
+	}
+}

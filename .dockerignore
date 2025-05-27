@@ -1,0 +1,38 @@
+# Go build artifacts
+blog
+blog_cli
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Dependency directories
+vendor/
+dashboard/
+node_modules/
+*.md
+
+# Git and editor files
+.git
+.gitignore
+*.swp
+*.swo
+*.bak
+*.tmp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE/editor config
+.vscode/
+.idea/
+
+# Build artifacts and output
+*templ.go
+cmd/web/assets/css/output.css

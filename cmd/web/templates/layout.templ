@@ -1,0 +1,81 @@
+package template
+
+import (
+	"fmt"
+	"github.com/spf13/viper"
+	"strings"
+	"time"
+)
+
+templ Base(title string) {
+	{{ blogName := viper.GetString("blog.name") }}
+	<!DOCTYPE html>
+	<html lang="en" class="scroll-smooth">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title } - { blogName } </title>
+			<meta name="description" content={ viper.GetString("blog.description") }/>
+			<meta name="keywords" content={ strings.Join(viper.GetStringSlice("blog.keywords"), ", ") }/>
+			<link rel="icon" href="/assets/favicon.ico" type="image/x-icon"/>
+			<meta name="robots" content="index, follow"/>
+			<link href="/assets/css/output.css" rel="stylesheet"/>
+			<link href="/rss.xml" rel="alternate" type="application/xml" title={ fmt.Sprintf("%s RSS Feed", blogName) }/>
+		</head>
+		<body class="bg-black text-green-400 font-mono text-sm leading-relaxed min-h-screen flex flex-col">
+			<div class="container mx-auto px-4 py-8 max-w-4xl">
+				@Header()
+				<main class="flex-1 mt-4">
+					{ children... }
+				</main>
+				@Footer()
+			</div>
+		</body>
+	</html>
+}
+
+templ Header() {
+	<header class="border-b border-green-800 pb-4 mb-6 sticky top-0 bg-black z-50">
+		<div class="flex items-center gap-4">
+			<span class="text-green-500">$</span>
+			<h1 class="text-xl font-medium">
+				<a href="/" class="hover:text-green-300">~/</a>
+			</h1>
+			<nav class="flex gap-4 ml-auto">
+				<a href="/archives" class="hover:text-green-300">~/archives</a>
+				<a href="/tags" class="hover:text-green-300">~/tags</a>
+				<a href="/about" class="hover:text-green-300">~/about</a>
+			</nav>
+		</div>
+	</header>
+}
+
+templ Footer() {
+	<footer class="border-t border-green-800 pt-4 mt-8 text-green-600 text-xs">
+		<div class="flex justify-between items-center">
+			<span>&copy; { fmt.Sprintf("%d", time.Now().Year()) } { viper.GetString("blog.author.name") } </span>
+			<span>Powered by Go</span>
+		</div>
+	</footer>
+}
+
+templ NotFound() {
+	@Base("404") {
+		<div class="space-y-4">
+			<div class="flex items-baseline gap-2">
+				<span class="text-green-500">$</span>
+				<p>cat 404.txt</p>
+			</div>
+			<div class="border-l-2 border-green-800 pl-4 ml-2 space-y-2">
+				<h2 class="text-xl text-green-300">Error 404: Page Not Found</h2>
+				<p>Command failed: No such file or directory</p>
+				<div class="pt-2">
+					<a href="/" class="inline-flex items-center text-green-300 hover:text-green-200">
+						<span class="text-green-500 mr-2">></span>
+						Return to home directory
+					</a>
+				</div>
+			</div>
+		</div>
+	}
+}
