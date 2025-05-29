@@ -39,7 +39,7 @@ func (post PostModel) Get(postID int) (*Post, error) {
 	query := `
         SELECT
             bp.id,
-	    bp.user_id,
+	    u.name AS author,
             bp.title,
             bp.description,
             bp.content,
@@ -49,6 +49,8 @@ func (post PostModel) Get(postID int) (*Post, error) {
             COALESCE(ARRAY_AGG(t.name), '{}') AS tags
         FROM
             blog_posts bp
+	JOIN
+    	    users u ON bp.user_id = u.id
         LEFT JOIN
             blog_tag bt ON bp.id = bt.blog_id
         LEFT JOIN
@@ -56,7 +58,7 @@ func (post PostModel) Get(postID int) (*Post, error) {
         WHERE
             bp.id = $1
         GROUP BY
-            bp.id;
+            bp.id, u.name;
     `
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -64,7 +66,7 @@ func (post PostModel) Get(postID int) (*Post, error) {
 	var p Post
 	err := post.DB.QueryRow(ctx, query, postID).Scan(
 		&p.ID,
-		&p.UserID,
+		&p.Author,
 		&p.Title,
 		&p.Description,
 		&p.Content,

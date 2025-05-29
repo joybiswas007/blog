@@ -29,7 +29,11 @@ func registerBlogRoutes(r *gin.Engine, s *Server) {
 	})
 	r.GET("robots.txt", func(c *gin.Context) {
 		robotsContent := []byte("User-agent: *\nAllow: /")
-		c.Writer.Write(robotsContent)
+		_, err := c.Writer.Write(robotsContent)
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
 	})
 	r.GET("rss.xml", s.rssHandler)
 

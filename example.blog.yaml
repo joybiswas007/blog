@@ -6,9 +6,10 @@ db: postgres://username:password@localhost:port/dbName?sslmode=disable
 
 # JWT (JSON Web Token) configuration
 jwt:
-  secret: "Super_Sekret_JWT_Key"       # Secret key for signing JWTs
-  exp: 2                               # Token expiration time in hours
-  ref_exp: 168                         # Refresh token expiration in hours (7 days)
+  secret: "Super_Sekret_JWT_Key"             # Secret key used to sign access JWT tokens
+  exp: 2                                     # Access token expiration time in hours
+  ref_exp: 24                                # Refresh token expiration time in hours (1 day)
+  ref_secret: "Super_Sekret_Refresh_JWT_Key" # Secret key used to sign refresh JWT tokens
 
 # Rate limiting configuration
 rate_limiter:

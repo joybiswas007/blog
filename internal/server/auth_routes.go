@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joybiswas007/blog/internal/database"
+	"github.com/go-playground/validator/v10"
 )
 
 // registerAuthRoutes registers the routes related to authentication
@@ -17,61 +17,24 @@ func registerAuthRoutes(rg *gin.RouterGroup, s *Server) {
 	auth.GET("status", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "OK"})
 	})
-	auth.POST("logout", s.logoutHandler)
 
 	registerUserRoutes(auth, s)
 }
 
-func (s *Server) registerHandler(c *gin.Context) {
-	// Create an anonymous struct to hold the expected data from the request body.
-	var input struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
-	err := c.ShouldBindJSON(&input)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	user := &database.User{
-		Name:  input.Name,
-		Email: input.Email,
-	}
-
-	err = user.Password.Set(input.Password)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	userID, err := s.db.Users.Insert(user)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	u, err := s.db.Users.GetByID(userID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "User created successfully!",
-		"user":    u,
-	})
-}
-
 func (s *Server) loginHandler(c *gin.Context) {
 	var input struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Email    string `json:"email" validate:"required,email"`
+		Password string `json:"password" validate:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+
+	if err := validate.Struct(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -93,7 +56,7 @@ func (s *Server) loginHandler(c *gin.Context) {
 		return
 	}
 
-	accessToken, refreshToken, err := generateAndStoreTokens(user.ID, s)
+	accessToken, refreshToken, err := generateTokens(user.ID, s)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -114,22 +77,9 @@ func (s *Server) refreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	//check if token is already revoked or not
-	revoked, err := s.db.Tokens.Revoked(token)
+	claims, err := parseJWT(token, s.config.JWT.RefSecret)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrUnauthorized})
-		return
-	}
-
-	// if revoked then ignore the request
-	if revoked {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrTokenExpired})
-		return
-	}
-
-	claims, err := parseJWT(token, s.config.JWT.Secret)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -146,14 +96,7 @@ func (s *Server) refreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	//before generating new token revoke user previous tokens
-	err = s.db.Tokens.Logout(int64(uid))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	accessToken, refreshToken, err := generateAndStoreTokens(int64(uid), s)
+	accessToken, refreshToken, err := generateTokens(int64(uid), s)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -164,20 +107,4 @@ func (s *Server) refreshTokenHandler(c *gin.Context) {
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
 	})
-}
-
-func (s *Server) logoutHandler(c *gin.Context) {
-	uid := c.GetFloat64("user_id")
-	if uid == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": ErrNotEnoughPerm})
-		return
-	}
-
-	err := s.db.Tokens.Logout(int64(uid))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Logout successfull!"})
 }

@@ -21,19 +21,6 @@ func (s *Server) checkJWT() gin.HandlerFunc {
 			return
 		}
 
-		//check if token is already revoked or not
-		revoked, err := s.db.Tokens.Revoked(token)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ErrUnauthorized})
-			return
-		}
-
-		//if revoked then ignore the request
-		if revoked {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ErrTokenExpired})
-			return
-		}
-
 		claims, err := parseJWT(token, s.config.JWT.Secret)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ErrUnauthorized})

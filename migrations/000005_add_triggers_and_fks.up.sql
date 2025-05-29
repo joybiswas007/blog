@@ -36,9 +36,3 @@ ALTER TABLE "blog_tag"
 ADD CONSTRAINT fk_blog_tag_tag
 FOREIGN KEY ("tag_id") REFERENCES "tags"("id")
 ON UPDATE CASCADE ON DELETE CASCADE;
-
--- Foreign key: tokens.user_id -> users.id
-ALTER TABLE "tokens"
-ADD CONSTRAINT fk_tokens_user
-FOREIGN KEY ("user_id") REFERENCES "users"("id")
-ON UPDATE CASCADE ON DELETE CASCADE;

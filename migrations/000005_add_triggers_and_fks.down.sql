@@ -4,4 +4,3 @@ DROP FUNCTION IF EXISTS update_updated_at_column();
 ALTER TABLE "blog_posts" DROP CONSTRAINT IF EXISTS fk_blog_posts_user;
 ALTER TABLE "blog_tag" DROP CONSTRAINT IF EXISTS fk_blog_tag_blog;
 ALTER TABLE "blog_tag" DROP CONSTRAINT IF EXISTS fk_blog_tag_tag;
-ALTER TABLE "tokens" DROP CONSTRAINT IF EXISTS fk_tokens_user;

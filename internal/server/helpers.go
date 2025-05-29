@@ -8,7 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joybiswas007/blog/internal/database"
 )
 
 const (
@@ -97,9 +96,8 @@ func parseJWT(tokenString, secretKey string) (jwt.MapClaims, error) {
 	return claims, nil
 }
 
-// generateAndStoreTokens generates access and refresh tokens for a user,
-// stores them in the database, and returns both tokens.
-func generateAndStoreTokens(userID int64, s *Server) (accessToken, refreshToken string, err error) {
+// generateTokens generates access and refresh tokens for a user and returns both tokens.
+func generateTokens(userID int64, s *Server) (accessToken, refreshToken string, err error) {
 	// Access token config
 	accessExp := s.config.JWT.Exp
 	accessClaims := map[string]any{
@@ -121,19 +119,7 @@ func generateAndStoreTokens(userID int64, s *Server) (accessToken, refreshToken 
 		"exp":     time.Now().Add(time.Hour * time.Duration(refreshExp)).Unix(),
 	}
 
-	refreshToken, err = generateJWT(refreshClaims, s.config.JWT.Secret)
-	if err != nil {
-		return "", "", err
-	}
-
-	// Store tokens in DB
-	tok := database.Token{
-		UserID:       userID,
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
-
-	err = s.db.Tokens.Insert(tok)
+	refreshToken, err = generateJWT(refreshClaims, s.config.JWT.RefSecret)
 	if err != nil {
 		return "", "", err
 	}

@@ -17,10 +17,9 @@ var (
 
 // Models contains all database models
 type Models struct {
-	Posts  PostModel
-	Tags   TagModel
-	Users  UserModel
-	Tokens TokenModel
+	Posts PostModel
+	Tags  TagModel
+	Users UserModel
 }
 
 // Filter contains query filtering options
@@ -52,9 +51,8 @@ func New(connStr string) *pgxpool.Pool {
 // NewModels initializes all database models with the given connection pool
 func NewModels(db *pgxpool.Pool) Models {
 	return Models{
-		Posts:  PostModel{DB: db},
-		Tags:   TagModel{DB: db},
-		Users:  UserModel{DB: db},
-		Tokens: TokenModel{DB: db},
+		Posts: PostModel{DB: db},
+		Tags:  TagModel{DB: db},
+		Users: UserModel{DB: db},
 	}
 }

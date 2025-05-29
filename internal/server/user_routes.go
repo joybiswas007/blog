@@ -21,7 +21,6 @@ func (s *Server) resetPasswdHandler(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		s.logger.Error(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -29,25 +28,21 @@ func (s *Server) resetPasswdHandler(c *gin.Context) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	if err := validate.Struct(&input); err != nil {
-		s.logger.Error(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	uid := c.GetFloat64("user_id")
 	if uid == 0 {
-		s.logger.Error(ErrNotEnoughPerm)
 		c.JSON(http.StatusBadRequest, gin.H{"error": ErrNotEnoughPerm})
 		return
 	}
 
 	user, err := s.db.Users.GetByEmail(input.Email)
 	if err != nil {
-		s.logger.Error(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	if user.ID != int64(uid) {
-		s.logger.Error(ErrUnauthorized)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrUnauthorized})
 		return
 	}
@@ -58,13 +53,11 @@ func (s *Server) resetPasswdHandler(c *gin.Context) {
 
 	err = updateUser.Password.Set(input.Password)
 	if err != nil {
-		s.logger.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := s.db.Users.UpdatePassword(updateUser); err != nil {
-		s.logger.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

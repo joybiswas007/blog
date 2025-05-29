@@ -21,9 +21,10 @@ type Config struct {
 
 // JWT holds configuration related to JSON Web Tokens.
 type JWT struct {
-	Secret string `mapstructure:"secret" validate:"required"`  // Secret key used to sign JWT tokens
-	Exp    int    `mapstructure:"exp" validate:"required"`     // Access token expiration time (in minutes or seconds)
-	RefExp int    `mapstructure:"ref_exp" validate:"required"` // Refresh token expiration time
+	Secret    string `mapstructure:"secret" validate:"required"`     // Secret key used to sign JWT tokens
+	Exp       int    `mapstructure:"exp" validate:"required"`        // Access token expiration time (in minutes or seconds)
+	RefExp    int    `mapstructure:"ref_exp" validate:"required"`    // Refresh token expiration time
+	RefSecret string `mapstructure:"ref_secret" validate:"required"` // Secret key used to sign refresh JWT tokens
 }
 
 // RateLimiter defines the rate limiting configuration.

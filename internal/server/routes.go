@@ -57,16 +57,15 @@ func (s *Server) RegisterRoutes() http.Handler {
 		r.GET("debug/vars", ginexp.Handler())
 	}
 
-	api := r.Group("api")
+	// Register routes for each module
+	registerBlogRoutes(r, s)
 
+	api := r.Group("api")
 	api.GET("", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "OK"})
 	})
 
 	v1 := api.Group("v1")
-
-	// Register routes for each module
-	registerBlogRoutes(r, s)
 
 	//api routes
 	registerAuthRoutes(v1, s)

@@ -76,10 +76,6 @@ export const authService = {
 		return response.data
 	},
 	logout: async () => {
-		const { refreshToken } = getAuthTokens()
-		if (refreshToken) {
-			await api.post('/auth/logout', { refreshToken })
-		}
 		clearAuthTokens()
 	},
 	status: async () => {
