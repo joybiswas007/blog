@@ -1,0 +1,9 @@
+services:
+  blog:
+    image: myblog
+    container_name: blog
+    ports:
+      - "8080:8080"
+    volumes:
+      - .blog.yaml:/app/.blog.yaml
+    restart: unless-stopped

@@ -116,6 +116,10 @@ You can run this blog either manually or using Docker.
    ```
 2. **Run the Container**:
    ```bash
+    sudo docker-compose up -d
+   ```
+   or 
+   ```bash
    make run-docker
    ```
    - Adjust the ports and config path as needed for your setup.

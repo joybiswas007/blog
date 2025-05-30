@@ -53,7 +53,7 @@ run-docker:
 		exit 1; \
 	fi
 	@echo "Running Docker container with config file: $(CONFIG_FILE)"
-	@docker run -d -p 8080:8080 -v $(shell pwd)/$(CONFIG_FILE):$(CONTAINER_CONFIG_PATH) $(DOCKER_IMG_NAME) --conf $(CONTAINER_CONFIG_PATH)
+	@docker run -d -p 8080:8080 -v $(shell pwd)/$(CONFIG_FILE):$(CONTAINER_CONFIG_PATH) $(DOCKER_IMG_NAME)
 
 # Run the API application
 run:
