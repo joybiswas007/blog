@@ -34,12 +34,13 @@ type RateLimiter struct {
 }
 
 type Blog struct {
-	Name          string   `mapstructure:"name" validate:"required"`        // Name of the blog
-	URL           string   `mapstructure:"url" validate:"required"`         // URL of the blog i.e: http(s)://sitename.com
-	Description   string   `mapstructure:"description" validate:"required"` // Description of the blog
-	Keywords      []string `mapstructure:"keywords" validate:"required"`    // Keywords for the SEO
-	MarkdownTheme string   `mapstructure:"md_theme"`                        // MarkdownTheme for displaying. See more themes: https://xyproto.github.io/splash/docs/all.html
-	Author        Author   `mapstructure:"author" validate:"required"`      // Author
+	Name              string   `mapstructure:"name" validate:"required"`        // Name of the blog
+	URL               string   `mapstructure:"url" validate:"required"`         // URL of the blog i.e: http(s)://sitename.com
+	Description       string   `mapstructure:"description" validate:"required"` // Description of the blog
+	GoogleAnalyticsID string   `mapstructure:"gtag_id"`                         // Google Analytics Measurement ID (e.g., G-XXXXXXX)
+	Keywords          []string `mapstructure:"keywords" validate:"required"`    // Keywords for the SEO
+	MarkdownTheme     string   `mapstructure:"md_theme"`                        // MarkdownTheme for displaying. See more themes: https://xyproto.github.io/splash/docs/all.html
+	Author            Author   `mapstructure:"author" validate:"required"`      // Author
 }
 
 // Author hold the info for who is posting

@@ -24,6 +24,8 @@ blog:
   name: "A name for your blog"          # Blog title
   description: "Enter your blog description"  # Short blog description
   url: "https://sitename.com"          # Full blog URL
+  # NO SUPPORT FOR Google Analytics YET!
+  # gtag_id: "G-XXXXXXX"                  # Google Analytics Measurement ID (GA4)
 
   # Markdown theme for code blocks (from Splash themes)
   # https://xyproto.github.io/splash/docs/all.html

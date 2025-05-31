@@ -9,6 +9,7 @@ import (
 
 templ Base(title string) {
 	{{ blogName := viper.GetString("blog.name") }}
+	{{ gtagID := viper.GetString("blog.gtag_id") }}
 	<!DOCTYPE html>
 	<html lang="en" class="scroll-smooth">
 		<head>
@@ -21,6 +22,9 @@ templ Base(title string) {
 			<meta name="robots" content="index, follow"/>
 			<link href="/assets/css/output.css" rel="stylesheet"/>
 			<link href="/rss.xml" rel="alternate" type="application/xml" title={ fmt.Sprintf("%s RSS Feed", blogName) }/>
+			if gtagID != "" {
+				@GoogleAnalytics(gtagID)
+			}
 		</head>
 		<body class="bg-black text-green-400 font-mono text-sm leading-relaxed min-h-screen flex flex-col">
 			<div class="container mx-auto px-4 py-8 max-w-4xl">
@@ -78,4 +82,16 @@ templ NotFound() {
 			</div>
 		</div>
 	}
+}
+
+templ GoogleAnalytics(gtagID string) {
+	<!-- Google tag (gtag.js) -->
+	<script async src={ fmt.Sprintf("https://www.googletagmanager.com/gtag/js?id=%s", gtagID) }></script>
+	<script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          // gtag('config', `fmt.Sprintf("%s", gtagID)`);
+        </script>
 }
