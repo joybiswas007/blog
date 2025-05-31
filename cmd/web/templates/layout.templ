@@ -18,8 +18,10 @@ templ Base(title string) {
 			<title>{ title } - { blogName } </title>
 			<meta name="description" content={ viper.GetString("blog.description") }/>
 			<meta name="keywords" content={ strings.Join(viper.GetStringSlice("blog.keywords"), ", ") }/>
-			<link rel="icon" href="/assets/favicon.ico" type="image/x-icon"/>
+			<meta name="author" content={ viper.GetString("blog.author.name") }/>
 			<meta name="robots" content="index, follow"/>
+			<link rel="canonical" href={ fmt.Sprintf("%s/", viper.GetString("blog.url")) }/>
+			<link rel="icon" href="/assets/favicon.ico" type="image/x-icon"/>
 			<link href="/assets/css/output.css" rel="stylesheet"/>
 			<link href="/rss.xml" rel="alternate" type="application/xml" title={ fmt.Sprintf("%s RSS Feed", blogName) }/>
 			if gtagID != "" {
