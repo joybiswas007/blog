@@ -1,8 +1,10 @@
 package server
 
 import (
+	"encoding/xml"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -28,7 +30,8 @@ func registerBlogRoutes(r *gin.Engine, s *Server) {
 		c.Render(http.StatusOK, r)
 	})
 	r.GET("robots.txt", func(c *gin.Context) {
-		robotsContent := []byte("User-agent: *\nAllow: /")
+		siteMapURL := fmt.Sprintf("%s/sitemap.xml", s.config.Blog.URL)
+		robotsContent := []byte("User-agent: *\nAllow: /\nSitemap: " + siteMapURL)
 		_, err := c.Writer.Write(robotsContent)
 		if err != nil {
 			c.String(http.StatusInternalServerError, err.Error())
@@ -36,6 +39,7 @@ func registerBlogRoutes(r *gin.Engine, s *Server) {
 		}
 	})
 	r.GET("rss.xml", s.rssHandler)
+	r.GET("sitemap.xml", s.siteMapHandler)
 
 	r.NoRoute(func(c *gin.Context) {
 		r := NewRenderer(c.Request.Context(), http.StatusNotFound, template.NotFound())
@@ -166,4 +170,125 @@ func (s *Server) archiveYearHandler(c *gin.Context) {
 
 	r := NewRenderer(c.Request.Context(), http.StatusOK, template.ArchiveByYear(year, posts))
 	c.Render(http.StatusOK, r)
+}
+
+func (s *Server) siteMapHandler(c *gin.Context) {
+	type URL struct {
+		Loc        string `xml:"loc"`
+		LastMod    string `xml:"lastmod,omitempty"`
+		ChangeFreq string `xml:"changefreq,omitempty"`
+		Priority   string `xml:"priority,omitempty"`
+	}
+	type URLSet struct {
+		XMLName xml.Name `xml:"urlset"`
+		Xmlns   string   `xml:"xmlns,attr"`
+		Urls    []URL    `xml:"url"`
+	}
+
+	const batchSize = 500
+	offset := 0
+	var allPosts []*database.Post
+
+	for {
+		filter := database.Filter{
+			Limit:   batchSize,
+			Offset:  offset,
+			OrderBy: "created_at",
+			Sort:    "ASC",
+		}
+
+		posts, _, err := s.db.Posts.GetAll(filter)
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		if len(posts) == 0 {
+			break
+		}
+
+		allPosts = append(allPosts, posts...)
+		offset += batchSize
+	}
+
+	tags, err := s.db.Tags.GetAll()
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	siteURL := s.config.Blog.URL
+	var urls []URL
+	now := time.Now().Format(time.RFC3339)
+
+	// Add static/manual URLs
+	staticPages := []struct {
+		Path string
+	}{
+		{"/"},
+		{"/archives"},
+		{"/tags"},
+		{"/about"},
+		{"?limit=10&offset=0&order_by=created_at&sort=DESC"},
+		{"?limit=10&offset=0&order_by=created_at&sort=ASC"},
+		{"?limit=10&offset=0&order_by=title&sort=ASC"},
+	}
+
+	for _, page := range staticPages {
+		urls = append(urls, URL{
+			Loc:     fmt.Sprintf("%s%s", siteURL, page.Path),
+			LastMod: now,
+		})
+	}
+
+	// Add post URLs
+	for _, post := range allPosts {
+		postURL := fmt.Sprintf("%s/posts/%s", siteURL, post.Slug)
+		urls = append(urls, URL{
+			Loc:     postURL,
+			LastMod: post.UpdatedAt.Format(time.RFC3339),
+		})
+	}
+
+	// Add tag URLs
+	for _, tag := range tags {
+		tagURL := fmt.Sprintf("%s/tags?=%s", siteURL, url.QueryEscape(tag.Name))
+		urls = append(urls, URL{
+			Loc:     tagURL,
+			LastMod: now,
+		})
+	}
+
+	// Add archive by year URLs
+	lists, err := s.db.Posts.YearlyStatsList()
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	for _, list := range lists {
+		archiveYear := fmt.Sprintf("%s/archives/%d", siteURL, list.Year)
+		urls = append(urls, URL{
+			Loc:     archiveYear,
+			LastMod: now,
+		})
+	}
+
+	urlset := URLSet{
+		Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+		Urls:  urls,
+	}
+
+	output, err := xml.MarshalIndent(urlset, "", "  ")
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Writer.Header().Set("Content-Type", "application/xml")
+	_, err = c.Writer.Write([]byte(xml.Header + string(output)))
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 }
