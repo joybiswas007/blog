@@ -113,3 +113,17 @@ func (tag TagModel) GetAll() ([]*Tag, error) {
 
 	return tags, nil
 }
+
+// Delete deletes a tag by its id
+func (tag TagModel) Delete(tagID int) error {
+	query := `DELETE FROM tags WHERE id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := tag.DB.Exec(ctx, query, tagID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

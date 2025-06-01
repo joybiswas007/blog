@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/joybiswas007/blog/config"
@@ -14,10 +15,11 @@ import (
 // application represents the configuration for the blog application
 // containing user credentials and configuration file path
 type application struct {
-	configFile string   // path to configuration file
-	name       string   // full name of the user
-	email      string   // email address for authentication
-	password   password // password for authentication
+	configFile      string   // path to configuration file
+	name            string   // full name of the user
+	email           string   // email address for authentication
+	password        password // password for authentication
+	deleteEmptyTags bool     // deleteEmptyTags deletes tags from the database that are not associated with any posts
 }
 
 type password struct {
@@ -39,18 +41,12 @@ func main() {
 		"Account password (leave empty to auto-generate a secure password)")
 	flag.BoolVar(&app.password.reset, "reset-pass", false,
 		"Reset user password")
+	flag.BoolVar(&app.deleteEmptyTags, "delete-empty-tags", false,
+		"Delete tags that are not associated with any posts")
 
 	flag.Parse()
 
 	config.Init(app.configFile)
-
-	if app.email == "" {
-		panic("email can't be empty")
-	}
-
-	if app.password.password == "" {
-		app.password.password = generatePassword(30, true, true, true)
-	}
 
 	cfg, err := config.GetAll()
 	if err != nil {
@@ -63,6 +59,64 @@ func main() {
 	}()
 
 	models := database.NewModels(db)
+
+	if app.deleteEmptyTags {
+		tags, err := models.Tags.GetAll()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if len(tags) == 0 {
+			fmt.Println("No tags found.")
+			return
+		}
+
+		var totalEmptyTag int
+		var emptyTags []*database.Tag
+		for _, tag := range tags {
+			// We're only looking for tags that are not associated with any posts.
+			// If PostCount is not zero, the tag is ignored.
+			if tag.PostCount != 0 {
+				continue
+			}
+			emptyTags = append(emptyTags, tag)
+			totalEmptyTag++
+		}
+		if totalEmptyTag == 0 {
+			fmt.Println("No unused tags found.")
+			return
+		}
+
+		var prompt string
+		fmt.Printf("Found %d unused tag(s).\n", totalEmptyTag)
+		fmt.Println("Are you sure you want to delete?yes/y/no/n: ")
+		fmt.Scan(&prompt)
+
+		switch strings.ToLower(prompt) {
+		case "yes", "y":
+			for _, tag := range emptyTags {
+				err := models.Tags.Delete(tag.ID)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+			fmt.Printf("%d unused tags deleted.\n", totalEmptyTag)
+		case "no", "n":
+			fmt.Println("No tags were deleted.")
+		default:
+			log.Printf("Unknown prompt type %s", prompt)
+		}
+
+		return
+	}
+
+	if app.email == "" {
+		log.Fatal("email can't be empty")
+	}
+
+	if app.password.password == "" {
+		app.password.password = generatePassword(30, true, true, true)
+	}
 
 	if app.password.reset {
 		user, err := models.Users.GetByEmail(app.email)
@@ -89,7 +143,7 @@ func main() {
 	}
 
 	if app.name == "" {
-		panic("name can't be empty")
+		log.Fatal("name can't be empty")
 	}
 
 	user := &database.User{
