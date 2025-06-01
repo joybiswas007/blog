@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"github.com/joybiswas007/blog/cmd/web"
 	"github.com/joybiswas007/blog/internal/database"
+	"github.com/joybiswas007/blog/config"
 )
 
-templ Post(post *database.Post) {
-	@Base(post.Title) {
+templ Post(blog config.Blog, post *database.Post) {
+	@Base(blog, post.Title) {
 		<div class="space-y-6">
 			<div class="flex items-baseline gap-2">
 				<span class="text-green-500">$</span>
@@ -50,8 +51,8 @@ templ Post(post *database.Post) {
 	}
 }
 
-templ Tags(tags []*database.Tag) {
-	@Base("tags") {
+templ Tags(blog config.Blog, tags []*database.Tag) {
+	@Base(blog, "tags") {
 		<div class="space-y-6">
 			<div class="flex items-baseline gap-2">
 				<span class="text-green-500">$</span>
@@ -81,8 +82,8 @@ templ Tags(tags []*database.Tag) {
 	}
 }
 
-templ Archives(lists []database.YearlyStats) {
-	@Base("archives") {
+templ Archives(blog config.Blog, lists []database.YearlyStats) {
+	@Base(blog, "archives") {
 		<div class="space-y-6">
 			<div class="flex items-baseline gap-2">
 				<span class="text-green-500">$</span>
@@ -126,8 +127,8 @@ templ Archives(lists []database.YearlyStats) {
 	}
 }
 
-templ ArchiveByYear(year int, posts []database.Post) {
-	@Base(fmt.Sprintf("archives - %d", year)) {
+templ ArchiveByYear(blog config.Blog, year int, posts []database.Post) {
+	@Base(blog, fmt.Sprintf("archives - %d", year)) {
 		<div class="space-y-6">
 			<div class="flex items-baseline gap-2">
 				<span class="text-green-500">$</span>

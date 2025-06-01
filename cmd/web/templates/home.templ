@@ -5,10 +5,11 @@ import (
 	"github.com/joybiswas007/blog/cmd/web"
 	"github.com/joybiswas007/blog/internal/database"
 	"math"
+	"github.com/joybiswas007/blog/config"
 )
 
-templ Home(posts []*database.Post, totalPosts int, filter database.Filter) {
-	@Base("home") {
+templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter database.Filter) {
+	@Base(blog, "home") {
 		<div class="space-y-8">
 			<div class="flex items-baseline gap-2">
 				<span class="text-green-500">$</span>

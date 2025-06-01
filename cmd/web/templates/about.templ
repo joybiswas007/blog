@@ -6,8 +6,9 @@ import (
 	"github.com/joybiswas007/blog/config"
 )
 
-templ About(author config.Author) {
-	@Base("about") {
+templ About(blog config.Blog) {
+	{{ author := blog.Author }}
+	@Base(blog, "about") {
 		<div class="space-y-6">
 			<div class="flex items-baseline gap-2">
 				<span class="text-green-500">$</span>

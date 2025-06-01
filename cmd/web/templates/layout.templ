@@ -5,27 +5,26 @@ import (
 	"github.com/spf13/viper"
 	"strings"
 	"time"
+	"github.com/joybiswas007/blog/config"
 )
 
-templ Base(title string) {
-	{{ blogName := viper.GetString("blog.name") }}
-	{{ gtagID := viper.GetString("blog.gtag_id") }}
+templ Base(blog config.Blog, title string) {
 	<!DOCTYPE html>
 	<html lang="en" class="scroll-smooth">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>{ title } - { blogName } </title>
-			<meta name="description" content={ viper.GetString("blog.description") }/>
-			<meta name="keywords" content={ strings.Join(viper.GetStringSlice("blog.keywords"), ", ") }/>
-			<meta name="author" content={ viper.GetString("blog.author.name") }/>
+			<title>{ title } - { blog.Name } </title>
+			<meta name="description" content={ blog.Description }/>
+			<meta name="keywords" content={ strings.Join(blog.Keywords, ", ") }/>
+			<meta name="author" content={ blog.Author.Name }/>
 			<meta name="robots" content="index, follow"/>
-			<link rel="canonical" href={ fmt.Sprintf("%s/", viper.GetString("blog.url")) }/>
+			<link rel="canonical" href={ fmt.Sprintf("%s/", blog.URL) }/>
 			<link rel="icon" href="/assets/favicon.ico" type="image/x-icon"/>
 			<link href="/assets/css/output.css" rel="stylesheet"/>
-			<link href="/rss.xml" rel="alternate" type="application/xml" title={ fmt.Sprintf("%s RSS Feed", blogName) }/>
-			if gtagID != "" {
-				@GoogleAnalytics(gtagID)
+			<link href="/rss.xml" rel="alternate" type="application/xml" title={ fmt.Sprintf("%s RSS Feed", blog.Name) }/>
+			if blog.GTagID != "" {
+				@GoogleAnalytics(blog.GTagID)
 			}
 		</head>
 		<body class="bg-black text-green-400 font-mono text-sm leading-relaxed min-h-screen flex flex-col">
@@ -65,8 +64,8 @@ templ Footer() {
 	</footer>
 }
 
-templ NotFound() {
-	@Base("404") {
+templ NotFound(blog config.Blog) {
+	@Base(blog, "404") {
 		<div class="space-y-4">
 			<div class="flex items-baseline gap-2">
 				<span class="text-green-500">$</span>
@@ -93,7 +92,7 @@ templ GoogleAnalytics(gtagID string) {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-
-          // gtag('config', `fmt.Sprintf("%s", gtagID)`);
+	 
+	 gtag('config', {{ gtagID }})
         </script>
 }

@@ -26,7 +26,7 @@ func registerBlogRoutes(r *gin.Engine, s *Server) {
 	archives.GET(":year", s.archiveYearHandler)
 
 	r.GET("about", func(c *gin.Context) {
-		r := NewRenderer(c.Request.Context(), http.StatusOK, template.About(s.config.Blog.Author))
+		r := NewRenderer(c.Request.Context(), http.StatusOK, template.About(s.config.Blog))
 		c.Render(http.StatusOK, r)
 	})
 	r.GET("robots.txt", func(c *gin.Context) {
@@ -42,7 +42,7 @@ func registerBlogRoutes(r *gin.Engine, s *Server) {
 	r.GET("sitemap.xml", s.siteMapHandler)
 
 	r.NoRoute(func(c *gin.Context) {
-		r := NewRenderer(c.Request.Context(), http.StatusNotFound, template.NotFound())
+		r := NewRenderer(c.Request.Context(), http.StatusNotFound, template.NotFound(s.config.Blog))
 		c.Render(http.StatusNotFound, r)
 	})
 }
@@ -55,7 +55,7 @@ func (s *Server) blogPostsHandler(c *gin.Context) {
 		return
 	}
 
-	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Home(posts, totalPost, filter))
+	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Home(s.config.Blog, posts, totalPost, filter))
 	c.Render(http.StatusOK, r)
 }
 
@@ -68,7 +68,7 @@ func (s *Server) blogTagsHandler(c *gin.Context) {
 		return
 	}
 
-	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Tags(tags))
+	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Tags(s.config.Blog, tags))
 	c.Render(http.StatusOK, r)
 }
 
@@ -89,7 +89,7 @@ func (s *Server) getBlogPostBySlugHandler(c *gin.Context) {
 		return
 	}
 
-	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Post(post))
+	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Post(s.config.Blog, post))
 	c.Render(http.StatusOK, r)
 }
 
@@ -149,7 +149,7 @@ func (s *Server) archivesHandler(c *gin.Context) {
 		return
 	}
 
-	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Archives(lists))
+	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Archives(s.config.Blog, lists))
 	c.Render(http.StatusOK, r)
 }
 
@@ -168,7 +168,7 @@ func (s *Server) archiveYearHandler(c *gin.Context) {
 		return
 	}
 
-	r := NewRenderer(c.Request.Context(), http.StatusOK, template.ArchiveByYear(year, posts))
+	r := NewRenderer(c.Request.Context(), http.StatusOK, template.ArchiveByYear(s.config.Blog, year, posts))
 	c.Render(http.StatusOK, r)
 }
 
