@@ -32,7 +32,7 @@ func main() {
 
 	// Define command-line flags and bind them to the application struct
 	flag.StringVar(&app.configFile, "conf", "",
-		"Path to configuration file (default: $PWD/.joyblog.yaml)")
+		"Path to configuration file (default: $PWD/.blog.yaml)")
 	flag.StringVar(&app.name, "name", "",
 		"Your full name (e.g. 'John Smith') for account creation")
 	flag.StringVar(&app.email, "email", "",
