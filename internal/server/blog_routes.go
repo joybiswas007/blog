@@ -55,7 +55,17 @@ func (s *Server) blogPostsHandler(c *gin.Context) {
 		return
 	}
 
-	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Home(s.config.Blog, posts, totalPost, filter))
+	// To prevent any potential misuse, we filter out unpublished posts here and ignore them.
+	var filteredPosts []*database.Post
+	for _, post := range posts {
+		//ignore un-published posts
+		if !post.IsPublished {
+			continue
+		}
+		filteredPosts = append(filteredPosts, post)
+	}
+
+	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Home(s.config.Blog, filteredPosts, totalPost, filter))
 	c.Render(http.StatusOK, r)
 }
 
@@ -117,10 +127,11 @@ func (s *Server) rssHandler(c *gin.Context) {
 
 	var items []*feeds.Item
 	for _, post := range posts {
-		//ignore if a post is not published
+		// we ignore un-published posts
 		if !post.IsPublished {
 			continue
 		}
+
 		item := &feeds.Item{
 			Id:          post.Slug,
 			Title:       post.Title,
@@ -247,11 +258,10 @@ func (s *Server) siteMapHandler(c *gin.Context) {
 
 	// Add post URLs
 	for _, post := range allPosts {
-		//ignore un-published post url
+		//ignore un-published posts url
 		if !post.IsPublished {
 			continue
 		}
-
 		postURL := fmt.Sprintf("%s/posts/%s", siteURL, post.Slug)
 		urls = append(urls, URL{
 			Loc:     postURL,
