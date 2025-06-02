@@ -57,7 +57,7 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 								</a>
 							</div>
 							<div class="ml-4 mt-1 text-green-600 text-xs flex flex-wrap gap-2 items-center">
-								<time>{ post.CreatedAt.Format("2006-01-02 15:04") }</time>
+								<time>{ post.CreatedAt.Format("2006-01-02 3:04:05 PM -0700") }</time>
 								<span>|</span>
 								<span>{ web.CalculateReadTime(post.Content) }</span>
 								if len(post.Tags) > 0 {
