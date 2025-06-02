@@ -150,7 +150,7 @@ func (post PostModel) GetBySlug(slug string) (*Post, error) {
 func (post PostModel) Create(p Post) (int, error) {
 	var postID int
 	query := `INSERT INTO blog_posts(user_id, title, description, content, slug, is_published) 
-		  VALUES($1, $2, $3, $4, $5) 
+		  VALUES($1, $2, $3, $4, $5, $6) 
 		  RETURNING id`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
