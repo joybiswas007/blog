@@ -117,6 +117,10 @@ func (s *Server) rssHandler(c *gin.Context) {
 
 	var items []*feeds.Item
 	for _, post := range posts {
+		//ignore if a post is not published
+		if !post.IsPublished {
+			continue
+		}
 		item := &feeds.Item{
 			Id:          post.Slug,
 			Title:       post.Title,
@@ -243,6 +247,11 @@ func (s *Server) siteMapHandler(c *gin.Context) {
 
 	// Add post URLs
 	for _, post := range allPosts {
+		//ignore un-published post url
+		if !post.IsPublished {
+			continue
+		}
+
 		postURL := fmt.Sprintf("%s/posts/%s", siteURL, post.Slug)
 		urls = append(urls, URL{
 			Loc:     postURL,

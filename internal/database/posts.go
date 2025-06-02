@@ -24,6 +24,7 @@ type Post struct {
 	Description string    `json:"description" validate:"required"` // Short description of the post
 	Content     string    `json:"content" validate:"required"`     // Main content of the post
 	Slug        string    `json:"slug"`                            // Slug of post title
+	IsPublished bool      `json:"is_published,omitempty"`          // Indicates if the post is published or not
 	Tags        []string  `json:"tags" validate:"required"`        // List of tags associated with the post
 	CreatedAt   time.Time `json:"created_at"`                      // When the post was created
 	UpdatedAt   time.Time `json:"updated_at"`                      // When the post was last updated
@@ -44,6 +45,7 @@ func (post PostModel) Get(postID int) (*Post, error) {
             bp.description,
             bp.content,
 	    bp.slug,
+	    bp.is_published,
             bp.created_at,
             bp.updated_at,
             COALESCE(ARRAY_AGG(t.name), '{}') AS tags
@@ -71,6 +73,7 @@ func (post PostModel) Get(postID int) (*Post, error) {
 		&p.Description,
 		&p.Content,
 		&p.Slug,
+		&p.IsPublished,
 		&p.CreatedAt,
 		&p.UpdatedAt,
 		&p.Tags,
@@ -97,6 +100,7 @@ func (post PostModel) GetBySlug(slug string) (*Post, error) {
             bp.description,
             bp.content,
             bp.slug,
+	    bp.is_published,
             bp.created_at,
             bp.updated_at,
             COALESCE(ARRAY_AGG(t.name), '{}') AS tags
@@ -125,6 +129,7 @@ func (post PostModel) GetBySlug(slug string) (*Post, error) {
 		&p.Description,
 		&p.Content,
 		&p.Slug,
+		&p.IsPublished,
 		&p.CreatedAt,
 		&p.UpdatedAt,
 		&p.Tags,
@@ -144,13 +149,13 @@ func (post PostModel) GetBySlug(slug string) (*Post, error) {
 // Create inserts a new blog post and returns its ID
 func (post PostModel) Create(p Post) (int, error) {
 	var postID int
-	query := `INSERT INTO blog_posts(user_id, title, description, content, slug) 
+	query := `INSERT INTO blog_posts(user_id, title, description, content, slug, is_published) 
 		  VALUES($1, $2, $3, $4, $5) 
 		  RETURNING id`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := post.DB.QueryRow(ctx, query, p.UserID, p.Title, p.Description, p.Content, p.Slug).Scan(&postID)
+	err := post.DB.QueryRow(ctx, query, p.UserID, p.Title, p.Description, p.Content, p.Slug, p.IsPublished).Scan(&postID)
 	if err != nil {
 		return 0, err
 	}
@@ -287,6 +292,7 @@ SELECT
     bp.description,
     bp.content,
     bp.slug,
+    bp.is_published,
     bp.created_at,
     bp.updated_at,
     COALESCE(ARRAY_AGG(t.name ORDER BY t.name), '{}') AS tags
@@ -334,6 +340,7 @@ LIMIT $1 OFFSET $2;
 			&p.Description,
 			&p.Content,
 			&p.Slug,
+			&p.IsPublished,
 			&p.CreatedAt,
 			&p.UpdatedAt,
 			&p.Tags,
