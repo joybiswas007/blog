@@ -24,7 +24,7 @@ type Post struct {
 	Description string    `json:"description" validate:"required"` // Short description of the post
 	Content     string    `json:"content" validate:"required"`     // Main content of the post
 	Slug        string    `json:"slug"`                            // Slug of post title
-	IsPublished bool      `json:"is_published,omitempty"`          // Indicates if the post is published or not
+	IsPublished bool      `json:"is_published"`                    // Indicates if the post is published or not
 	Tags        []string  `json:"tags" validate:"required"`        // List of tags associated with the post
 	CreatedAt   time.Time `json:"created_at"`                      // When the post was created
 	UpdatedAt   time.Time `json:"updated_at"`                      // When the post was last updated
@@ -311,6 +311,7 @@ WHERE
         JOIN tags t2 ON t2.id = bt2.tag_id
         WHERE t2.name = $3
     ))
+    AND bp.is_published = $4
 GROUP BY
     bp.id, u.name
 ORDER BY
@@ -320,7 +321,7 @@ LIMIT $1 OFFSET $2;
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := post.DB.Query(ctx, query, filter.Limit, filter.Offset, filter.Tag)
+	rows, err := post.DB.Query(ctx, query, filter.Limit, filter.Offset, filter.Tag, filter.IsPublished)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -398,11 +399,13 @@ func (m PostModel) YearlyStatsList() ([]YearlyStats, error) {
 // It filters the posts using the `created_at` timestamp column.
 func (m PostModel) GetByYear(year int) ([]Post, error) {
 	query := `
-		SELECT id, title, slug, created_at
-		FROM blog_posts
-		WHERE EXTRACT(YEAR FROM created_at)::INT = $1
-		ORDER BY created_at DESC;
-	`
+	SELECT id, title, slug, created_at
+	FROM blog_posts
+	WHERE EXTRACT(YEAR FROM created_at)::INT = $1
+	  AND is_published = true
+	ORDER BY created_at DESC;
+`
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 

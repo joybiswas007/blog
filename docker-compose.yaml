@@ -6,4 +6,8 @@ services:
       - "8080:8080"
     volumes:
       - .blog.yaml:/app/.blog.yaml
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Asia/Dhaka
     restart: unless-stopped

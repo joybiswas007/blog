@@ -24,11 +24,12 @@ type Models struct {
 
 // Filter contains query filtering options
 type Filter struct {
-	Limit   int    // Maximum number of records to return
-	Offset  int    // Number of records to skip
-	Tag     string // Search via specific tag
-	OrderBy string // Column to order by
-	Sort    string // Sort direction (ASC/DESC)
+	Limit       int    // Maximum number of records to return
+	Offset      int    // Number of records to skip
+	Tag         string // Search via specific tag
+	OrderBy     string // Column to order by
+	Sort        string // Sort direction (ASC/DESC)
+	IsPublished bool   // Filter by published status: true = published, false = drafts
 }
 
 // New creates a new database connection pool

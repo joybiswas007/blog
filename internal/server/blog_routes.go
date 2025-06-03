@@ -105,10 +105,11 @@ func (s *Server) getBlogPostBySlugHandler(c *gin.Context) {
 
 func (s *Server) rssHandler(c *gin.Context) {
 	filter := database.Filter{
-		Limit:   10,
-		Offset:  0,
-		OrderBy: "created_at",
-		Sort:    "DESC",
+		Limit:       10,
+		Offset:      0,
+		OrderBy:     "created_at",
+		Sort:        "DESC",
+		IsPublished: true,
 	}
 
 	posts, _, err := s.db.Posts.GetAll(filter)
@@ -127,11 +128,6 @@ func (s *Server) rssHandler(c *gin.Context) {
 
 	var items []*feeds.Item
 	for _, post := range posts {
-		// we ignore un-published posts
-		if !post.IsPublished {
-			continue
-		}
-
 		item := &feeds.Item{
 			Id:          post.Slug,
 			Title:       post.Title,
@@ -206,10 +202,11 @@ func (s *Server) siteMapHandler(c *gin.Context) {
 
 	for {
 		filter := database.Filter{
-			Limit:   batchSize,
-			Offset:  offset,
-			OrderBy: "created_at",
-			Sort:    "ASC",
+			Limit:       batchSize,
+			Offset:      offset,
+			OrderBy:     "created_at",
+			Sort:        "ASC",
+			IsPublished: true,
 		}
 
 		posts, _, err := s.db.Posts.GetAll(filter)
@@ -258,10 +255,6 @@ func (s *Server) siteMapHandler(c *gin.Context) {
 
 	// Add post URLs
 	for _, post := range allPosts {
-		//ignore un-published posts url
-		if !post.IsPublished {
-			continue
-		}
 		postURL := fmt.Sprintf("%s/posts/%s", siteURL, post.Slug)
 		urls = append(urls, URL{
 			Loc:     postURL,

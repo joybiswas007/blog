@@ -31,6 +31,13 @@ func (s *Server) getPosts(c *gin.Context) ([]*database.Post, database.Filter, in
 	orderBy := c.DefaultQuery("order_by", "created_at")
 	sort := c.DefaultQuery("sort", "DESC")
 
+	isPublishedStr := c.DefaultQuery("is_published", "true")
+	isPublished, err := strconv.ParseBool(isPublishedStr)
+	if err != nil {
+		// fallback or handle invalid value
+		isPublished = true
+	}
+
 	// Convert limit and offset to integers and validate them
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil || limit < 1 {
@@ -43,11 +50,12 @@ func (s *Server) getPosts(c *gin.Context) ([]*database.Post, database.Filter, in
 
 	// Create a filter and fetch posts from the database
 	filter := database.Filter{
-		Limit:   limit,
-		Offset:  offset,
-		Tag:     tag,
-		OrderBy: orderBy,
-		Sort:    sort,
+		Limit:       limit,
+		Offset:      offset,
+		Tag:         tag,
+		OrderBy:     orderBy,
+		Sort:        sort,
+		IsPublished: isPublished,
 	}
 	posts, totalPost, err := s.db.Posts.GetAll(filter)
 	if err != nil {

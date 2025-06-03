@@ -18,7 +18,7 @@ templ Post(blog config.Blog, post *database.Post) {
 				<header class="space-y-3">
 					<h1 class="text-xl text-green-300">{ post.Title }</h1>
 					<div class="text-green-600 text-xs flex flex-wrap gap-2 items-center">
-						<time>{ post.CreatedAt.Format("2006-01-02 3:04:05 PM -0700") }</time>
+						<time>{ post.CreatedAt.Format("2006-01-02 3:04:05 PM") }</time>
 						<span>|</span>
 						<span>{ web.CalculateReadTime(post.Content) }</span>
 						<span>|</span>
