@@ -36,7 +36,7 @@ type YearlyStats struct {
 }
 
 // Get retrieves a single post by its ID including associated tags
-func (post PostModel) Get(postID int) (*Post, error) {
+func (m PostModel) Get(postID int) (*Post, error) {
 	query := `
         SELECT
             bp.id,
@@ -66,7 +66,7 @@ func (post PostModel) Get(postID int) (*Post, error) {
 	defer cancel()
 
 	var p Post
-	err := post.DB.QueryRow(ctx, query, postID).Scan(
+	err := m.DB.QueryRow(ctx, query, postID).Scan(
 		&p.ID,
 		&p.Author,
 		&p.Title,
@@ -91,7 +91,7 @@ func (post PostModel) Get(postID int) (*Post, error) {
 }
 
 // GetBySlug retrieves a single post by its slug including author name and associated tags
-func (post PostModel) GetBySlug(slug string) (*Post, error) {
+func (m PostModel) GetBySlug(slug string) (*Post, error) {
 	query := `
         SELECT
             bp.id,
@@ -122,7 +122,7 @@ func (post PostModel) GetBySlug(slug string) (*Post, error) {
 	defer cancel()
 
 	var p Post
-	err := post.DB.QueryRow(ctx, query, slug).Scan(
+	err := m.DB.QueryRow(ctx, query, slug).Scan(
 		&p.ID,
 		&p.Author,
 		&p.Title,
@@ -147,7 +147,7 @@ func (post PostModel) GetBySlug(slug string) (*Post, error) {
 }
 
 // Create inserts a new blog post and returns its ID
-func (post PostModel) Create(p Post) (int, error) {
+func (m PostModel) Create(p Post) (int, error) {
 	var postID int
 	query := `INSERT INTO blog_posts(user_id, title, description, content, slug, is_published) 
 		  VALUES($1, $2, $3, $4, $5, $6) 
@@ -155,7 +155,7 @@ func (post PostModel) Create(p Post) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := post.DB.QueryRow(ctx, query, p.UserID, p.Title, p.Description, p.Content, p.Slug, p.IsPublished).Scan(&postID)
+	err := m.DB.QueryRow(ctx, query, p.UserID, p.Title, p.Description, p.Content, p.Slug, p.IsPublished).Scan(&postID)
 	if err != nil {
 		return 0, err
 	}
@@ -164,14 +164,14 @@ func (post PostModel) Create(p Post) (int, error) {
 }
 
 // AddTag associates a tag with a blog post
-func (post PostModel) AddTag(postID, tagID int) error {
+func (m PostModel) AddTag(postID, tagID int) error {
 	query := `INSERT INTO blog_tag(blog_id, tag_id) VALUES($1, $2)`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	args := []any{postID, tagID}
 
-	_, err := post.DB.Exec(ctx, query, args...)
+	_, err := m.DB.Exec(ctx, query, args...)
 	if err != nil {
 		return err
 	}
@@ -180,11 +180,11 @@ func (post PostModel) AddTag(postID, tagID int) error {
 }
 
 // Update updates the specific post
-func (post PostModel) Update(p Post) error {
+func (m PostModel) Update(p Post) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	tx, err := post.DB.Begin(ctx)
+	tx, err := m.DB.Begin(ctx)
 	if err != nil {
 		return err
 	}
@@ -261,14 +261,36 @@ func (post PostModel) Update(p Post) error {
 	return tx.Commit(ctx)
 }
 
+// Publish sets the `is_published` field of a post to true, marking it as published.
+// Returns an error if the post doesn't exist or the update fails.
+func (m PostModel) Publish(postID int) error {
+	query := `UPDATE blog_posts 
+          SET is_published = true 
+          WHERE id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := m.DB.Exec(ctx, query, postID)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return ErrEditConflict
+		default:
+			return err
+		}
+	}
+	return nil
+}
+
 // Delete deletes the specific blog post
-func (post PostModel) Delete(postID int) error {
+func (m PostModel) Delete(postID int) error {
 	query := `DELETE FROM blog_posts WHERE id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	result, err := post.DB.Exec(ctx, query, postID)
+	result, err := m.DB.Exec(ctx, query, postID)
 	if err != nil {
 		return err
 	}
@@ -281,7 +303,7 @@ func (post PostModel) Delete(postID int) error {
 }
 
 // GetAll retrieves a paginated list of all blog posts with their tags
-func (post PostModel) GetAll(filter Filter) ([]*Post, int, error) {
+func (m PostModel) GetAll(filter Filter) ([]*Post, int, error) {
 	query := fmt.Sprintf(`
 SELECT
     count(*) OVER(),
@@ -321,7 +343,7 @@ LIMIT $1 OFFSET $2;
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := post.DB.Query(ctx, query, filter.Limit, filter.Offset, filter.Tag, filter.IsPublished)
+	rows, err := m.DB.Query(ctx, query, filter.Limit, filter.Offset, filter.Tag, filter.IsPublished)
 	if err != nil {
 		return nil, 0, err
 	}

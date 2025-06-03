@@ -22,7 +22,7 @@ type Tag struct {
 }
 
 // Get retrieves a tag by its name
-func (tag TagModel) Get(tagName string) (*Tag, error) {
+func (m TagModel) Get(tagName string) (*Tag, error) {
 	query := `
 		SELECT 
 			id, 
@@ -37,7 +37,7 @@ func (tag TagModel) Get(tagName string) (*Tag, error) {
 	defer cancel()
 
 	var t Tag
-	err := tag.DB.QueryRow(ctx, query, tagName).Scan(&t.ID, &t.Name)
+	err := m.DB.QueryRow(ctx, query, tagName).Scan(&t.ID, &t.Name)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -51,7 +51,7 @@ func (tag TagModel) Get(tagName string) (*Tag, error) {
 }
 
 // Create inserts a new tag and returns its ID
-func (tag TagModel) Create(tagName string) (int, error) {
+func (m TagModel) Create(tagName string) (int, error) {
 	var tagID int
 
 	query := `
@@ -63,7 +63,7 @@ func (tag TagModel) Create(tagName string) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := tag.DB.QueryRow(ctx, query, tagName).Scan(&tagID)
+	err := m.DB.QueryRow(ctx, query, tagName).Scan(&tagID)
 	if err != nil {
 		return 0, err
 	}
@@ -72,7 +72,7 @@ func (tag TagModel) Create(tagName string) (int, error) {
 }
 
 // GetAll retrieves all tags from the database
-func (tag TagModel) GetAll() ([]*Tag, error) {
+func (m TagModel) GetAll() ([]*Tag, error) {
 	query := `
 		SELECT 
 			t.id, 
@@ -90,7 +90,7 @@ func (tag TagModel) GetAll() ([]*Tag, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := tag.DB.Query(ctx, query)
+	rows, err := m.DB.Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -115,13 +115,13 @@ func (tag TagModel) GetAll() ([]*Tag, error) {
 }
 
 // Delete deletes a tag by its id
-func (tag TagModel) Delete(tagID int) error {
+func (m TagModel) Delete(tagID int) error {
 	query := `DELETE FROM tags WHERE id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := tag.DB.Exec(ctx, query, tagID)
+	_, err := m.DB.Exec(ctx, query, tagID)
 	if err != nil {
 		return err
 	}
