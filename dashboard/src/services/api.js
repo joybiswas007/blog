@@ -1,137 +1,109 @@
 import axios from "axios";
-import { API_BASE_URL } from "../config";
-import { toast } from "react-hot-toast";
-import { getAuthTokens, setAuthTokens, clearAuthTokens } from "../utils/auth";
+import { clearAuthTokens, getAuthTokens, setAuthTokens } from "../utils/auth";
+
+const { VITE_BASE_URL } = import.meta.env;
 
 const api = axios.create({
-	baseURL: API_BASE_URL,
-	headers: {
-		"Content-Type": "application/json",
-	},
+  baseURL: VITE_BASE_URL,
+  headers: {
+    "Content-Type": "application/json"
+  }
 });
 
-// Request interceptor to add auth token
+// Add a request interceptor to attach tokens to outgoing requests
 api.interceptors.request.use(
-	(config) => {
-		// Skip adding Authorization header for refresh endpoint
-		if (config.url === "/auth/refresh") {
-			return config;
-		}
+  config => {
+    const { access_token, refresh_token } = getAuthTokens();
 
-		const { accessToken } = getAuthTokens();
-		if (accessToken) {
-			config.headers.Authorization = `Bearer ${accessToken}`;
-		}
-		return config;
-	},
-	(error) => {
-		return Promise.reject(error);
-	},
+    // Handle the refresh token separately for the refresh endpoint
+    if (config.url === "/auth/refresh") {
+      if (refresh_token) {
+        config.headers["Authorization"] = `Bearer ${refresh_token}`;
+      }
+      return config;
+    }
+
+    // Attach the access token for all other requests
+    if (access_token) {
+      config.headers["Authorization"] = `Bearer ${access_token}`;
+    }
+
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
 );
 
-// Response interceptor to handle token refresh
+// Handle 401: Token refresh logic
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 api.interceptors.response.use(
-	(response) => response,
-	async (error) => {
-		const originalRequest = error.config;
-		const { refreshToken } = getAuthTokens();
+  response => response,
+  async error => {
+    const originalRequest = error.config;
 
-		if (
-			error.response?.status === 401 &&
-			!originalRequest._retry &&
-			refreshToken &&
-			originalRequest.url !== "/auth/refresh"
-		) {
-			originalRequest._retry = true;
+    // If 401 and not retrying already
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
+      if (isRefreshing) {
+        return new Promise(function (resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(token => {
+            originalRequest.headers["Authorization"] = "Bearer " + token;
+            return api(originalRequest);
+          })
+          .catch(err => Promise.reject(err));
+      }
 
-			try {
-				const response = await api.post("/auth/refresh", { refreshToken });
-				const { access_token, refresh_token } = response.data;
-				setAuthTokens({ access_token, refresh_token });
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-				// Retry original request with new accessToken
-				originalRequest.headers.Authorization = `Bearer ${access_token}`;
-				return api(originalRequest);
-			} catch (refreshError) {
-				clearAuthTokens();
-				window.location.href = "/login";
-				return Promise.reject(refreshError);
-			}
-		}
+      try {
+        const { refresh_token } = getAuthTokens();
+        // Call your refresh endpoint (adjust URL as needed)
+        const response = await axios.post(`${VITE_BASE_URL}/auth/refresh`, "", {
+          headers: {
+            Authorization: `Bearer ${refresh_token}`
+          }
+        });
 
-		// Handle other errors
-		if (error.response?.data?.message) {
-			toast.error(error.response.data.message);
-		} else {
-			toast.error("An error occurred. Please try again.");
-		}
+        const { access_token, refresh_token: newRefreshToken } = response.data;
+        setAuthTokens({ access_token, refresh_token: newRefreshToken });
 
-		return Promise.reject(error);
-	},
+        api.defaults.headers.common["Authorization"] = "Bearer " + access_token;
+        processQueue(null, newToken);
+
+        originalRequest.headers["Authorization"] = "Bearer " + access_token;
+        return api(originalRequest);
+      } catch (err) {
+        processQueue(err, null);
+        // Optionally, logout the user here if refresh fails
+        clearAuthTokens();
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  }
 );
-
-export const authService = {
-	login: async (email, password) => {
-		const response = await api.post("/auth/login", { email, password });
-		return response.data;
-	},
-	logout: async () => {
-		clearAuthTokens();
-	},
-	status: async () => {
-		const response = await api.get("/auth/status");
-		return response.data;
-	},
-	resetPassword: async (email) => {
-		const response = await api.post("/auth/users/reset-password", { email });
-		return response.data;
-	},
-	refresh: async (refreshToken) => {
-		const response = await api.post("/auth/refresh", { refreshToken });
-		return response.data;
-	},
-};
-
-export const postService = {
-	getPosts: async ({
-		limit = 10,
-		offset = 0,
-		order_by = "created_at",
-		sort = "DESC",
-		is_published = true,
-	}) => {
-		const response = await api.get("/posts", {
-			params: {
-				limit,
-				offset,
-				order_by,
-				sort,
-				is_published,
-			},
-		});
-		return response.data;
-	},
-	getPost: async (id) => {
-		const response = await api.get(`/posts/${id}`);
-		return response.data;
-	},
-
-	createPost: async (postData) => {
-		const response = await api.post("/posts", postData);
-		return response.data;
-	},
-	updatePost: async (id, postData) => {
-		const response = await api.patch(`/posts/${id}`, postData);
-		return response.data;
-	},
-	deletePost: async (id) => {
-		const response = await api.delete(`/posts/${id}`);
-		return response.data;
-	},
-	publishDraft: async (postID) => {
-		const response = await api.post(`/posts/publish/${postID}`)
-		return response.data
-	},
-};
 
 export default api;

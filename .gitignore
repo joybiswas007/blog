@@ -25,6 +25,9 @@ tmp/
 # .yaml file
 .blog.yaml
 
+# .env file
+.env
+
 # Project build
 blog
 blog_cli

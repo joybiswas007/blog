@@ -2,13 +2,13 @@ export const getAuthTokens = () => {
   const tokens = localStorage.getItem("authTokens");
   return tokens
     ? JSON.parse(tokens)
-    : { accessToken: null, refreshToken: null };
+    : { access_token: null, refresh_token: null };
 };
 
-export const setAuthTokens = ({ accessToken, refreshToken }) => {
+export const setAuthTokens = ({ access_token, refresh_token }) => {
   localStorage.setItem(
     "authTokens",
-    JSON.stringify({ accessToken, refreshToken }),
+    JSON.stringify({ access_token, refresh_token })
   );
 };
 

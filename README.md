@@ -91,10 +91,10 @@ You can run this blog either manually or using Docker.
    ```bash
    npm install
    ```
-4. Copy and configure the example config file:
+4. Copy and configure the `example.env` file:
    ```bash
-   cp src/example.config.js src/config.js
-   # Then edit src/config.js and update the URL values as needed
+   cp example.env .env
+   # Then edit .env and update the URL values as needed
    ```
 5. Start the development server:
    ```bash
