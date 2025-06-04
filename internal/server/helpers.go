@@ -140,7 +140,7 @@ func getIDFromParam(c *gin.Context) (int, error) {
 	// Convert the ID to an integer
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return 0, fmt.Errorf("invalid post ID: %w", err)
+		return 0, fmt.Errorf("invalid ID: %w", err)
 	}
 
 	return id, nil
