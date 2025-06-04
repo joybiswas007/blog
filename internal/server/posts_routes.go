@@ -79,7 +79,7 @@ func (s *Server) postsHandler(c *gin.Context) {
 }
 
 func (s *Server) getPostByIDHandler(c *gin.Context) {
-	pid, err := getPostIDFromParam(c)
+	pid, err := getIDFromParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -174,7 +174,7 @@ func (s *Server) createPostHandler(c *gin.Context) {
 }
 
 func (s *Server) updatePostHandler(c *gin.Context) {
-	pid, err := getPostIDFromParam(c)
+	pid, err := getIDFromParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -209,7 +209,7 @@ func (s *Server) updatePostHandler(c *gin.Context) {
 }
 
 func (s *Server) deletePostHandler(c *gin.Context) {
-	pid, err := getPostIDFromParam(c)
+	pid, err := getIDFromParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -225,7 +225,7 @@ func (s *Server) deletePostHandler(c *gin.Context) {
 }
 
 func (s *Server) publishDraftHandler(c *gin.Context) {
-	pid, err := getPostIDFromParam(c)
+	pid, err := getIDFromParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

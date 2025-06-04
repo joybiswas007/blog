@@ -94,10 +94,11 @@ export const authService = {
 
 export const postService = {
 	getPosts: async ({
-		limit = 5,
+		limit = 10,
 		offset = 0,
 		order_by = "created_at",
 		sort = "DESC",
+		is_published = true,
 	}) => {
 		const response = await api.get("/posts", {
 			params: {
@@ -105,6 +106,7 @@ export const postService = {
 				offset,
 				order_by,
 				sort,
+				is_published,
 			},
 		});
 		return response.data;
@@ -125,6 +127,10 @@ export const postService = {
 	deletePost: async (id) => {
 		const response = await api.delete(`/posts/${id}`);
 		return response.data;
+	},
+	publishDraft: async (postID) => {
+		const response = await api.post(`/posts/publish/${postID}`)
+		return response.data
 	},
 };
 
