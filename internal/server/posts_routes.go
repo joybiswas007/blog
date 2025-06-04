@@ -21,6 +21,7 @@ func registerPostRoutes(rg *gin.RouterGroup, s *Server) {
 	posts.POST("", s.createPostHandler)
 	posts.PATCH(":id", s.updatePostHandler)
 	posts.DELETE(":id", s.deletePostHandler)
+	posts.POST("publish/:id", s.publishDraftHandler)
 }
 
 func (s *Server) getPosts(c *gin.Context) ([]*database.Post, database.Filter, int, error) {
@@ -78,21 +79,12 @@ func (s *Server) postsHandler(c *gin.Context) {
 }
 
 func (s *Server) getPostByIDHandler(c *gin.Context) {
-	// Get the post ID from the request parameter
-	id := c.Param("id")
-	if id == "" {
-		// Respond with a bad request if the ID is missing
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing parameter: id is required to identify the item you want to access."})
-		return
-	}
-
-	pid, err := strconv.Atoi(id)
+	pid, err := getPostIDFromParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Fetch the post from the database
 	post, err := s.db.Posts.Get(pid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -182,18 +174,8 @@ func (s *Server) createPostHandler(c *gin.Context) {
 }
 
 func (s *Server) updatePostHandler(c *gin.Context) {
-	// Get the post ID from the request parameter
-	postID := c.Param("id")
-	if postID == "" {
-		// Respond with a bad request if the ID is missing
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing parameter: id is required to update the item you want."})
-		return
-	}
-
-	// Convert the post ID to an integer
-	pid, err := strconv.Atoi(postID)
+	pid, err := getPostIDFromParam(c)
 	if err != nil {
-		// Handle invalid ID format
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -227,18 +209,8 @@ func (s *Server) updatePostHandler(c *gin.Context) {
 }
 
 func (s *Server) deletePostHandler(c *gin.Context) {
-	// Get the post ID from the request parameter
-	postID := c.Param("id")
-	if postID == "" {
-		// Respond with a bad request if the ID is missing
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing parameter: id is required to update the item you want."})
-		return
-	}
-
-	// Convert the post ID to an integer
-	pid, err := strconv.Atoi(postID)
+	pid, err := getPostIDFromParam(c)
 	if err != nil {
-		// Handle invalid ID format
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -250,4 +222,31 @@ func (s *Server) deletePostHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Post deleted successfully!"})
+}
+
+func (s *Server) publishDraftHandler(c *gin.Context) {
+	pid, err := getPostIDFromParam(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	post, err := s.db.Posts.Get(pid)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if !post.IsPublished {
+		err := s.db.Posts.Publish(post.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Post published successfully"})
+		return
+	}
+
+	// If the post is already published
+	c.JSON(http.StatusOK, gin.H{"message": "Post is already published"})
 }

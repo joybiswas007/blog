@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -125,4 +126,22 @@ func generateTokens(userID int64, s *Server) (accessToken, refreshToken string, 
 	}
 
 	return accessToken, refreshToken, nil
+}
+
+// getPostIDFromParam extracts the "id" parameter from the request,
+// converts it to an integer, and returns an error if it's missing or invalid.
+func getPostIDFromParam(c *gin.Context) (int, error) {
+	// Get the post ID from the URL parameter
+	postID := c.Param("id")
+	if postID == "" {
+		return 0, fmt.Errorf("missing parameter: id is required")
+	}
+
+	// Convert the post ID to an integer
+	pid, err := strconv.Atoi(postID)
+	if err != nil {
+		return 0, fmt.Errorf("invalid post ID: %w", err)
+	}
+
+	return pid, nil
 }
