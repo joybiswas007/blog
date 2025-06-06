@@ -23,28 +23,10 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
 
       <div>
         <label
-          htmlFor="description"
-          className="block text-sm font-medium text-gray-300 mb-1"
-        >
-          Description <span className="text-red-500">*</span>
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          rows={3}
-          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
-          required
-        />
-      </div>
-
-      <div>
-        <label
           htmlFor="tags"
           className="block text-sm font-medium text-gray-300 mb-1"
         >
-          Tags (comma-separated)
+          Tags (comma-separated) <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -52,7 +34,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           name="tags"
           value={formData.tags}
           onChange={handleChange}
-          placeholder="react, javascript, webdev"
+          placeholder="go, linux, javascript"
           className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
         />
         <p className="mt-1 text-xs text-gray-400">Separate tags with commas</p>

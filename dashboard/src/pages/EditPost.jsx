@@ -14,7 +14,6 @@ const EditPost = () => {
   const [formData, setFormData] = useState({
     title: "",
     tags: "",
-    description: "",
     content: ""
   });
   const [loading, setLoading] = useState(false);
@@ -30,7 +29,6 @@ const EditPost = () => {
           setFormData({
             title: post.title,
             tags: post.tags?.join(", ") || "",
-            description: post.description || "",
             content: post.content || ""
           });
         }
@@ -46,7 +44,7 @@ const EditPost = () => {
 
   const handleUpdate = async () => {
     if (!formData.title || !formData.description || !formData.content) {
-      setError("Title, description, and content are required");
+      setError("Title and content are required");
       return;
     }
 
@@ -57,7 +55,6 @@ const EditPost = () => {
       await api.patch(`/posts/${id}`, {
         title: formData.title,
         tags: formData.tags.split(",").map(tag => tag.trim()),
-        description: formData.description,
         content: formData.content
       });
 
@@ -71,7 +68,7 @@ const EditPost = () => {
 
   const handlePublish = async () => {
     if (!formData.title || !formData.description || !formData.content) {
-      setError("Title, description, and content are required");
+      setError("Title and content are required");
       return;
     }
 

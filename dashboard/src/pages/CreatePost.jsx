@@ -12,7 +12,6 @@ const CreatePost = () => {
   const [formData, setFormData] = useState({
     title: "",
     tags: "",
-    description: "",
     content: ""
   });
   const [loading, setLoading] = useState(false);
@@ -28,7 +27,7 @@ const CreatePost = () => {
 
   const handleSubmit = async (isPublished = true) => {
     if (!formData.title || !formData.description || !formData.content) {
-      setError("Title, description, and content are required");
+      setError("Title and content are required");
       return;
     }
 
@@ -39,7 +38,6 @@ const CreatePost = () => {
       await api.post("/posts", {
         title: formData.title,
         tags: formData.tags.split(",").map(tag => tag.trim()),
-        description: formData.description,
         content: formData.content,
         is_published: isPublished
       });
