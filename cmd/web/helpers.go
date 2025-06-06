@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/a-h/templ"
-	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/spf13/viper"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
@@ -33,16 +32,14 @@ func StripSchema(rawURL string) string {
 func MarkdownToHTML(content string) string {
 	theme := viper.GetString("blog.md_theme")
 	if theme == "" {
-		theme = "vim"
+		theme = "monokai"
 	}
 	md := goldmark.New(
 		goldmark.WithExtensions(
 			extension.GFM,
 			highlighting.NewHighlighting(
+				highlighting.WithGuessLanguage(true),
 				highlighting.WithStyle(theme),
-				highlighting.WithFormatOptions(
-					chromahtml.WithLineNumbers(true),
-				),
 			),
 		),
 		goldmark.WithParserOptions(

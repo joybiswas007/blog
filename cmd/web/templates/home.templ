@@ -22,24 +22,9 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 					<p>sort --{ filter.OrderBy } --order { filter.Sort }</p>
 				</div>
 				<div class="flex flex-wrap gap-2 mt-2 ml-4">
-					<a
-						href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=0&order_by=created_at&sort=DESC", filter.Limit)) }
-						class={ `px-2 py-1 ${orderBy == "created_at" && sort == "DESC" ? "bg-green-900 text-green-200" : "hover:bg-green-900/50"}` }
-					>
-						--newest
-					</a>
-					<a
-						href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=0&order_by=created_at&sort=ASC", filter.Limit)) }
-						class={ `px-2 py-1 ${orderBy == "created_at" && sort == "ASC" ? "bg-green-900 text-green-200" : "hover:bg-green-900/50"}` }
-					>
-						--oldest
-					</a>
-					<a
-						href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=0&order_by=title&sort=ASC", filter.Limit)) }
-						class={ `px-2 py-1 ${orderBy == "title" ? "bg-green-900 text-green-200" : "hover:bg-green-900/50"}` }
-					>
-						--alphabetical
-					</a>
+					@SortOption("created_at", "DESC", "--newest", filter)
+					@SortOption("created_at", "ASC", "--oldest", filter)
+					@SortOption("title", "ASC", "--alphabetical", filter)
 				</div>
 			</div>
 			<!-- Posts list -->
@@ -112,4 +97,13 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 			}
 		</div>
 	}
+}
+
+templ SortOption(orderBy string, sort string, label string, filter database.Filter) {
+	<a
+		href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=0&order_by=%s&sort=%s", filter.Limit, orderBy, sort)) }
+		class={ `px-2 py-1 rounded ${filter.OrderBy == orderBy && filter.Sort == sort ? "bg-green-900 text-green-200" : "hover:bg-green-900/50"}` }
+	>
+		{ label }
+	</a>
 }

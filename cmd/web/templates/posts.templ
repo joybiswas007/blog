@@ -58,19 +58,18 @@ templ Tags(blog config.Blog, tags []*database.Tag) {
 				<span class="text-green-500">$</span>
 				<p>ls ./tags</p>
 			</div>
-			<div class="border-l-2 border-green-800 pl-4 ml-2">
+			<div class="border-l-2 border-green-800 pl-4 ml-2 space-y-1">
 				if len(tags) > 0 {
-					<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-						for _, tag := range tags {
-							<a
-								href={ templ.URL(fmt.Sprintf("/?tag=%s", tag.Name)) }
-								class="group flex flex-col hover:bg-green-900/30 p-2 rounded"
-							>
-								<span class="text-green-300 group-hover:text-green-200">#{ tag.Name }</span>
-								<span class="text-green-600 text-xs">{ tag.PostCount } entries</span>
-							</a>
-						}
-					</div>
+					for _, tag := range tags {
+						<a
+							href={ templ.URL(fmt.Sprintf("/?tag=%s", tag.Name)) }
+							class="flex items-baseline gap-2 hover:bg-green-900/30 p-2 rounded group"
+						>
+							<span class="text-green-500">></span>
+							<span class="text-green-300 group-hover:text-green-200 text-base">{ tag.Name }</span>
+							<span class="text-green-600 text-sm">({ tag.PostCount })</span>
+						</a>
+					}
 				} else {
 					<div class="flex items-baseline gap-2 text-green-600">
 						<span class="text-green-500">></span>

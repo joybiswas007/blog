@@ -4,7 +4,6 @@ go 1.24.2
 
 require (
 	github.com/a-h/templ v0.3.865
-	github.com/alecthomas/chroma/v2 v2.18.0
 	github.com/gin-contrib/cors v1.7.5
 	github.com/gin-contrib/expvar v1.0.3
 	github.com/gin-gonic/gin v1.10.1
@@ -22,6 +21,7 @@ require (
 )
 
 require (
+	github.com/alecthomas/chroma/v2 v2.18.0 // indirect
 	github.com/bytedance/sonic v1.13.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect

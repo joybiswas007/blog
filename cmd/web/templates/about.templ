@@ -17,7 +17,7 @@ templ About(blog config.Blog) {
 			<div class="border-l-2 border-green-800 pl-4 ml-2 space-y-6">
 				<section class="space-y-4">
 					<h2 class="text-lg text-green-300">$ whoami</h2>
-					<p>{ author.Name } - { author.Profession }</p>
+					<p><strong>{ author.Name }</strong> - { author.Profession }</p>
 				</section>
 				<section class="space-y-4">
 					<h2 class="text-lg text-green-300">$ message --greeting</h2>
@@ -43,58 +43,34 @@ templ About(blog config.Blog) {
 					<h2 class="text-lg text-green-300">$ contact --social</h2>
 					<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 						if author.Social.Github != "" {
-							<a
-								href={ templ.URL(author.Social.Github) }
-								target="_blank"
-								class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
-							>
-								<span class="text-green-500">></span>
-								<span>{ web.StripSchema(author.Social.Github) }</span>
-							</a>
+							@SocialLink(author.Social.Github)
 						}
-						if author.Social.LinkedIn!= "" {
-							<a
-								href={ templ.URL(author.Social.LinkedIn) }
-								target="_blank"
-								class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
-							>
-								<span class="text-green-500">></span>
-								<span>{ web.StripSchema(author.Social.LinkedIn) }</span>
-							</a>
+						if author.Social.LinkedIn != "" {
+							@SocialLink(author.Social.LinkedIn)
 						}
 						if author.Social.Twitter != "" {
-							<a
-								href={ templ.URL(author.Social.Twitter) }
-								target="_blank"
-								class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
-							>
-								<span class="text-green-500">></span>
-								<span>{ web.StripSchema(author.Social.Twitter) }</span>
-							</a>
+							@SocialLink(author.Social.Twitter)
 						}
 						if author.Social.Fiverr != "" {
-							<a
-								href={ templ.URL(author.Social.Fiverr) }
-								target="_blank"
-								class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
-							>
-								<span class="text-green-500">></span>
-								<span>{ web.StripSchema(author.Social.Fiverr) }</span>
-							</a>
+							@SocialLink(author.Social.Fiverr)
 						}
 						if author.Social.Upwork != "" {
-							<a
-								href={ templ.URL(author.Social.Upwork) }
-								target="_blank"
-								class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
-							>
-								<span class="text-green-500">></span>
-								<span>{ web.StripSchema(author.Social.Upwork) }</span>
-							</a>
+							@SocialLink(author.Social.Upwork)
 						}
 					</div>
 				</section>
 			</div>
 		</div>
 	}
+}
+
+templ SocialLink(socialURL string) {
+	<a
+		href={ templ.URL(socialURL) }
+		target="_blank"
+		class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
+	>
+		<span class="text-green-500">></span>
+		<span>{ web.StripSchema(socialURL) }</span>
+	</a>
 }
