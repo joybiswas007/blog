@@ -26,8 +26,8 @@ const CreatePost = () => {
   };
 
   const handleSubmit = async (isPublished = true) => {
-    if (!formData.title || !formData.description || !formData.content) {
-      setError("Title and content are required");
+    if (!formData.title || !formData.tags || !formData.content) {
+      setError("Title, tags and content are required");
       return;
     }
 
