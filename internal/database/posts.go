@@ -17,17 +17,16 @@ type PostModel struct {
 
 // Post represents a blog post in the database
 type Post struct {
-	ID          int       `json:"id"`                              // Unique identifier for the post
-	UserID      int64     `json:"-"`                               // UserID of the user who created the post
-	Author      string    `json:"author"`                          // Author the guy who posted the blog
-	Title       string    `json:"title" validate:"required"`       // Title of the post
-	Description string    `json:"description" validate:"required"` // Short description of the post
-	Content     string    `json:"content" validate:"required"`     // Main content of the post
-	Slug        string    `json:"slug"`                            // Slug of post title
-	IsPublished bool      `json:"is_published"`                    // Indicates if the post is published or not
-	Tags        []string  `json:"tags" validate:"required"`        // List of tags associated with the post
-	CreatedAt   time.Time `json:"created_at"`                      // When the post was created
-	UpdatedAt   time.Time `json:"updated_at"`                      // When the post was last updated
+	ID          int       `json:"id"`                          // Unique identifier for the post
+	UserID      int64     `json:"-"`                           // UserID of the user who created the post
+	Author      string    `json:"author"`                      // Author the guy who posted the blog
+	Title       string    `json:"title" validate:"required"`   // Title of the post
+	Content     string    `json:"content" validate:"required"` // Main content of the post
+	Slug        string    `json:"slug"`                        // Slug of post title
+	IsPublished bool      `json:"is_published"`                // Indicates if the post is published or not
+	Tags        []string  `json:"tags" validate:"required"`    // List of tags associated with the post
+	CreatedAt   time.Time `json:"created_at"`                  // When the post was created
+	UpdatedAt   time.Time `json:"updated_at"`                  // When the post was last updated
 }
 
 type YearlyStats struct {
@@ -42,7 +41,6 @@ func (m PostModel) Get(postID int) (*Post, error) {
             bp.id,
 	    u.name AS author,
             bp.title,
-            bp.description,
             bp.content,
 	    bp.slug,
 	    bp.is_published,
@@ -70,7 +68,6 @@ func (m PostModel) Get(postID int) (*Post, error) {
 		&p.ID,
 		&p.Author,
 		&p.Title,
-		&p.Description,
 		&p.Content,
 		&p.Slug,
 		&p.IsPublished,
@@ -97,7 +94,6 @@ func (m PostModel) GetBySlug(slug string) (*Post, error) {
             bp.id,
             u.name AS author,
             bp.title,
-            bp.description,
             bp.content,
             bp.slug,
 	    bp.is_published,
@@ -126,7 +122,6 @@ func (m PostModel) GetBySlug(slug string) (*Post, error) {
 		&p.ID,
 		&p.Author,
 		&p.Title,
-		&p.Description,
 		&p.Content,
 		&p.Slug,
 		&p.IsPublished,
@@ -149,13 +144,13 @@ func (m PostModel) GetBySlug(slug string) (*Post, error) {
 // Create inserts a new blog post and returns its ID
 func (m PostModel) Create(p Post) (int, error) {
 	var postID int
-	query := `INSERT INTO blog_posts(user_id, title, description, content, slug, is_published) 
-		  VALUES($1, $2, $3, $4, $5, $6) 
+	query := `INSERT INTO blog_posts(user_id, title, content, slug, is_published) 
+		  VALUES($1, $2, $3, $4, $5) 
 		  RETURNING id`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRow(ctx, query, p.UserID, p.Title, p.Description, p.Content, p.Slug, p.IsPublished).Scan(&postID)
+	err := m.DB.QueryRow(ctx, query, p.UserID, p.Title, p.Content, p.Slug, p.IsPublished).Scan(&postID)
 	if err != nil {
 		return 0, err
 	}
@@ -204,12 +199,11 @@ func (m PostModel) Update(p Post) error {
 	// update the blog post
 	updateQuery := `
             UPDATE blog_posts 
-            SET title = $1, description = $2, content = $3
-            WHERE id = $4`
+            SET title = $1, content = $2
+            WHERE id = $3`
 
 	updateArgs := []any{
 		p.Title,
-		p.Description,
 		p.Content,
 		p.ID, // id we are passing to identify the post
 	}
@@ -265,7 +259,8 @@ func (m PostModel) Update(p Post) error {
 // Returns an error if the post doesn't exist or the update fails.
 func (m PostModel) Publish(postID int) error {
 	query := `UPDATE blog_posts 
-          SET is_published = true 
+          SET is_published = true,
+		created_at = NOW()
           WHERE id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -311,7 +306,6 @@ SELECT
     bp.user_id,
     u.name AS author,
     bp.title,
-    bp.description,
     bp.content,
     bp.slug,
     bp.is_published,
@@ -360,7 +354,6 @@ LIMIT $1 OFFSET $2;
 			&p.UserID,
 			&p.Author,
 			&p.Title,
-			&p.Description,
 			&p.Content,
 			&p.Slug,
 			&p.IsPublished,
