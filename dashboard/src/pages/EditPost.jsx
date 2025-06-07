@@ -4,7 +4,7 @@ import api from "../services/api";
 import {
   PostFormFields,
   ErrorMessage,
-  FormHeader,
+  PostEditorHeader,
   LoadingSpinner
 } from "../components/PostForm";
 
@@ -19,6 +19,7 @@ const EditPost = () => {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState(null);
+  const [isPublished, setIsPublished] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -31,6 +32,7 @@ const EditPost = () => {
             tags: post.tags?.join(", ") || "",
             content: post.content || ""
           });
+          setIsPublished(post.is_published);
         }
       } catch (err) {
         setError(err.response?.data?.message || "Failed to fetch post");
@@ -42,11 +44,24 @@ const EditPost = () => {
     fetchPost();
   }, [id]);
 
-  const handleUpdate = async () => {
-    if (!formData.title || !formData.tags || !formData.content) {
-      setError("Title, tags and content are required");
-      return;
+  const validateForm = () => {
+    if (!formData.title || formData.title.length < 3) {
+      setError("Title must be at least 3 characters long");
+      return false;
     }
+    if (!formData.content || formData.content.length < 10) {
+      setError("Content must be at least 10 characters long");
+      return false;
+    }
+    if (!formData.tags) {
+      setError("At least one tag is required");
+      return false;
+    }
+    return true;
+  };
+
+  const handleUpdate = async () => {
+    if (!validateForm()) return;
 
     setLoading(true);
     setError(null);
@@ -67,16 +82,14 @@ const EditPost = () => {
   };
 
   const handlePublish = async () => {
-    if (!formData.title || !formData.description || !formData.content) {
-      setError("Title and content are required");
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
     setError(null);
 
     try {
       await api.post(`/posts/publish/${id}`);
+      setIsPublished(true);
       navigate("/", { state: { success: true } });
     } catch (err) {
       setError(err.response?.data?.message || "Failed to publish post");
@@ -96,7 +109,7 @@ const EditPost = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 py-8 px-4">
       <div className="max-w-3xl mx-auto">
-        <FormHeader
+        <PostEditorHeader
           title="Edit Post"
           subtitle="Make changes to your post below"
         />
@@ -136,71 +149,21 @@ const EditPost = () => {
                 loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
-              {loading ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Updating...
-                </>
-              ) : (
-                "Update Post"
-              )}
+              {loading ? <LoadingSpinner /> : "Update Post"}
             </button>
 
-            <button
-              type="button"
-              onClick={handlePublish}
-              disabled={loading}
-              className={`flex-1 sm:flex-none px-6 py-3 rounded-lg font-medium bg-emerald-600 hover:bg-emerald-700 text-white transition ${
-                loading ? "opacity-70 cursor-not-allowed" : ""
-              }`}
-            >
-              {loading ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Publishing...
-                </>
-              ) : (
-                "Publish Post"
-              )}
-            </button>
+            {!isPublished && (
+              <button
+                type="button"
+                onClick={handlePublish}
+                disabled={loading}
+                className={`flex-1 sm:flex-none px-6 py-3 rounded-lg font-medium bg-emerald-600 hover:bg-emerald-700 text-white transition ${
+                  loading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+              >
+                {loading ? <LoadingSpinner /> : "Publish Post"}
+              </button>
+            )}
           </div>
         </div>
       </div>

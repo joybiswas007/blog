@@ -59,14 +59,15 @@ api.interceptors.response.use(
     if (
       error.response &&
       error.response.status === 401 &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      originalRequest.url !== "/auth/refresh" // Don't retry refresh token requests
     ) {
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
         })
           .then(token => {
-            originalRequest.headers["Authorization"] = "Bearer " + token;
+            originalRequest.headers["Authorization"] = `Bearer ${token}`;
             return api(originalRequest);
           })
           .catch(err => Promise.reject(err));
@@ -77,7 +78,10 @@ api.interceptors.response.use(
 
       try {
         const { refresh_token } = getAuthTokens();
-        // Call your refresh endpoint (adjust URL as needed)
+        if (!refresh_token) {
+          throw new Error("No refresh token available");
+        }
+
         const response = await axios.post(`${VITE_BASE_URL}/auth/refresh`, "", {
           headers: {
             Authorization: `Bearer ${refresh_token}`
@@ -87,15 +91,15 @@ api.interceptors.response.use(
         const { access_token, refresh_token: newRefreshToken } = response.data;
         setAuthTokens({ access_token, refresh_token: newRefreshToken });
 
-        api.defaults.headers.common["Authorization"] = "Bearer " + access_token;
-        processQueue(null, newToken);
+        api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
+        processQueue(null, access_token);
 
-        originalRequest.headers["Authorization"] = "Bearer " + access_token;
+        originalRequest.headers["Authorization"] = `Bearer ${access_token}`;
         return api(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        // Optionally, logout the user here if refresh fails
         clearAuthTokens();
+        window.location.href = "/login";
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

@@ -4,6 +4,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import CreatePost from "./pages/CreatePost";
 import EditPost from "./pages/EditPost";
+import ResetPassword from "./components/ResetPassword";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/posts/create" element={<CreatePost />} />
           <Route path="/posts/:id/edit" element={<EditPost />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
       </Routes>
     </Router>

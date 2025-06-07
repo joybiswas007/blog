@@ -4,7 +4,8 @@ import api from "../services/api";
 import {
   PostFormFields,
   ErrorMessage,
-  FormHeader
+  PostEditorHeader,
+  LoadingSpinner
 } from "../components/PostForm";
 
 const CreatePost = () => {
@@ -25,11 +26,24 @@ const CreatePost = () => {
     }));
   };
 
-  const handleSubmit = async (isPublished = true) => {
-    if (!formData.title || !formData.tags || !formData.content) {
-      setError("Title, tags and content are required");
-      return;
+  const validateForm = () => {
+    if (!formData.title || formData.title.length < 3) {
+      setError("Title must be at least 3 characters long");
+      return false;
     }
+    if (!formData.content || formData.content.length < 10) {
+      setError("Content must be at least 10 characters long");
+      return false;
+    }
+    if (!formData.tags) {
+      setError("At least one tag is required");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (isPublished = true) => {
+    if (!validateForm()) return;
 
     setLoading(true);
     setError(null);
@@ -53,7 +67,7 @@ const CreatePost = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 py-8 px-4">
       <div className="max-w-3xl mx-auto">
-        <FormHeader
+        <PostEditorHeader
           title="Create New Post"
           subtitle="Fill in the details below to create a new post"
         />
@@ -76,8 +90,9 @@ const CreatePost = () => {
                 loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
-              {loading ? "Saving..." : "Save Draft"}
+              {loading ? <LoadingSpinner /> : "Save Draft"}
             </button>
+
             <button
               type="button"
               onClick={() => handleSubmit(true)}
@@ -86,33 +101,7 @@ const CreatePost = () => {
                 loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
-              {loading ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Publishing...
-                </>
-              ) : (
-                "Publish Post"
-              )}
+              {loading ? <LoadingSpinner /> : "Publish Post"}
             </button>
           </div>
         </div>

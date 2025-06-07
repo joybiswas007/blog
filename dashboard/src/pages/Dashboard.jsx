@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { ErrorMessage, LoadingSpinner } from "../components/PostForm";
@@ -8,7 +8,7 @@ export default function Dashboard() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("published"); // 'published' or 'drafts'
+  const [activeTab, setActiveTab] = useState("published");
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -16,12 +16,13 @@ export default function Dashboard() {
     totalPages: 1
   });
   const navigate = useNavigate();
+
   const handleLogout = () => {
     clearAuthTokens();
     navigate("/login");
   };
 
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
@@ -42,11 +43,11 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, activeTab]);
 
   useEffect(() => {
     fetchPosts();
-  }, [pagination.page, activeTab]);
+  }, [fetchPosts]);
 
   const handleDelete = async postId => {
     if (window.confirm("Are you sure you want to delete this post?")) {
@@ -75,37 +76,104 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-emerald-400">Dashboard</h1>
-          <Link
-            to="/posts/create"
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition"
-          >
-            Create New Post
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-          >
-            Logout
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Header */}
+      <header className="bg-gray-800/50 backdrop-blur-lg border-b border-gray-700/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">
+                Dashboard
+              </h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Link
+                to="/posts/create"
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
+              >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 4v16m8-8H4"
+                  ></path>
+                </svg>
+                New Post
+              </Link>
+              <button
+                onClick={() => navigate("/reset-password")}
+                className="inline-flex items-center px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
+              >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+                  ></path>
+                </svg>
+                Reset Password
+              </button>
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
+              >
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  ></path>
+                </svg>
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
+      </header>
 
-        <div className="flex border-b border-gray-700 mb-6">
-          <button
-            className={`px-4 py-2 font-medium ${activeTab === "published" ? "text-emerald-400 border-b-2 border-emerald-400" : "text-gray-400 hover:text-gray-300"}`}
-            onClick={() => setActiveTab("published")}
-          >
-            Published Posts
-          </button>
-          <button
-            className={`px-4 py-2 font-medium ${activeTab === "drafts" ? "text-emerald-400 border-b-2 border-emerald-400" : "text-gray-400 hover:text-gray-300"}`}
-            onClick={() => setActiveTab("drafts")}
-          >
-            Drafts
-          </button>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <div className="flex border-b border-gray-700/50">
+            <button
+              className={`px-4 py-2 font-medium text-sm ${
+                activeTab === "published"
+                  ? "text-emerald-400 border-b-2 border-emerald-400"
+                  : "text-gray-400 hover:text-gray-300"
+              }`}
+              onClick={() => setActiveTab("published")}
+            >
+              Published Posts
+            </button>
+            <button
+              className={`px-4 py-2 font-medium text-sm ${
+                activeTab === "drafts"
+                  ? "text-emerald-400 border-b-2 border-emerald-400"
+                  : "text-gray-400 hover:text-gray-300"
+              }`}
+              onClick={() => setActiveTab("drafts")}
+            >
+              Drafts
+            </button>
+          </div>
         </div>
 
         <ErrorMessage error={error} />
@@ -114,130 +182,151 @@ export default function Dashboard() {
           <div className="flex justify-center items-center h-64">
             <LoadingSpinner />
           </div>
-        ) : posts === null ? (
-          <div className="text-center py-12 text-gray-400">
-            {activeTab === "published"
-              ? "No published posts found."
-              : "No drafts found."}
+        ) : !posts || posts.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-800/50 mb-4">
+              <svg
+                className="w-8 h-8 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                ></path>
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-300 mb-1">
+              No {activeTab === "published" ? "published posts" : "drafts"}{" "}
+              found
+            </h3>
+            <p className="text-gray-400 mb-4">
+              {activeTab === "published"
+                ? "Start by publishing your first post"
+                : "Create a draft to get started"}
+            </p>
+            <Link
+              to="/posts/create"
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
+            >
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 4v16m8-8H4"
+                ></path>
+              </svg>
+              Create New Post
+            </Link>
           </div>
         ) : (
           <>
-            <div className="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-700">
-                  <thead className="bg-gray-700">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                        Title
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                        Author
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                        Date
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                        Tags
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-gray-800 divide-y divide-gray-700">
-                    {posts.map(post => (
-                      <tr
-                        key={post.id}
-                        className="hover:bg-gray-750 transition"
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {posts.map(post => (
+                <div
+                  key={post.id}
+                  className="bg-gray-800/50 backdrop-blur-lg rounded-xl border border-gray-700/50 overflow-hidden hover:border-gray-600/50 transition-all duration-200"
+                >
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-gray-400 mb-4 line-clamp-2">
+                      {post.slug}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {post.tags?.map(tag => (
+                        <span
+                          key={tag}
+                          className="px-2 py-1 text-xs rounded-full bg-gray-700/50 text-gray-300"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between text-sm text-gray-400">
+                      <span>
+                        {new Date(post.created_at).toLocaleDateString()}
+                      </span>
+                      <span>{post.author}</span>
+                    </div>
+                  </div>
+                  <div className="px-6 py-4 bg-gray-700/30 border-t border-gray-700/50 flex items-center justify-end space-x-3">
+                    {activeTab === "drafts" && (
+                      <button
+                        onClick={() => handlePublish(post.id)}
+                        className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                        title="Publish"
                       >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-white">
-                            {post.title}
-                          </div>
-                          <div className="text-sm text-gray-400">
-                            {post.slug}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                          {post.author}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                          {new Date(post.created_at).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex flex-wrap gap-1">
-                            {post.tags?.map(tag => (
-                              <span
-                                key={tag}
-                                className="px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                          {activeTab === "drafts" && (
-                            <button
-                              onClick={() => handlePublish(post.id)}
-                              className="text-emerald-400 hover:text-emerald-300"
-                              title="Publish"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            </button>
-                          )}
-                          <Link
-                            to={`/posts/${post.id}/edit`}
-                            className="text-blue-400 hover:text-blue-300"
-                            title="Edit"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                            </svg>
-                          </Link>
-                          <button
-                            onClick={() => handleDelete(post.id)}
-                            className="text-red-400 hover:text-red-300"
-                            title="Delete"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 13l4 4L19 7"
+                          ></path>
+                        </svg>
+                      </button>
+                    )}
+                    <Link
+                      to={`/posts/${post.id}/edit`}
+                      className="text-blue-400 hover:text-blue-300 transition-colors"
+                      title="Edit"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        ></path>
+                      </svg>
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(post.id)}
+                      className="text-red-400 hover:text-red-300 transition-colors"
+                      title="Delete"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <div className="flex items-center justify-between mt-6">
+            {/* Pagination */}
+            <div className="flex items-center justify-between mt-8">
               <div className="text-sm text-gray-400">
                 Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
                 {Math.min(
@@ -254,7 +343,7 @@ export default function Dashboard() {
                   className={`px-4 py-2 rounded-lg border border-gray-600 text-sm ${
                     pagination.page === 1
                       ? "text-gray-500 cursor-not-allowed"
-                      : "text-gray-300 hover:bg-gray-700"
+                      : "text-gray-300 hover:bg-gray-700/50"
                   }`}
                 >
                   Previous
@@ -265,7 +354,7 @@ export default function Dashboard() {
                   className={`px-4 py-2 rounded-lg border border-gray-600 text-sm ${
                     pagination.page === pagination.totalPages
                       ? "text-gray-500 cursor-not-allowed"
-                      : "text-gray-300 hover:bg-gray-700"
+                      : "text-gray-300 hover:bg-gray-700/50"
                   }`}
                 >
                   Next
@@ -274,7 +363,7 @@ export default function Dashboard() {
             </div>
           </>
         )}
-      </div>
+      </main>
     </div>
   );
 }

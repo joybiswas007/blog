@@ -1,13 +1,14 @@
 {
   "name": "dashboard",
   "private": true,
-  "version": "1.1.1",
+  "version": "1.1.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "format": "prettier --write .",
+    "lint": "eslint . --ext .js,.jsx",
+    "lint:fix": "eslint . --ext .js,.jsx --fix",
+    "format": "prettier --write \"**/*.{js,jsx,json,css,scss}\"",
     "preview": "vite preview"
   },
   "dependencies": {
