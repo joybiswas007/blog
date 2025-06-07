@@ -45,4 +45,5 @@ cmd/web/assets/css/output.css
 .DS_Store
 
 #ignore gin generated log files
+logs
 *.log

@@ -13,6 +13,7 @@ dashboard/
 migrations/
 node_modules/
 *.md
+tmp
 
 # Git and editor files
 .git
@@ -28,14 +29,17 @@ node_modules/
 Thumbs.db
 
 # Logs
+logs
 *.log
 
 # IDE/editor config
 .vscode/
 .idea/
 
-# blog config
+# config files
 .blog.yaml
+.air.toml
+example.blog.yaml
 
 # Build artifacts and output
 *templ.go

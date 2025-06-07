@@ -42,18 +42,11 @@ build-cli:
 # Build the docker image
 build-docker:
 	@command -v docker >/dev/null 2>&1 || { echo >&2 "Docker is not installed. Aborting."; exit 1; }
+	@mkdir -p logs
+	@touch logs/blog.log
+	@chmod 666 logs/blog.log
 	@echo "Building Docker image: $(DOCKER_IMG_NAME)"
 	@docker build -t $(DOCKER_IMG_NAME) .
-
-# Run the Docker container with mounted config file
-run-docker:
-	@command -v docker >/dev/null 2>&1 || { echo >&2 "Docker is not installed. Aborting."; exit 1; }
-	@if [ ! -f $(CONFIG_FILE) ]; then \
-		echo "Config file '$(CONFIG_FILE)' not found. Aborting."; \
-		exit 1; \
-	fi
-	@echo "Running Docker container with config file: $(CONFIG_FILE)"
-	@docker run -d -p 8080:8080 -v $(shell pwd)/$(CONFIG_FILE):$(CONTAINER_CONFIG_PATH) $(DOCKER_IMG_NAME)
 
 # Run the API application
 run:
@@ -108,7 +101,6 @@ help:
 	@echo "  build         - Build Blog binary"
 	@echo "  build-cli     - Build CLI binary"
 	@echo "  build-docker  - Build the Docker image"
-	@echo "  run-docker    - Run the Docker image"
 	@echo "  run           - Run Blog application"
 	@echo "  run-cli       - Run CLI application"
 	@echo "  gen           - Generate Go code from Templ templates"

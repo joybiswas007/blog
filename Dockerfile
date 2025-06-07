@@ -5,7 +5,7 @@ COPY --chown=65532:65532 . /app
 RUN ["templ", "generate"]
 
 # Stage 2: Build stage
-FROM golang:1.24.3-bullseye AS builder
+FROM golang:1.24.4-bullseye AS builder
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y make

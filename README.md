@@ -118,10 +118,6 @@ You can run this blog either manually or using Docker.
    ```bash
     sudo docker-compose up -d
    ```
-   or 
-   ```bash
-   make run-docker
-   ```
    - Adjust the ports and config path as needed for your setup.
    - Make sure `.blog.yaml` is available in your working directory and is mounted into the container.
 
