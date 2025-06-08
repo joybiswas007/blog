@@ -53,6 +53,8 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 									{ prevPost.Title }
 								</div>
 							</a>
+						} else {
+							<div class="w-full sm:w-auto"></div> <!-- Empty spacer -->
 						}
 						if nextPost != nil {
 							<a
@@ -65,6 +67,8 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 								</div>
 								<span class="text-green-500 ml-2 group-hover:translate-x-1 transition-transform">→</span>
 							</a>
+						} else {
+							<div class="w-full sm:w-auto"></div> <!-- Empty spacer -->
 						}
 					</div>
 				</div>
