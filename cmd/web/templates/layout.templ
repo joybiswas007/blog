@@ -2,7 +2,6 @@ package template
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"strings"
 	"time"
 	"github.com/joybiswas007/blog/config"
@@ -33,7 +32,7 @@ templ Base(blog config.Blog, title string) {
 				<main class="flex-1 mt-4">
 					{ children... }
 				</main>
-				@Footer()
+				@Footer(blog.Author.Name)
 			</div>
 		</body>
 	</html>
@@ -55,10 +54,10 @@ templ Header() {
 	</header>
 }
 
-templ Footer() {
+templ Footer(authorName string) {
 	<footer class="border-t border-green-800 pt-4 mt-8 text-green-600 text-xs">
 		<div class="flex justify-between items-center">
-			<span>&copy; { fmt.Sprintf("%d", time.Now().Year()) } { viper.GetString("blog.author.name") } </span>
+			<span>&copy; { fmt.Sprintf("%d", time.Now().Year()) } { authorName } </span>
 			<span>Powered by Go</span>
 		</div>
 	</footer>
