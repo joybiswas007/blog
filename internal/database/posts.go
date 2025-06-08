@@ -446,3 +446,59 @@ func (m PostModel) GetByYear(year int) ([]Post, error) {
 
 	return posts, nil
 }
+
+// PreviousID returns the ID of the most recent published post with an ID less than currentID.
+// If no such post exists, it returns 0 and nil error.
+func (m PostModel) PreviousID(currentID int) (int, error) {
+	const query = `
+		SELECT id 
+		FROM blog_posts
+		WHERE id < $1 AND is_published = true
+		ORDER BY id DESC
+		LIMIT 1;
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var postID int
+
+	err := m.DB.QueryRow(ctx, query, currentID).Scan(&postID)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return 0, nil // No previous post found
+		default:
+			return 0, err // Other error
+		}
+	}
+	return postID, nil
+}
+
+// NextID returns the ID of the next published post with an ID greater than currentID.
+// If no such post exists, it returns 0 and nil error.
+func (m PostModel) NextID(currentID int) (int, error) {
+	const query = `
+		SELECT id 
+		FROM blog_posts
+		WHERE id > $1 AND is_published = true
+		ORDER BY id ASC
+		LIMIT 1;
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var postID int
+
+	err := m.DB.QueryRow(ctx, query, currentID).Scan(&postID)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return 0, nil // No next post found
+		default:
+			return 0, err // Other error
+		}
+	}
+	return postID, nil
+}

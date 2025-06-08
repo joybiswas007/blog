@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/feeds"
 	"github.com/joybiswas007/blog/cmd/web"
-	"github.com/joybiswas007/blog/cmd/web/templates"
+	template "github.com/joybiswas007/blog/cmd/web/templates"
 	"github.com/joybiswas007/blog/internal/database"
 )
 
@@ -98,8 +98,47 @@ func (s *Server) getBlogPostBySlugHandler(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
+	var (
+		previousPost, nextPost *database.Post
+	)
 
-	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Post(s.config.Blog, post))
+	// Fetch the previous post ID if exists
+	previousID, err := s.db.Posts.PreviousID(post.ID)
+	if err != nil {
+		// Handle database error (e.g., post not found)
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// Fetch the previous post if ID exists
+	if previousID != 0 {
+		previousPost, err = s.db.Posts.Get(previousID)
+		if err != nil {
+			// Handle database error (e.g., post not found)
+			c.String(http.StatusBadRequest, err.Error())
+			return
+		}
+	}
+
+	// Fetch the next post ID if exists
+	nextID, err := s.db.Posts.NextID(post.ID)
+	if err != nil {
+		// Handle database error (e.g., post not found)
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// Fetch the next post if ID exists
+	if nextID != 0 {
+		nextPost, err = s.db.Posts.Get(nextID)
+		if err != nil {
+			// Handle database error (e.g., post not found)
+			c.String(http.StatusBadRequest, err.Error())
+			return
+		}
+	}
+
+	r := NewRenderer(c.Request.Context(), http.StatusOK, template.Post(s.config.Blog, post, previousPost, nextPost))
 	c.Render(http.StatusOK, r)
 }
 

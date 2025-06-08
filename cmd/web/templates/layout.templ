@@ -27,6 +27,16 @@ templ Base(blog config.Blog, title string) {
 			}
 		</head>
 		<body class="bg-black text-green-400 font-mono text-sm leading-relaxed min-h-screen flex flex-col">
+			<!-- Back to Top Button -->
+			<button
+				id="back-to-top"
+				class="fixed bottom-6 right-6 p-2 bg-green-900/80 border border-green-800 rounded-full text-green-300 hover:text-green-200 hover:bg-green-900 transition-all opacity-0 invisible"
+				aria-label="Back to top"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M18 15l-6-6-6 6"></path>
+				</svg>
+			</button>
 			<div class="container mx-auto px-4 py-8 max-w-4xl">
 				@Header()
 				<main class="flex-1 mt-4">
@@ -34,6 +44,26 @@ templ Base(blog config.Blog, title string) {
 				</main>
 				@Footer(blog.Author.Name)
 			</div>
+			<script>
+				const backToTopButton = document.getElementById('back-to-top');
+				
+				window.addEventListener('scroll', () => {
+					if (window.scrollY > 300) {
+						backToTopButton.classList.remove('opacity-0', 'invisible');
+						backToTopButton.classList.add('opacity-100', 'visible');
+					} else {
+						backToTopButton.classList.remove('opacity-100', 'visible');
+						backToTopButton.classList.add('opacity-0', 'invisible');
+					}
+				});
+
+				backToTopButton.addEventListener('click', () => {
+					window.scrollTo({
+						top: 0,
+						behavior: 'smooth'
+					});
+				});
+			</script>
 		</body>
 	</html>
 }
