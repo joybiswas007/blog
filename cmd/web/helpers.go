@@ -51,7 +51,9 @@ func MarkdownToHTML(content string) string {
 		),
 	)
 	var buf bytes.Buffer
-	_ = md.Convert([]byte(content), &buf)
+	if err := md.Convert([]byte(content), &buf); err != nil {
+		return fmt.Sprintf("<div class='error'>Error rendering markdown: %v</div>", err)
+	}
 	return buf.String()
 }
 
