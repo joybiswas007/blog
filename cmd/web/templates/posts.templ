@@ -10,7 +10,7 @@ import (
 templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 	@Base(blog, post.Title) {
 		<div class="space-y-8">
-			<article class="border-l-4 border-blue-800 pl-6 ml-4 space-y-8">
+			<article class="pl-6 ml-4 space-y-8">
 				<header class="space-y-4">
 					<h1 class="text-2xl text-gray-300">{ post.Title }</h1>
 					<div class="text-gray-500 text-sm flex flex-wrap gap-3 items-center">
@@ -34,7 +34,7 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 					}
 				</header>
 				<div class="prose prose-invert max-w-none">
-					@web.Unsafe(web.MarkdownToHTML(post.Content))
+					@web.Unsafe(web.MarkdownToHTML(blog.MarkdownTheme, post.Content))
 				</div>
 				<div class="pt-6 border-t border-blue-800/50">
 					<div class="flex flex-col sm:flex-row justify-between items-center gap-6">
@@ -76,7 +76,7 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 templ Tags(blog config.Blog, tags []*database.Tag) {
 	@Base(blog, "Tags") {
 		<div class="space-y-6">
-			<div class="border-l-2 border-blue-800 pl-4 ml-2 space-y-1">
+			<div class="pl-4 ml-2 space-y-1">
 				if len(tags) > 0 {
 					for _, tag := range tags {
 						<a
@@ -102,7 +102,7 @@ templ Tags(blog config.Blog, tags []*database.Tag) {
 templ Archives(blog config.Blog, lists []database.YearlyStats) {
 	@Base(blog, "Archives") {
 		<div class="space-y-6">
-			<div class="border-l-2 border-blue-800 pl-4 ml-2 space-y-6">
+			<div class="pl-4 ml-2 space-y-6">
 				<section class="space-y-4">
 					<div class="flex items-baseline gap-2">
 						<span class="text-blue-500">></span>
@@ -118,7 +118,7 @@ templ Archives(blog config.Blog, lists []database.YearlyStats) {
 					</a>
 				</section>
 				<section class="space-y-4">
-					<h2 class="text-lg text-gray-300">$ ls --by-year</h2>
+					<h2 class="text-lg text-gray-300">By year</h2>
 					<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
 						for _, list := range lists {
 							<a
@@ -142,11 +142,11 @@ templ Archives(blog config.Blog, lists []database.YearlyStats) {
 templ ArchiveByYear(blog config.Blog, year int, posts []database.Post) {
 	@Base(blog, fmt.Sprintf("Archives - %d", year)) {
 		<div class="space-y-6">
-			<div class="border-l-2 border-blue-800 pl-4 ml-2 space-y-4">
+			<div class="pl-4 ml-2 space-y-4">
 				if len(posts) == 0 {
 					<div class="flex items-baseline gap-2 text-gray-500">
 						<span class="text-blue-500">></span>
-						<p>No posts found in archives directory</p>
+						<p>No posts found in archives</p>
 					</div>
 				} else {
 					<div class="space-y-2">
@@ -172,12 +172,11 @@ templ ArchiveByYear(blog config.Blog, year int, posts []database.Post) {
 					</div>
 				}
 			</div>
-			<div class="border-l-2 border-blue-800 pl-4 ml-2 pt-4">
+			<div class="pl-4 ml-2 pt-4">
 				<a
 					href="/archives"
 					class="flex items-center gap-2 text-blue-500 hover:text-blue-300"
 				>
-					<span class="text-blue-500">cd ..</span>
 					<span>Back to archives</span>
 				</a>
 			</div>

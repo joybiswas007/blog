@@ -1,6 +1,6 @@
 # blog
 
-A personal blog built with Go, inspired by the aesthetics and simplicity of the terminal. Share your thoughts and stories in a fast, minimal, and terminal-style environment.
+A fast and minimal personal blog built with Go, designed to share your thoughts and stories in a clean and modern layout.
 
 ## Getting Started
 

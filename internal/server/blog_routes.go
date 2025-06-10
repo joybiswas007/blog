@@ -171,7 +171,7 @@ func (s *Server) rssHandler(c *gin.Context) {
 			Id:          post.Slug,
 			Title:       post.Title,
 			Link:        &feeds.Link{Href: fmt.Sprintf("%s/posts/%s", s.config.Blog.URL, post.Slug)},
-			Description: web.MarkdownToHTML(post.Content),
+			Description: web.MarkdownToHTML(s.config.Blog.MarkdownTheme, post.Content),
 			Created:     post.CreatedAt,
 		}
 		items = append(items, item)

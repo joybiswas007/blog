@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/a-h/templ"
-	"github.com/spf13/viper"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	"github.com/yuin/goldmark/extension"
@@ -29,8 +28,7 @@ func StripSchema(rawURL string) string {
 }
 
 // MarkdownToHTML converts a Markdown string to HTML with syntax highlighting.
-func MarkdownToHTML(content string) string {
-	theme := viper.GetString("blog.md_theme")
+func MarkdownToHTML(theme, content string) string {
 	if theme == "" {
 		theme = "nord"
 	}
