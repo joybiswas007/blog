@@ -42,7 +42,7 @@ templ Base(blog config.Blog, title string) {
 				<main class="flex-1 mt-4">
 					{ children... }
 				</main>
-				@Footer(blog.Author.Name)
+				@Footer(blog.Author.Name, blog.Source)
 			</div>
 			<script>
 				const backToTopButton = document.getElementById('back-to-top');
@@ -84,10 +84,22 @@ templ Header() {
 	</header>
 }
 
-templ Footer(authorName string) {
+templ Footer(authorName string, sourceCodeURL string) {
 	<footer class="border-t border-green-800 pt-4 mt-8 text-green-600 text-xs">
 		<div class="flex justify-between items-center">
-			<span>&copy; { fmt.Sprintf("%d", time.Now().Year()) } { authorName } </span>
+			<div class="flex space-x-4">
+				<span>&copy; { fmt.Sprintf("%d", time.Now().Year()) } { authorName }</span>
+				if sourceCodeURL != "" {
+					<a
+						href={ templ.URL(sourceCodeURL) }
+						target="_blank"
+						rel="noopener noreferrer"
+						class="hover:text-green-800 hover:underline transition-colors duration-200"
+					>
+						Source
+					</a>
+				}
+			</div>
 			<span>Powered by Go</span>
 		</div>
 	</footer>

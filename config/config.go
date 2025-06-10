@@ -36,6 +36,7 @@ type RateLimiter struct {
 type Blog struct {
 	Name          string   `mapstructure:"name" validate:"required"`        // Name of the blog
 	URL           string   `mapstructure:"url" validate:"required"`         // URL of the blog i.e: http(s)://sitename.com
+	Source        string   `mapstructure:"source"`                          // Source code of the blog i.e: https://github.com/username/blog
 	Description   string   `mapstructure:"description" validate:"required"` // Description of the blog
 	GTagID        string   `mapstructure:"gtag_id"`                         // Google Analytics Measurement ID (e.g., G-XXXXXXX)
 	Keywords      []string `mapstructure:"keywords" validate:"required"`    // Keywords for the SEO

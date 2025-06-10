@@ -23,12 +23,13 @@ is_production: false
 blog:
   name: "A name for your blog"          # Blog title
   description: "Enter your blog description"  # Short blog description
+  source: https://github.com/joybiswas007/blog # replace it with your source 
   url: "https://sitename.com"          # Full blog URL
   gtag_id: "G-XXXXXXX"                  # Google Analytics Measurement ID (GA4)
 
   # Markdown theme for code blocks (from Splash themes)
   # https://xyproto.github.io/splash/docs/all.html
-  md_theme: vim
+  md_theme: monokai 
 
   # Keywords for SEO purposes
   keywords:

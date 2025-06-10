@@ -1,151 +1,152 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
 
 @import "tailwindcss";
 
 @theme {
-	/* Font family */
-	--font-family-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  /* Font family */
+  --font-family-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-	/* Color palette */
-	--color-black: #000000;
-	--color-green-50: #f0fff4;
-	--color-green-100: #dcfce7;
-	--color-green-200: #bbf7d0;
-	--color-green-300: #86efac;
-	--color-green-400: #4ade80;
-	--color-green-500: #22c55e;
-	--color-green-600: #16a34a;
-	--color-green-700: #15803d;
-	--color-green-800: #166534;
-	--color-green-900: #14532d;
-	--color-green-950: #052e16;
+  /* Color palette */
+  --color-black: #000000;
+  --color-green-50: #f0fff4;
+  --color-green-100: #dcfce7;
+  --color-green-200: #bbf7d0;
+  --color-green-300: #86efac;
+  --color-green-400: #4ade80;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
+  --color-green-700: #15803d;
+  --color-green-800: #166534;
+  --color-green-900: #14532d;
+  --color-green-950: #052e16;
 
-	/* Terminal colors */
-	--color-terminal-bg: var(--color-black);
-	--color-terminal-text: #33ff33;
-	--color-terminal-text-dim: #228822;
-	--color-terminal-border: var(--color-green-800);
-	--color-terminal-selection: var(--color-green-900);
-	--color-terminal-cursor: var(--color-green-400);
+  /* Terminal colors */
+  --color-terminal-bg: var(--color-black);
+  --color-terminal-text: #33ff33;
+  --color-terminal-text-dim: #228822;
+  --color-terminal-border: var(--color-green-800);
+  --color-terminal-selection: var(--color-green-900);
+  --color-terminal-cursor: var(--color-green-400);
 }
 
 /* Base styles */
 @layer base {
-	body {
-		background-color: var(--color-terminal-bg);
-		color: var(--color-terminal-text);
-		font-family: var(--font-family-mono);
-	}
+  body {
+    background-color: var(--color-terminal-bg);
+    color: var(--color-terminal-text);
+    font-family: var(--font-family-mono);
+  }
 
-	a {
-		@apply transition-colors;
-	}
+  a {
+    @apply transition-colors;
+  }
 
-	/* Scrollbar */
-	::-webkit-scrollbar {
-		@apply w-2 h-2;
-	}
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
 
-	::-webkit-scrollbar-track {
-		@apply bg-black;
-	}
+  ::-webkit-scrollbar-track {
+    @apply bg-black;
+  }
 
-	::-webkit-scrollbar-thumb {
-		@apply bg-neutral-900 rounded-full;
-	}
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-900 rounded-full;
+  }
 
-	/* Style for disabled input boxes */
-	input:disabled,
-	textarea:disabled,
-	select:disabled {
-		@apply bg-green-900/10 text-green-600 border-green-800 cursor-not-allowed;
-		opacity: 0.7;
-	}
+  /* Style for disabled input boxes */
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    @apply bg-green-900/10 text-green-600 border-green-800 cursor-not-allowed;
+    opacity: 0.7;
+  }
 }
 
 /* Prose settings for markdown content */
 @layer utilities {
-	.prose {
-		@apply max-w-none;
-	}
+  .prose {
+    @apply max-w-none;
+  }
 
-	.prose h1,
-	.prose h2,
-	.prose h3,
-	.prose h4 {
-		@apply text-green-300 mt-6 mb-4;
-	}
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4 {
+    @apply text-green-300 mt-6 mb-4;
+  }
 
-	.prose h1 {
-		@apply text-2xl border-b border-green-800 pb-2;
-	}
+  .prose h1 {
+    @apply text-2xl border-b border-green-800 pb-2;
+  }
 
-	.prose h2 {
-		@apply text-xl;
-	}
+  .prose h2 {
+    @apply text-xl;
+  }
 
-	.prose h3 {
-		@apply text-lg;
-	}
+  .prose h3 {
+    @apply text-lg;
+  }
 
-	.prose p {
-		@apply my-4;
-	}
+  .prose p {
+    @apply my-4;
+  }
 
-	.prose a {
-		@apply text-green-400 hover:text-green-300 underline;
-	}
+  .prose a {
+    @apply text-green-400 hover:text-green-300 underline;
+  }
 
-	.prose a.tag {
-		@apply bg-green-900/30 text-green-400 hover:text-green-300 px-1.5 py-0.5 rounded no-underline;
-	}
+  .prose a.tag {
+    @apply bg-green-900/30 text-green-400 hover:text-green-300 px-1.5 py-0.5 rounded no-underline;
+  }
 
-	.prose ul,
-	.prose ol {
-		@apply pl-5 my-4;
-	}
+  .prose ul,
+  .prose ol {
+    @apply pl-5 my-4;
+  }
 
-	.prose ul {
-		@apply list-disc;
-	}
+  .prose ul {
+    @apply list-disc;
+  }
 
-	.prose ol {
-		@apply list-decimal;
-	}
+  .prose ol {
+    @apply list-decimal;
+  }
 
-	.prose li {
-		@apply my-2;
-	}
+  .prose li {
+    @apply my-2;
+  }
 
-	.prose code {
-		@apply bg-green-900/30 text-green-300 px-1 py-0.5 rounded;
-	}
+  .prose code {
+    @apply bg-green-900/30 text-green-300 px-1 py-0.5 rounded;
+  }
 
-	.prose pre {
-		@apply bg-green-900/20 p-4 rounded border border-green-800 overflow-x-auto my-4;
-	}
+  .prose pre {
+    @apply bg-green-900/20 p-4 rounded border border-green-800 overflow-x-auto my-4;
+  }
 
-	.prose pre code {
-		@apply bg-transparent p-0;
-	}
+  .prose pre code {
+    @apply bg-transparent p-0;
+  }
 
-	.prose blockquote {
-		@apply border-l-4 border-green-800 pl-4 italic text-green-500 my-4;
-	}
+  .prose blockquote {
+    @apply border-l-4 border-green-800 pl-4 italic text-green-500 my-4;
+  }
 
-	.prose table {
-		@apply w-full my-4;
-	}
+  .prose table {
+    @apply w-full my-4;
+  }
 
-	.prose th {
-		@apply bg-green-900/30 text-left px-4 py-2 border-b border-green-800;
-	}
+  .prose th {
+    @apply bg-green-900/30 text-left px-4 py-2 border-b border-green-800;
+  }
 
-	.prose td {
-		@apply px-4 py-2 border-b border-green-800/50;
-	}
+  .prose td {
+    @apply px-4 py-2 border-b border-green-800/50;
+  }
 
-	.prose img {
-		@apply my-4 rounded border border-green-800;
-	}
+  .prose img {
+    @apply my-4 rounded border border-green-800;
+  }
 }

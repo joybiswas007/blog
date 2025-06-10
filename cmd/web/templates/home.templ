@@ -10,16 +10,17 @@ import (
 
 templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter database.Filter) {
 	@Base(blog, "home") {
-		<div class="space-y-8">
-			<div class="flex items-baseline gap-2">
+		<div class="space-y-8 font-mono">
+			<!-- Command prompt header -->
+			<div class="flex items-baseline gap-2 text-green-400">
 				<span class="text-green-500">$</span>
-				<p>ls -la ./posts</p>
+				<p class="font-fira">ls -la ./posts</p>
 			</div>
 			<!-- Sorting controls -->
-			<div class="border-l-2 border-green-800 pl-4 ml-2">
-				<div class="flex items-baseline gap-2">
+			<div class="border-l-2 border-green-700 pl-4 ml-2">
+				<div class="flex items-baseline gap-2 text-green-400">
 					<span class="text-green-500">></span>
-					<p>sort --{ filter.OrderBy } --order { filter.Sort }</p>
+					<p class="font-fira">sort --{ filter.OrderBy } --order { filter.Sort }</p>
 				</div>
 				<div class="flex flex-wrap gap-2 mt-2 ml-4">
 					@SortOption("created_at", "DESC", "--newest", filter)
@@ -28,7 +29,7 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 				</div>
 			</div>
 			<!-- Posts list -->
-			<div class="border-l-2 border-green-800 pl-4 ml-2 space-y-6">
+			<div class="border-l-2 border-green-700 pl-4 ml-2 space-y-6">
 				if len(posts) > 0 {
 					for _, post := range posts {
 						<article class="group">
@@ -36,13 +37,13 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 								<span class="text-green-500">></span>
 								<a
 									href={ templ.URL(fmt.Sprintf("/posts/%s", post.Slug)) }
-									class="hover:text-green-300 hover:underline"
+									class="text-green-300 hover:text-green-200 hover:underline font-medium font-fira"
 								>
 									{ post.Title }
 								</a>
 							</div>
-							<div class="ml-4 mt-1 text-green-600 text-xs flex flex-wrap gap-2 items-center">
-								<time>{ post.CreatedAt.Format("2006-01-02 3:04:05 PM") }</time>
+							<div class="ml-4 mt-1 text-green-500 text-xs flex flex-wrap gap-2 items-center font-fira">
+								<time>{ post.CreatedAt.Format("2006-01-02 3:04 PM") }</time>
 								<span>|</span>
 								<span>{ web.CalculateReadTime(post.Content) }</span>
 								if len(post.Tags) > 0 {
@@ -50,7 +51,7 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 									for _, tag := range post.Tags {
 										<a
 											href={ templ.URL(fmt.Sprintf("/?tag=%s", tag)) }
-											class="hover:text-green-400"
+											class="text-green-600 hover:text-green-400"
 										>
 											#{ tag }
 										</a>
@@ -62,22 +63,22 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 				} else {
 					<div class="flex items-baseline gap-2 text-green-600">
 						<span class="text-green-500">></span>
-						<p>No posts found in directory</p>
+						<p class="font-fira">No posts found in directory</p>
 					</div>
 				}
 			</div>
 			<!-- Pagination -->
 			if totalPosts > filter.Limit {
-				<div class="border-l-2 border-green-800 pl-4 ml-2">
-					<div class="flex items-baseline gap-2">
+				<div class="border-l-2 border-green-700 pl-4 ml-2">
+					<div class="flex items-baseline gap-2 text-green-400">
 						<span class="text-green-500">></span>
-						<p>navigate --page { (filter.Offset/filter.Limit)+1 }/{ int(math.Ceil(float64(totalPosts)/float64(filter.Limit))) }</p>
+						<p class="font-fira">navigate --page { (filter.Offset/filter.Limit)+1 }/{ int(math.Ceil(float64(totalPosts)/float64(filter.Limit))) }</p>
 					</div>
 					<div class="flex gap-2 mt-2 ml-4">
 						if filter.Offset > 0 {
 							<a
 								href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=%d&order_by=%s&sort=%s", filter.Limit, max(0, filter.Offset-filter.Limit), filter.OrderBy, filter.Sort)) }
-								class="px-2 py-1 hover:bg-green-900/50 flex items-center gap-1"
+								class="px-2 py-1 hover:bg-green-900/50 flex items-center gap-1 text-green-400 hover:text-green-300 font-fira"
 							>
 								<span class="text-green-500">&lt;</span>
 								prev
@@ -86,7 +87,7 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 						if filter.Offset+filter.Limit < totalPosts {
 							<a
 								href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=%d&order_by=%s&sort=%s", filter.Limit, filter.Offset+filter.Limit, filter.OrderBy, filter.Sort)) }
-								class="px-2 py-1 hover:bg-green-900/50 flex items-center gap-1"
+								class="px-2 py-1 hover:bg-green-900/50 flex items-center gap-1 text-green-400 hover:text-green-300 font-fira"
 							>
 								next
 								<span class="text-green-500">&gt;</span>
@@ -102,7 +103,7 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 templ SortOption(orderBy string, sort string, label string, filter database.Filter) {
 	<a
 		href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=0&order_by=%s&sort=%s", filter.Limit, orderBy, sort)) }
-		class={ `px-2 py-1 rounded ${filter.OrderBy == orderBy && filter.Sort == sort ? "bg-green-900 text-green-200" : "hover:bg-green-900/50"}` }
+		class={ `px-2 py-1 rounded font-fira ${filter.OrderBy == orderBy && filter.Sort == sort ? "bg-green-900 text-green-200" : "text-green-400 hover:bg-green-900/50 hover:text-green-300"}` }
 	>
 		{ label }
 	</a>

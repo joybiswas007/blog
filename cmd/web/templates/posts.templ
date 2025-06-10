@@ -9,15 +9,15 @@ import (
 
 templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 	@Base(blog, post.Title) {
-		<div class="space-y-6">
-			<div class="flex items-baseline gap-2">
-				<span class="text-green-500">$</span>
-				<p>cat ./posts/{ post.Slug }.md</p>
+		<div class="space-y-8">
+			<div class="flex items-baseline gap-2 text-green-500">
+				<span class="text-xl font-bold">$</span>
+				<p class="text-green-300 font-medium">cat ./posts/{ post.Slug }.md</p>
 			</div>
-			<article class="border-l-2 border-green-800 pl-4 ml-2 space-y-6">
-				<header class="space-y-3">
-					<h1 class="text-xl text-green-300">{ post.Title }</h1>
-					<div class="text-green-600 text-xs flex flex-wrap gap-2 items-center">
+			<article class="border-l-4 border-green-800 pl-6 ml-4 space-y-8">
+				<header class="space-y-4">
+					<h1 class="text-2xl text-green-300">{ post.Title }</h1>
+					<div class="text-green-600 text-sm flex flex-wrap gap-3 items-center">
 						<time>{ post.CreatedAt.Format("2006-01-02 3:04:05 PM") }</time>
 						<span>|</span>
 						<span>{ web.CalculateReadTime(post.Content) }</span>
@@ -25,11 +25,11 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 						<span>{ post.Author }</span>
 					</div>
 					if len(post.Tags) > 0 {
-						<div class="flex flex-wrap gap-2 text-xs">
+						<div class="flex flex-wrap gap-3 text-sm">
 							for _, tag := range post.Tags {
 								<a
 									href={ templ.URL(fmt.Sprintf("/?tag=%s", tag)) }
-									class="text-green-500 hover:text-green-400 bg-green-900/30 px-2 py-1 rounded"
+									class="text-green-500 hover:text-green-400 bg-green-900/30 px-3 py-1 rounded shadow-sm transition-shadow hover:shadow-md"
 								>
 									#{ tag }
 								</a>
@@ -40,8 +40,8 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 				<div class="prose prose-invert max-w-none">
 					@web.Unsafe(web.MarkdownToHTML(post.Content))
 				</div>
-				<div class="pt-4 border-t border-green-800/50">
-					<div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+				<div class="pt-6 border-t border-green-800/50">
+					<div class="flex flex-col sm:flex-row justify-between items-center gap-6">
 						if prevPost != nil {
 							<a
 								href={ templ.URL(fmt.Sprintf("/posts/%s", prevPost.Slug)) }
@@ -50,11 +50,11 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 								<span class="text-green-500 mr-2 group-hover:-translate-x-1 transition-transform">←</span>
 								<div class="truncate max-w-xs">
 									<span class="text-xs text-green-500 block">Previous</span>
-									{ prevPost.Title }
+									<span class="font-medium">{ prevPost.Title }</span>
 								</div>
 							</a>
 						} else {
-							<div class="w-full sm:w-auto"></div> <!-- Empty spacer -->
+							<div class="w-full sm:w-auto"></div>
 						}
 						if nextPost != nil {
 							<a
@@ -63,12 +63,12 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 							>
 								<div class="truncate max-w-xs">
 									<span class="text-xs text-green-500 block">Next</span>
-									{ nextPost.Title }
+									<span class="font-medium">{ nextPost.Title }</span>
 								</div>
 								<span class="text-green-500 ml-2 group-hover:translate-x-1 transition-transform">→</span>
 							</a>
 						} else {
-							<div class="w-full sm:w-auto"></div> <!-- Empty spacer -->
+							<div class="w-full sm:w-auto"></div>
 						}
 					</div>
 				</div>
