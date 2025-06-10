@@ -13,7 +13,7 @@ templ Base(blog config.Blog, title string) {
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>{ title } - { blog.Name } </title>
+			<title>{ title } - { blog.Name }</title>
 			<meta name="description" content={ blog.Description }/>
 			<meta name="keywords" content={ strings.Join(blog.Keywords, ", ") }/>
 			<meta name="author" content={ blog.Author.Name }/>
@@ -26,11 +26,11 @@ templ Base(blog config.Blog, title string) {
 				@GoogleAnalytics(blog.GTagID)
 			}
 		</head>
-		<body class="bg-black text-green-400 font-mono text-sm leading-relaxed min-h-screen flex flex-col">
+		<body class="bg-black text-gray-400 font-mono text-sm leading-relaxed min-h-screen flex flex-col">
 			<!-- Back to Top Button -->
 			<button
 				id="back-to-top"
-				class="fixed bottom-6 right-6 p-2 bg-green-900/80 border border-green-800 rounded-full text-green-300 hover:text-green-200 hover:bg-green-900 transition-all opacity-0 invisible"
+				class="fixed bottom-6 right-6 p-2 bg-blue-900/80 border border-blue-800 rounded-full text-blue-300 hover:text-blue-200 hover:bg-blue-900 transition-all opacity-0 invisible"
 				aria-label="Back to top"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -38,13 +38,14 @@ templ Base(blog config.Blog, title string) {
 				</svg>
 			</button>
 			<div class="container mx-auto px-4 py-8 max-w-4xl">
-				@Header()
+				@Header(blog.Name)
 				<main class="flex-1 mt-4">
 					{ children... }
 				</main>
 				@Footer(blog.Author.Name, blog.Source)
 			</div>
 			<script>
+				// Back to Top Button Functionality
 				const backToTopButton = document.getElementById('back-to-top');
 				
 				window.addEventListener('scroll', () => {
@@ -68,24 +69,23 @@ templ Base(blog config.Blog, title string) {
 	</html>
 }
 
-templ Header() {
-	<header class="border-b border-green-800 pb-4 mb-6 sticky top-0 bg-black z-50">
+templ Header(blogName string) {
+	<header class="pb-4 mb-6 sticky top-0 bg-black z-50">
 		<div class="flex items-center gap-4">
-			<span class="text-green-500">$</span>
 			<h1 class="text-xl font-medium">
-				<a href="/" class="hover:text-green-300">~/</a>
+				<a href="/" class="hover:text-gray-300 text-gray-400">{ blogName }</a>
 			</h1>
 			<nav class="flex gap-4 ml-auto">
-				<a href="/archives" class="hover:text-green-300">~/archives</a>
-				<a href="/tags" class="hover:text-green-300">~/tags</a>
-				<a href="/about" class="hover:text-green-300">~/about</a>
+				<a href="/archives" class="hover:text-gray-300 text-gray-400">Archives</a>
+				<a href="/tags" class="hover:text-gray-300 text-gray-400">Tags</a>
+				<a href="/about" class="hover:text-gray-300 text-gray-400">About</a>
 			</nav>
 		</div>
 	</header>
 }
 
 templ Footer(authorName string, sourceCodeURL string) {
-	<footer class="border-t border-green-800 pt-4 mt-8 text-green-600 text-xs">
+	<footer class="pt-4 mt-8 text-gray-600 text-xs">
 		<div class="flex justify-between items-center">
 			<div class="flex space-x-4">
 				<span>&copy; { fmt.Sprintf("%d", time.Now().Year()) } { authorName }</span>
@@ -94,7 +94,7 @@ templ Footer(authorName string, sourceCodeURL string) {
 						href={ templ.URL(sourceCodeURL) }
 						target="_blank"
 						rel="noopener noreferrer"
-						class="hover:text-green-800 hover:underline transition-colors duration-200"
+						class="hover:text-blue-800 hover:underline transition-colors duration-200"
 					>
 						Source
 					</a>
@@ -107,20 +107,17 @@ templ Footer(authorName string, sourceCodeURL string) {
 
 templ NotFound(blog config.Blog) {
 	@Base(blog, "404") {
-		<div class="space-y-4">
-			<div class="flex items-baseline gap-2">
-				<span class="text-green-500">$</span>
-				<p>cat 404.txt</p>
-			</div>
-			<div class="border-l-2 border-green-800 pl-4 ml-2 space-y-2">
-				<h2 class="text-xl text-green-300">Error 404: Page Not Found</h2>
-				<p>Command failed: No such file or directory</p>
-				<div class="pt-2">
-					<a href="/" class="inline-flex items-center text-green-300 hover:text-green-200">
-						<span class="text-green-500 mr-2">></span>
-						Return to home directory
-					</a>
-				</div>
+		<div class="space-y-8 flex flex-col items-center justify-center min-h-[50vh]">
+			<h1 class="text-4xl text-blue-300 font-bold">404</h1>
+			<h2 class="text-xl text-blue-300">Oops! The page you’re looking for doesn’t exist.</h2>
+			<p class="text-gray-400 text-center max-w-lg">
+				It seems the page you were trying to access has either been moved, deleted, or never existed. Don’t worry, you can head back to the homepage and explore more!
+			</p>
+			<div>
+				<a href="/" class="inline-flex items-center px-4 py-2 bg-blue-800 text-blue-300 hover:bg-blue-700 hover:text-blue-200 rounded transition-all">
+					<span class="text-blue-500 mr-2">></span>
+					Return to homepage
+				</a>
 			</div>
 		</div>
 	}

@@ -32,7 +32,7 @@ func StripSchema(rawURL string) string {
 func MarkdownToHTML(content string) string {
 	theme := viper.GetString("blog.md_theme")
 	if theme == "" {
-		theme = "monokai"
+		theme = "nord"
 	}
 	md := goldmark.New(
 		goldmark.WithExtensions(

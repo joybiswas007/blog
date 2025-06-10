@@ -10,37 +10,33 @@ templ About(blog config.Blog) {
 	{{ author := blog.Author }}
 	@Base(blog, "about") {
 		<div class="space-y-6">
-			<div class="flex items-baseline gap-2">
-				<span class="text-green-500">$</span>
-				<p>cat ./about.md</p>
-			</div>
-			<div class="border-l-2 border-green-800 pl-4 ml-2 space-y-6">
+			<div class="border-l-2 border-blue-800 pl-4 ml-2 space-y-6">
 				<section class="space-y-4">
-					<h2 class="text-lg text-green-300">$ whoami</h2>
-					<p><strong>{ author.Name }</strong> - { author.Profession }</p>
+					<h2 class="text-lg text-gray-300">$ whoami</h2>
+					<p><strong class="text-gray-300">{ author.Name }</strong> - <span class="text-gray-400">{ author.Profession }</span></p>
 				</section>
 				<section class="space-y-4">
-					<h2 class="text-lg text-green-300">$ message --greeting</h2>
-					<div class="bg-green-900/20 p-4 rounded border border-green-800">
-						<p>If you want to talk about technology, collaborate on a project, or just say hello,</p>
-						<p>I'd love to hear from you! Feel free to reach out through any of these channels:</p>
+					<h2 class="text-lg text-gray-300">$ message --greeting</h2>
+					<div class="bg-blue-900/20 p-4 rounded border border-blue-800">
+						<p class="text-gray-400">If you want to talk about technology, collaborate on a project, or just say hello,</p>
+						<p class="text-gray-400">I'd love to hear from you! Feel free to reach out through any of these channels:</p>
 					</div>
 				</section>
 				<section class="space-y-4">
-					<h2 class="text-lg text-green-300">$ contact --primary</h2>
-					<div class="flex items-center gap-4 p-3 bg-green-900/30 rounded border border-green-800">
-						<span class="text-green-500">></span>
+					<h2 class="text-lg text-gray-300">$ contact --primary</h2>
+					<div class="flex items-center gap-4 p-3 bg-blue-900/30 rounded border border-blue-800">
+						<span class="text-blue-500">></span>
 						<a
 							href={ templ.URL(fmt.Sprintf("mailto:%s", author.Social.Email)) }
 							target="_blank"
-							class="hover:text-green-300"
+							class="hover:text-blue-300 text-gray-300"
 						>
 							{ author.Social.Email }
 						</a>
 					</div>
 				</section>
 				<section class="space-y-4">
-					<h2 class="text-lg text-green-300">$ contact --social</h2>
+					<h2 class="text-lg text-gray-300">$ contact --social</h2>
 					<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 						if author.Social.Github != "" {
 							@SocialLink(author.Social.Github)
@@ -68,9 +64,9 @@ templ SocialLink(socialURL string) {
 	<a
 		href={ templ.URL(socialURL) }
 		target="_blank"
-		class="flex items-center gap-2 p-3 hover:bg-green-900/30 rounded border border-green-800 hover:text-green-300"
+		class="flex items-center gap-2 p-3 hover:bg-blue-900/30 rounded border border-blue-800 hover:text-blue-300 text-gray-300"
 	>
-		<span class="text-green-500">></span>
+		<span class="text-blue-500">></span>
 		<span>{ web.StripSchema(socialURL) }</span>
 	</a>
 }

@@ -29,7 +29,7 @@ blog:
 
   # Markdown theme for code blocks (from Splash themes)
   # https://xyproto.github.io/splash/docs/all.html
-  md_theme: monokai 
+  md_theme: nord 
 
   # Keywords for SEO purposes
   keywords:
