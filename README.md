@@ -2,6 +2,8 @@
 
 A fast and minimal personal blog built with Go, designed to share your thoughts and stories in a clean and modern layout.
 
+---
+
 ## Getting Started
 
 Follow these steps to get a copy of the project up and running for development or production.
@@ -19,7 +21,7 @@ Follow these steps to get a copy of the project up and running for development o
    ```bash
    migrate -path=./migrations -database="postgres://bloguser:yourpassword@localhost:5432/blogdb?sslmode=disable" up
    ```
-   *If you want to roll back (down) the database migrations, simply run:*
+   *To roll back (down) the database migrations:*
    ```bash
    migrate -path=./migrations -database="postgres://bloguser:yourpassword@localhost:5432/blogdb?sslmode=disable" down
    ```
@@ -80,7 +82,7 @@ You can run this blog either manually or using Docker.
    ```
    *Password is optional. If not provided, a secure password will be generated automatically.*
 
-#### **Admin Dashboard**
+#### **Admin Dashboard (Frontend)**
 
 1. **Node.js and npm**: Make sure both Node.js and npm are installed.
 2. Navigate to the `dashboard` directory:
@@ -91,7 +93,7 @@ You can run this blog either manually or using Docker.
    ```bash
    npm install
    ```
-4. Copy and configure the `example.env` file:
+4. Copy and configure the `.env` file:
    ```bash
    cp example.env .env
    # Then edit .env and update the URL values as needed
@@ -100,6 +102,15 @@ You can run this blog either manually or using Docker.
    ```bash
    npm run dev
    ```
+6. **Build and Run the Docker Image for the frontend:**
+   ```bash
+   docker compose up -d
+   ```
+   or to rebuild the image:
+   ```bash
+   docker compose up --build -d
+   ```
+   Visit: [http://localhost:8000](http://localhost:8000) for the frontend dashboard when using Docker.
 
 > **Note:**  
 > To log in to the frontend, you must first create a user via the backend CLI as described above.  
@@ -110,13 +121,21 @@ You can run this blog either manually or using Docker.
 
 ### Docker Installation
 
-1. **Build the Docker Image**:
+1. **Build and Run the Docker Image (Backend):**
    ```bash
-   make build-docker
+   make run-docker
    ```
-2. **Run the Container**:
+   or
    ```bash
-    sudo docker-compose up -d
+   make up
+   ```
+2. **Rebuild the Docker Image (Backend):**
+   ```bash
+   make re-build-docker 
+   ```
+   or
+   ```bash
+   make re-up
    ```
    - Adjust the ports and config path as needed for your setup.
    - Make sure `.blog.yaml` is available in your working directory and is mounted into the container.
@@ -128,7 +147,8 @@ You can run this blog either manually or using Docker.
 
 ## Makefile Usage
 
-This project includes a `Makefile` for managing common Go project tasks. 
+This project includes a `Makefile` for managing common Go project tasks.  
+See all available commands with:
 ```bash
 make help
 ```
@@ -143,6 +163,8 @@ make help
 ## Contributing 🤝
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
+
+---
 
 ## License 📜
 

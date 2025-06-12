@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: blog_dashboard 
+    container_name: blog_dashboard 
+    ports:
+      - "8000:80"
+    restart: unless-stopped
+    env_file:
+      - .env

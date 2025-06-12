@@ -8,11 +8,8 @@ CLI_ENTRY = cmd/cli/main.go
 TEMPLATE_DIR = ./cmd/web/templates
 TAILWIND_INPUT = ./cmd/web/styles/input.css
 TAILWIND_OUTPUT = ./cmd/web/assets/css/output.css
-DOCKER_IMG_NAME = myblog
-CONFIG_FILE = .blog.yaml
-CONTAINER_CONFIG_PATH = /app/.blog.yaml
 
-.PHONY: all build build-cli run run-cli gen gen-css lint test clean help build-docker watch
+.PHONY: all build build-cli run run-cli gen gen-css lint test clean help run-docker re-build-docker watch
 
 # Default: build and test
 all: build test
@@ -39,14 +36,27 @@ build-cli:
 	@echo "Building cli binary: $(CLI_BINARY_NAME)"
 	@go build -ldflags="-s -w" -o $(CLI_BINARY_NAME) $(CLI_ENTRY)
 
-# Build the docker image
-build-docker:
+# Build and run the docker image
+run-docker:
 	@command -v docker >/dev/null 2>&1 || { echo >&2 "Docker is not installed. Aborting."; exit 1; }
 	@mkdir -p logs
 	@touch logs/blog.log
 	@chmod 666 logs/blog.log
-	@echo "Building Docker image: $(DOCKER_IMG_NAME)"
-	@docker build -t $(DOCKER_IMG_NAME) .
+	@docker-compose up -d
+
+# Rebuild and run docker image
+re-build-docker:
+	@command -v docker >/dev/null 2>&1 || { echo >&2 "Docker is not installed. Aborting."; exit 1; }
+	@mkdir -p logs
+	@touch logs/blog.log
+	@chmod 666 logs/blog.log
+	@docker-compose up --build -d
+
+# Short alias for run-docker
+up: run-docker
+
+# Short alias for re-build-docker
+re-up: re-build-docker
 
 # Run the API application
 run:
@@ -97,16 +107,19 @@ help:
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "Common targets:"
-	@echo "  all           - Build and test"
-	@echo "  build         - Build Blog binary"
-	@echo "  build-cli     - Build CLI binary"
-	@echo "  build-docker  - Build the Docker image"
-	@echo "  run           - Run Blog application"
-	@echo "  run-cli       - Run CLI application"
-	@echo "  gen           - Generate Go code from Templ templates"
-	@echo "  gen-css       - Generate CSS with Tailwind CSS"
-	@echo "  lint          - Run linter"
-	@echo "  test          - Run tests"
-	@echo "  clean         - Remove binaries"
-	@echo "  watch         - Live reload (with Air)"
-	@echo "  help          - Show this help message"
+	@echo "  all             - Build and test"
+	@echo "  build           - Build Blog binary"
+	@echo "  build-cli       - Build CLI binary"
+	@echo "  run-docker      - Start Docker containers"
+	@echo "  re-build-docker - Rebuild and start Docker containers"
+	@echo "  up              - Alias for run-docker"
+	@echo "  re-up           - Alias for re-build-docker"
+	@echo "  run             - Run Blog application"
+	@echo "  run-cli         - Run CLI application"
+	@echo "  gen             - Generate Go code from Templ templates"
+	@echo "  gen-css         - Generate CSS with Tailwind CSS"
+	@echo "  lint            - Run linter"
+	@echo "  test            - Run tests"
+	@echo "  clean           - Remove binaries"
+	@echo "  watch           - Live reload (with Air)"
+	@echo "  help            - Show this help message"

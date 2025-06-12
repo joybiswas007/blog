@@ -1,0 +1,30 @@
+# Dependency directories
+node_modules/
+*.md
+
+# Git and editor files
+.git
+.gitignore
+*.swp
+*.swo
+*.bak
+*.tmp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
+# IDE/editor config
+.vscode/
+.idea/
+
+# env
+example.env
+
+# Logs
+*.log
+
+Dockerfile
+dist

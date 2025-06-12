@@ -1,6 +1,9 @@
 services:
-  blog:
-    image: myblog
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: blog
     container_name: blog
     ports:
       - "8080:8080"
