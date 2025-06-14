@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"errors"
-	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -43,7 +42,7 @@ func New(connStr string) (*pgxpool.Pool, error) {
 	// Create new connection pool
 	db, err := pgxpool.NewWithConfig(context.Background(), poolConfig)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return db, nil
