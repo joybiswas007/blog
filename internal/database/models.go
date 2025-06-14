@@ -40,19 +40,19 @@ func New(connStr string) (*pgxpool.Pool, error) {
 	}
 
 	// Create new connection pool
-	db, err := pgxpool.NewWithConfig(context.Background(), poolConfig)
+	pool, err := pgxpool.NewWithConfig(context.Background(), poolConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	return db, nil
+	return pool, nil
 }
 
 // NewModels initializes all database models with the given connection pool
-func NewModels(db *pgxpool.Pool) Models {
+func NewModels(pool *pgxpool.Pool) Models {
 	return Models{
-		Posts: PostModel{DB: db},
-		Tags:  TagModel{DB: db},
-		Users: UserModel{DB: db},
+		Posts: PostModel{DB: pool},
+		Tags:  TagModel{DB: pool},
+		Users: UserModel{DB: pool},
 	}
 }
