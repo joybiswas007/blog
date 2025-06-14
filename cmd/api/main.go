@@ -38,7 +38,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db := database.New(cfg.DB)
+	db, err := database.New(cfg.DB)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	defer func() {
 		log.Println("Disconnected from database")
 		db.Close()

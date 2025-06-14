@@ -33,11 +33,11 @@ type Filter struct {
 }
 
 // New creates a new database connection pool
-func New(connStr string) *pgxpool.Pool {
+func New(connStr string) (*pgxpool.Pool, error) {
 	// Parse connection string into pool configuration
 	poolConfig, err := pgxpool.ParseConfig(connStr)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	// Create new connection pool
@@ -46,7 +46,7 @@ func New(connStr string) *pgxpool.Pool {
 		log.Fatal(err)
 	}
 
-	return db
+	return db, nil
 }
 
 // NewModels initializes all database models with the given connection pool
