@@ -8,7 +8,16 @@ import (
 )
 
 templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
-	@Base(blog, post.Title) {
+	{{ postURL := fmt.Sprintf("%s/posts/%s", blog.URL, post.Slug) }}
+	{{
+	seo := web.NewSEO(blog)
+	seo.Title = post.Title
+	seo.Description = post.Title //NO description yet we'll add later
+	seo.Keywords = post.Tags
+	seo.Canonical = postURL
+	seo.OG.Type = "article"
+	}}
+	@Base(seo) {
 		<div class="space-y-8">
 			<article class="pl-6 ml-4 space-y-8">
 				<header class="space-y-4">
@@ -74,7 +83,12 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 }
 
 templ Tags(blog config.Blog, tags []*database.Tag) {
-	@Base(blog, "Tags") {
+	{{
+	seo := web.NewSEO(blog)
+	seo.Title = "Tags"
+	seo.Canonical = fmt.Sprintf("%s/tags", blog.URL)
+	}}
+	@Base(seo) {
 		<div class="space-y-6">
 			<div class="pl-4 ml-2 space-y-1">
 				if len(tags) > 0 {
@@ -100,7 +114,12 @@ templ Tags(blog config.Blog, tags []*database.Tag) {
 }
 
 templ Archives(blog config.Blog, lists []database.YearlyStats) {
-	@Base(blog, "Archives") {
+	{{
+	seo := web.NewSEO(blog)
+	seo.Title = "Archives"
+	seo.Canonical = fmt.Sprintf("%s/archives", blog.URL)
+	}}
+	@Base(seo) {
 		<div class="space-y-6">
 			<div class="pl-4 ml-2 space-y-6">
 				<section class="space-y-4">
@@ -140,7 +159,12 @@ templ Archives(blog config.Blog, lists []database.YearlyStats) {
 }
 
 templ ArchiveByYear(blog config.Blog, year int, posts []database.Post) {
-	@Base(blog, fmt.Sprintf("Archives - %d", year)) {
+	{{
+	seo := web.NewSEO(blog)
+	seo.Title = fmt.Sprintf("Archives - %d", year)
+	seo.Canonical = fmt.Sprintf("%s/archives/%d", blog.URL, year)
+	}}
+	@Base(seo) {
 		<div class="space-y-6">
 			<div class="pl-4 ml-2 space-y-4">
 				if len(posts) == 0 {

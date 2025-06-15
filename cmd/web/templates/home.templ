@@ -9,7 +9,11 @@ import (
 )
 
 templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter database.Filter) {
-	@Base(blog, "Home") {
+	{{
+	seo := web.NewSEO(blog)
+	seo.Title = "Home"
+	}}
+	@Base(seo) {
 		<div class="space-y-8 font-mono">
 			<!-- Sorting controls -->
 			<div class="flex justify-start items-center space-x-4 pl-4 ml-2">

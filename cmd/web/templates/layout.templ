@@ -5,25 +5,34 @@ import (
 	"strings"
 	"time"
 	"github.com/joybiswas007/blog/config"
+	"github.com/joybiswas007/blog/cmd/web"
 )
 
-templ Base(blog config.Blog, title string) {
+templ Base(seo web.SEO) {
 	<!DOCTYPE html>
 	<html lang="en" class="scroll-smooth">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>{ title } - { blog.Name }</title>
-			<meta name="description" content={ blog.Description }/>
-			<meta name="keywords" content={ strings.Join(blog.Keywords, ", ") }/>
-			<meta name="author" content={ blog.Author.Name }/>
+			<title>{ seo.Title } - { seo.SiteName }</title>
+			<meta name="description" content={ seo.Description }/>
+			<meta name="keywords" content={ strings.Join(seo.Keywords, ", ") }/>
+			<meta name="author" content={ seo.Author }/>
 			<meta name="robots" content="index, follow"/>
-			<link rel="canonical" href={ fmt.Sprintf("%s/", blog.URL) }/>
+			<link rel="canonical" href={ fmt.Sprintf("%s/", seo.Canonical) }/>
 			<link rel="icon" href="/assets/favicon.ico" type="image/x-icon"/>
 			<link href="/assets/css/output.css" rel="stylesheet"/>
-			<link href="/rss.xml" rel="alternate" type="application/xml" title={ fmt.Sprintf("%s RSS Feed", blog.Name) }/>
-			if blog.GTagID != "" {
-				@GoogleAnalytics(blog.GTagID)
+			<link href="/rss.xml" rel="alternate" type="application/xml" title={ fmt.Sprintf("%s RSS Feed", seo.SiteName) }/>
+			if seo.GTagID != "" {
+				@GoogleAnalytics(seo.GTagID)
+			}
+			<meta property="og:title" content={ seo.Title }/>
+			<meta property="og:description" content={ seo.Description }/>
+			<meta property="og:type" content={ seo.OG.Type }/>
+			<meta property="og:url" content={ seo.Canonical }/>
+			<meta property="og:site_name" content={ seo.SiteName }/>
+			if seo.OG.Image != "" {
+				<meta property="og:image" content={ seo.OG.Image }/>
 			}
 		</head>
 		<body class="bg-black text-gray-400 font-mono text-sm leading-relaxed min-h-screen flex flex-col">
@@ -38,11 +47,11 @@ templ Base(blog config.Blog, title string) {
 				</svg>
 			</button>
 			<div class="container mx-auto px-4 py-8 max-w-4xl">
-				@Header(blog.Name)
+				@Header(seo.SiteName)
 				<main class="flex-1 mt-4">
 					{ children... }
 				</main>
-				@Footer(blog.Author.Name, blog.Source)
+				@Footer(seo.Author, seo.SourceCode)
 			</div>
 			<script>
 				// Back to Top Button Functionality
@@ -106,7 +115,12 @@ templ Footer(authorName string, sourceCodeURL string) {
 }
 
 templ NotFound(blog config.Blog) {
-	@Base(blog, "404") {
+	{{
+	seo := web.NewSEO(blog)
+	seo.Title = "404"
+	seo.Canonical = fmt.Sprintf("%s/404", blog.URL)
+	}}
+	@Base(seo) {
 		<div class="space-y-8 flex flex-col items-center justify-center min-h-[50vh]">
 			<h1 class="text-4xl text-blue-300 font-bold">404</h1>
 			<h2 class="text-xl text-blue-300">Oops! The page you’re looking for doesn’t exist.</h2>

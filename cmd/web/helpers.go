@@ -10,12 +10,50 @@ import (
 	"strings"
 
 	"github.com/a-h/templ"
+	"github.com/joybiswas007/blog/config"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 )
+
+// SEO holds metadata for search engines and social sharing.
+type SEO struct {
+	Title       string    // The page or post title (shown in browser tab and search results)
+	Description string    // A brief summary of the page/post (used in meta description)
+	Keywords    []string  // List of keywords relevant to the page/post (meta keywords)
+	Author      string    // Name of the content author
+	SiteName    string    // The name of your website or blog
+	Canonical   string    // Canonical URL for the page (prevents duplicate content issues)
+	OG          OpenGraph // Contains Open Graph metadata used to control how this page appears when shared on social media platforms
+	GTagID      string    // Google Analytics Measurement ID (for tracking site usage)
+	SourceCode  string    // URL or reference to the source code repository for this page/post
+}
+
+// OpenGraph holds metadata for social media sharing using the Open Graph protocol.
+type OpenGraph struct {
+	Type  string // The type of content: e.g., "website" or "article"
+	Image string // The URL of the image to display in social shares
+}
+
+// NewSEO creates and returns an SEO struct with default values
+// populated from the provided blog configuration.
+func NewSEO(blog config.Blog) SEO {
+	return SEO{
+		// Title:       blog.Name, // "Home", "About", "Tags"
+		Description: blog.Description,
+		Keywords:    blog.Keywords,
+		Author:      blog.Author.Name,
+		Canonical:   blog.URL,
+		SiteName:    blog.Name,
+		OG: OpenGraph{
+			Type: "website",
+		},
+		GTagID:     blog.GTagID,
+		SourceCode: blog.Source,
+	}
+}
 
 // StripSchema removes the schema from a URL and returns the host and path.
 func StripSchema(rawURL string) string {

@@ -7,8 +7,13 @@ import (
 )
 
 templ About(blog config.Blog) {
+	{{
+		seo := web.NewSEO(blog)
+		seo.Title = "About"
+		seo.Canonical = fmt.Sprintf("%s/about", blog.URL)
+	}}
 	{{ author := blog.Author }}
-	@Base(blog, "About") {
+	@Base(seo) {
 		<div class="space-y-6">
 			<div class="pl-4 ml-2 space-y-6">
 				<section class="space-y-4">
