@@ -12,6 +12,7 @@ const CreatePost = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
+    description: "",
     tags: "",
     content: ""
   });
@@ -51,6 +52,7 @@ const CreatePost = () => {
     try {
       await api.post("/posts", {
         title: formData.title,
+        description: formData.description,
         tags: formData.tags.split(",").map(tag => tag.trim()),
         content: formData.content,
         is_published: isPublished

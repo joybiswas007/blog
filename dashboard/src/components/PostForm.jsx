@@ -90,7 +90,24 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           <p className="mt-1 text-sm text-red-500">{titleError}</p>
         )}
       </div>
-
+      <div>
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium text-gray-300 mb-2"
+        >
+          Description
+        </label>
+        <input
+          type="text"
+          id="description"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors duration-200"
+          maxLength={150}
+          placeholder="Add a short description (optional)"
+        />
+      </div>
       <div>
         <label
           htmlFor="tags"

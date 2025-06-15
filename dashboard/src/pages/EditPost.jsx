@@ -13,6 +13,7 @@ const EditPost = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
+    description: "",
     tags: "",
     content: ""
   });
@@ -29,6 +30,7 @@ const EditPost = () => {
         if (post) {
           setFormData({
             title: post.title,
+            description: post.description || "",
             tags: post.tags?.join(", ") || "",
             content: post.content || ""
           });
@@ -69,6 +71,7 @@ const EditPost = () => {
     try {
       await api.patch(`/posts/${id}`, {
         title: formData.title,
+        description: formData.description,
         tags: formData.tags.split(",").map(tag => tag.trim()),
         content: formData.content
       });
