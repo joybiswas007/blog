@@ -190,6 +190,9 @@ func (s *Server) updatePostHandler(c *gin.Context) {
 	}
 	post.ID = pid
 
+	updatedSlug := slug.Make(post.Title)
+	post.Slug = updatedSlug
+
 	err = s.db.Posts.Update(post)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

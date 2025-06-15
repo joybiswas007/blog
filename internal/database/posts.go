@@ -21,6 +21,7 @@ type Post struct {
 	UserID      int64     `json:"-"`                           // UserID of the user who created the post
 	Author      string    `json:"author"`                      // Author the guy who posted the blog
 	Title       string    `json:"title" validate:"required"`   // Title of the post
+	Description *string   `json:"description,omitempty"`       // Short summary of the post
 	Content     string    `json:"content" validate:"required"` // Main content of the post
 	Slug        string    `json:"slug"`                        // Slug of post title
 	IsPublished bool      `json:"is_published"`                // Indicates if the post is published or not
@@ -41,6 +42,7 @@ func (m PostModel) Get(postID int) (*Post, error) {
             bp.id,
 	    u.name AS author,
             bp.title,
+	    bp.description,
             bp.content,
 	    bp.slug,
 	    bp.is_published,
@@ -68,6 +70,7 @@ func (m PostModel) Get(postID int) (*Post, error) {
 		&p.ID,
 		&p.Author,
 		&p.Title,
+		&p.Description,
 		&p.Content,
 		&p.Slug,
 		&p.IsPublished,
@@ -94,6 +97,7 @@ func (m PostModel) GetBySlug(slug string) (*Post, error) {
             bp.id,
             u.name AS author,
             bp.title,
+	    bp.description,
             bp.content,
             bp.slug,
 	    bp.is_published,
@@ -122,6 +126,7 @@ func (m PostModel) GetBySlug(slug string) (*Post, error) {
 		&p.ID,
 		&p.Author,
 		&p.Title,
+		&p.Description,
 		&p.Content,
 		&p.Slug,
 		&p.IsPublished,
@@ -144,13 +149,13 @@ func (m PostModel) GetBySlug(slug string) (*Post, error) {
 // Create inserts a new blog post and returns its ID
 func (m PostModel) Create(p Post) (int, error) {
 	var postID int
-	query := `INSERT INTO blog_posts(user_id, title, content, slug, is_published) 
-		  VALUES($1, $2, $3, $4, $5) 
+	query := `INSERT INTO blog_posts(user_id, title, description, content, slug, is_published) 
+		  VALUES($1, $2, $3, $4, $5, $6) 
 		  RETURNING id`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRow(ctx, query, p.UserID, p.Title, p.Content, p.Slug, p.IsPublished).Scan(&postID)
+	err := m.DB.QueryRow(ctx, query, p.UserID, p.Title, p.Description, p.Content, p.Slug, p.IsPublished).Scan(&postID)
 	if err != nil {
 		return 0, err
 	}
@@ -199,12 +204,14 @@ func (m PostModel) Update(p Post) error {
 	// update the blog post
 	updateQuery := `
             UPDATE blog_posts 
-            SET title = $1, content = $2
-            WHERE id = $3`
+            SET title = $1, description = $2, content = $3, slug = $4
+            WHERE id = $5`
 
 	updateArgs := []any{
 		p.Title,
+		p.Description,
 		p.Content,
+		p.Slug,
 		p.ID, // id we are passing to identify the post
 	}
 	_, err = tx.Exec(ctx, updateQuery, updateArgs...)
@@ -306,6 +313,7 @@ SELECT
     bp.user_id,
     u.name AS author,
     bp.title,
+    bp.description,
     bp.content,
     bp.slug,
     bp.is_published,
@@ -354,6 +362,7 @@ LIMIT $1 OFFSET $2;
 			&p.UserID,
 			&p.Author,
 			&p.Title,
+			&p.Description,
 			&p.Content,
 			&p.Slug,
 			&p.IsPublished,
@@ -454,7 +463,7 @@ func (m PostModel) PreviousID(currentID int) (int, error) {
 		SELECT id 
 		FROM blog_posts
 		WHERE id < $1 AND is_published = true
-		ORDER BY id DESC
+		ORDER BY id ASC
 		LIMIT 1;
 	`
 

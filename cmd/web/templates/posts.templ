@@ -12,7 +12,9 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 	{{
 	seo := web.NewSEO(blog)
 	seo.Title = post.Title
-	seo.Description = post.Title //NO description yet we'll add later
+	if post.Description != nil {
+		seo.Description = *post.Description
+	}
 	seo.Keywords = post.Tags
 	seo.Canonical = postURL
 	seo.OG.Type = "article"
