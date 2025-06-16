@@ -1,48 +1,56 @@
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap");
+@import "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap";
 
 @import "tailwindcss";
 
 @theme {
-  /* Font family */
-  --font-family-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco,
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Source Sans Pro", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, "Liberation Mono", "Courier New", monospace;
 
-  /* Color palette */
-  --color-black: #212121;
-  --color-blue-50: #eff6ff;
-  --color-blue-100: #dbeafe;
-  --color-blue-200: #bfdbfe;
-  --color-blue-300: #93c5fd;
-  --color-blue-400: #60a5fa;
-  --color-blue-500: #3b82f6;
-  --color-blue-600: #2563eb;
-  --color-blue-700: #1d4ed8;
-  --color-blue-800: #1e40af;
-  --color-blue-900: #1e3a8a;
-  --color-blue-950: #0e1726;
+  --color-base: #212121;
+  --color-shade-50: #eff6ff;
+  --color-shade-100: #dbeafe;
+  --color-shade-200: #bfdbfe;
+  --color-shade-300: #93c5fd;
+  --color-shade-400: #60a5fa;
+  --color-shade-500: #3b82f6;
+  --color-shade-600: #2563eb;
+  --color-shade-700: #1d4ed8;
+  --color-shade-800: #1e40af;
+  --color-shade-900: #1e3a8a;
+  --color-shade-950: #0e1726;
 
-  /* Terminal colors */
-  --color-terminal-bg: var(--color-black); /* Background Color */
-  --color-terminal-text: #c0c5ce; /* Foreground Text Color */
-  --color-terminal-text-dim: #5c5c5c; /* Dim text (bright black in Alacritty) */
-  --color-terminal-border: var(--color-blue-800);
-  --color-terminal-selection: var(--color-blue-900);
-  --color-terminal-cursor: #c0c5ce; /* Cursor Color */
+  --color-background-primary: var(--color-base);
+  --color-text-primary: #c0c5ce;
+  --color-text-secondary: #5c5c5c;
+  --color-border-primary: var(--color-shade-800);
+  --color-selection-background: var(--color-shade-900);
+  --color-cursor: #c0c5ce;
 }
 
-/* Base styles */
 @layer base {
   body {
-    background-color: var(--color-terminal-bg);
-    color: var(--color-terminal-text);
-    font-family: var(--font-family-mono);
+    background-color: var(--color-background-primary);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
   }
 
   a {
     @apply transition-colors;
   }
 
-  /* Scrollbar */
   ::-webkit-scrollbar {
     @apply w-2 h-2;
   }
@@ -55,7 +63,6 @@
     @apply bg-neutral-900 rounded-full;
   }
 
-  /* Style for disabled input boxes */
   input:disabled,
   textarea:disabled,
   select:disabled {
@@ -64,10 +71,10 @@
   }
 }
 
-/* Prose settings for markdown content */
 @layer utilities {
   .prose {
     @apply max-w-none;
+    font-family: var(--font-sans);
   }
 
   .prose h1,
@@ -75,10 +82,11 @@
   .prose h3,
   .prose h4 {
     @apply text-blue-300 mt-6 mb-4;
+    font-family: var(--font-heading);
   }
 
   .prose h1 {
-    @apply text-2xl border-b border-blue-800 pb-2;
+    @apply text-2xl;
   }
 
   .prose h2 {
@@ -94,11 +102,16 @@
   }
 
   .prose a {
-    @apply text-blue-400 hover:text-blue-300 underline;
+    @apply text-blue-400 hover:text-blue-300;
+  }
+
+  .prose a.underline {
+    @apply underline;
   }
 
   .prose a.tag {
     @apply bg-blue-900/30 text-blue-400 hover:text-blue-300 px-1.5 py-0.5 rounded no-underline;
+    text-decoration: none !important; /* In case something else adds underline */
   }
 
   .prose ul,
@@ -120,14 +133,17 @@
 
   .prose code {
     @apply bg-blue-900/30 text-blue-300 px-1 py-0.5 rounded;
+    font-family: var(--font-mono);
   }
 
   .prose pre {
     @apply bg-blue-900/20 p-4 rounded border border-blue-800 overflow-x-auto my-4;
+    font-family: var(--font-mono);
   }
 
   .prose pre code {
     @apply bg-transparent p-0;
+    font-family: var(--font-mono);
   }
 
   .prose blockquote {

@@ -1,6 +1,6 @@
 # blog
 
-A fast and minimal personal blog built with Go, designed to share your thoughts and stories in a clean and modern layout.
+A personal blog built with Go.
 
 ---
 
@@ -95,7 +95,7 @@ You can run this blog either manually or using Docker.
    ```
 4. Copy and configure the `.env` file:
    ```bash
-   cp example.env .env
+   cp env.example .env
    # Then edit .env and update the URL values as needed
    ```
 5. Start the development server:

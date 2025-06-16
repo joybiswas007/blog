@@ -1,10 +1,10 @@
-package template 
+package template
 
 import (
 	"fmt"
+	"math"
 	"github.com/joybiswas007/blog/cmd/web"
 	"github.com/joybiswas007/blog/internal/database"
-	"math"
 	"github.com/joybiswas007/blog/config"
 )
 
@@ -14,83 +14,85 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 	seo.Title = "Home"
 	}}
 	@Base(seo) {
-		<div class="space-y-8 font-mono">
-			<!-- Sorting controls -->
-			<div class="flex justify-start items-center space-x-4 pl-4 ml-2">
-				<p class="text-gray-400 text-sm">Sort by:</p>
-				@SortOption("created_at", "DESC", "Newest", filter)
-				@SortOption("created_at", "ASC", "Oldest", filter)
-				@SortOption("title", "ASC", "A-Z", filter)
-			</div>
-			<!-- Posts list -->
-			<div class="space-y-6 pl-4 ml-2">
-				if len(posts) > 0 {
-					for _, post := range posts {
-						<article class="group">
-							<div class="flex items-baseline gap-2">
-								<span class="text-blue-500">></span>
-								<a
-									href={ templ.URL(fmt.Sprintf("/posts/%s", post.Slug)) }
-									class="text-gray-300 hover:text-gray-200 hover:underline font-medium font-fira"
-								>
-									{ post.Title }
-								</a>
-							</div>
-							<div class="ml-4 mt-1 text-gray-500 text-xs flex flex-wrap gap-2 items-center font-fira">
-								<time>{ post.CreatedAt.Format("2006-01-02 3:04 PM") }</time>
-								<span>|</span>
-								<span>{ web.CalculateReadTime(post.Content) }</span>
-								if len(post.Tags) > 0 {
+		<div class="flex justify-center w-full">
+			<div class="space-y-8 w-full max-w-3xl font-sans">
+				<!-- Sorting controls -->
+				<div class="flex justify-start items-center space-x-4 pl-4 ml-2">
+					<p class="text-[var(--color-text-secondary)] text-sm">Sort by:</p>
+					@SortOption("created_at", "DESC", "Newest", filter)
+					@SortOption("created_at", "ASC", "Oldest", filter)
+					@SortOption("title", "ASC", "A-Z", filter)
+				</div>
+				<!-- Posts list -->
+				<div class="space-y-6 pl-4 ml-2">
+					if len(posts) > 0 {
+						for _, post := range posts {
+							<article class="group">
+								<div class="flex items-baseline gap-2">
+									<span class="text-blue-500">></span>
+									<a
+										href={ templ.URL(fmt.Sprintf("/posts/%s", post.Slug)) }
+										class="text-[var(--color-text-primary)] hover:text-blue-300 hover:underline font-medium font-mono transition-colors"
+									>
+										{ post.Title }
+									</a>
+								</div>
+								<div class="ml-4 mt-1 text-[var(--color-text-secondary)] text-xs flex flex-wrap gap-2 items-center font-mono">
+									<time>{ post.CreatedAt.Format("2006-01-02 3:04 PM") }</time>
 									<span>|</span>
-									for _, tag := range post.Tags {
-										<a
-											href={ templ.URL(fmt.Sprintf("/?tag=%s", tag)) }
-											class="text-blue-600 hover:text-blue-400"
-										>
-											#{ tag }
-										</a>
+									<span>{ web.CalculateReadTime(post.Content) }</span>
+									if len(post.Tags) > 0 {
+										<span>|</span>
+										for _, tag := range post.Tags {
+											<a
+												href={ templ.URL(fmt.Sprintf("/?tag=%s", tag)) }
+												class="text-blue-400 hover:text-blue-300 transition-colors"
+											>
+												#{ tag }
+											</a>
+										}
 									}
-								}
-							</div>
-						</article>
+								</div>
+							</article>
+						}
+					} else {
+						<div class="flex items-baseline gap-2 text-blue-600">
+							<span class="text-blue-500">></span>
+							<p class="font-mono">No posts found</p>
+						</div>
 					}
-				} else {
-					<div class="flex items-baseline gap-2 text-blue-600">
-						<span class="text-blue-500">></span>
-						<p class="font-fira">No posts found</p>
+				</div>
+				<!-- Pagination -->
+				if totalPosts > filter.Limit {
+					<div class="flex justify-center items-center space-x-4 mt-8">
+						if filter.Offset > 0 {
+							<a
+								href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=%d&order_by=%s&sort=%s", filter.Limit, max(0, filter.Offset-filter.Limit), filter.OrderBy, filter.Sort)) }
+								class="px-4 py-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] font-mono transition-colors"
+							>
+								<span class="text-blue-500">&lt;</span>
+								Prev
+							</a>
+						} else {
+							<span class="px-4 py-2 text-gray-500 cursor-not-allowed font-mono">Prev</span>
+						}
+						<p class="text-[var(--color-text-secondary)] text-sm font-mono">
+							Page { (filter.Offset/filter.Limit)+1 } of { int(math.Ceil(float64(totalPosts)/float64(filter.Limit))) }
+						</p>
+						if filter.Offset+filter.Limit < totalPosts {
+							<a
+								href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=%d&order_by=%s&sort=%s", filter.Limit, filter.Offset+filter.Limit, filter.OrderBy, filter.Sort)) }
+								class="px-4 py-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] font-mono transition-colors"
+							>
+								Next
+								<span class="text-blue-500">&gt;</span>
+							</a>
+						} else {
+							<span class="px-4 py-2 text-gray-500 cursor-not-allowed font-mono">Next</span>
+						}
 					</div>
 				}
 			</div>
-			<!-- Pagination -->
-			if totalPosts > filter.Limit {
-				<div class="flex justify-center items-center space-x-4 mt-8">
-					if filter.Offset > 0 {
-						<a
-							href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=%d&order_by=%s&sort=%s", filter.Limit, max(0, filter.Offset-filter.Limit), filter.OrderBy, filter.Sort)) }
-							class="px-4 py-2 text-gray-400 hover:text-gray-300 hover:bg-blue-900/50 font-fira rounded transition-all"
-						>
-							<span class="text-blue-500">&lt;</span>
-							Prev
-						</a>
-					} else {
-						<span class="px-4 py-2 text-gray-500 cursor-not-allowed font-fira">Prev</span>
-					}
-					<p class="text-gray-400 text-sm font-fira">
-						Page { (filter.Offset/filter.Limit)+1 } of { int(math.Ceil(float64(totalPosts)/float64(filter.Limit))) }
-					</p>
-					if filter.Offset+filter.Limit < totalPosts {
-						<a
-							href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=%d&order_by=%s&sort=%s", filter.Limit, filter.Offset+filter.Limit, filter.OrderBy, filter.Sort)) }
-							class="px-4 py-2 text-gray-400 hover:text-gray-300 hover:bg-blue-900/50 font-fira rounded transition-all"
-						>
-							Next
-							<span class="text-blue-500">&gt;</span>
-						</a>
-					} else {
-						<span class="px-4 py-2 text-gray-500 cursor-not-allowed font-fira">Next</span>
-					}
-				</div>
-			}
 		</div>
 	}
 }
@@ -98,7 +100,7 @@ templ Home(blog config.Blog, posts []*database.Post, totalPosts int, filter data
 templ SortOption(orderBy string, sort string, label string, filter database.Filter) {
 	<a
 		href={ templ.URL(fmt.Sprintf("/?limit=%d&offset=0&order_by=%s&sort=%s", filter.Limit, orderBy, sort)) }
-		class={ `px-2 py-1 rounded font-fira ${filter.OrderBy == orderBy && filter.Sort == sort ? "bg-blue-900 text-gray-200" : "text-gray-400 hover:bg-blue-900/50 hover:text-gray-300"}` }
+		class={ `px-2 py-1 rounded font-mono transition-colors ${filter.OrderBy == orderBy && filter.Sort == sort ? "bg-blue-900 text-[var(--color-text-primary)]" : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"}` }
 	>
 		{ label }
 	</a>

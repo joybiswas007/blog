@@ -35,20 +35,20 @@ templ Base(seo web.SEO) {
 				<meta property="og:image" content={ seo.OG.Image }/>
 			}
 		</head>
-		<body class="bg-black text-gray-400 font-mono text-sm leading-relaxed min-h-screen flex flex-col">
+		<body class="bg-[var(--color-background-primary)] text-[var(--color-text-primary)] font-sans relative min-h-screen">
 			<!-- Back to Top Button -->
 			<button
 				id="back-to-top"
-				class="fixed bottom-6 right-6 p-2 bg-blue-900/80 border border-blue-800 rounded-full text-blue-300 hover:text-blue-200 hover:bg-blue-900 transition-all opacity-0 invisible"
 				aria-label="Back to top"
+				class="fixed bottom-6 right-6 z-50 p-2 rounded-full bg-blue-800 text-blue-200 shadow-lg opacity-0 invisible transition-opacity duration-300 hover:bg-blue-700 hover:text-white"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<path d="M18 15l-6-6-6 6"></path>
 				</svg>
 			</button>
-			<div class="container mx-auto px-4 py-8 max-w-4xl">
+			<div class="flex flex-col min-h-screen">
 				@Header(seo.SiteName)
-				<main class="flex-1 mt-4">
+				<main class="flex-1 mx-auto w-full max-w-3xl py-8 px-4 prose">
 					{ children... }
 				</main>
 				@Footer(seo.Author, seo.SourceCode)
@@ -56,7 +56,6 @@ templ Base(seo web.SEO) {
 			<script>
 				// Back to Top Button Functionality
 				const backToTopButton = document.getElementById('back-to-top');
-				
 				window.addEventListener('scroll', () => {
 					if (window.scrollY > 300) {
 						backToTopButton.classList.remove('opacity-0', 'invisible');
@@ -66,7 +65,6 @@ templ Base(seo web.SEO) {
 						backToTopButton.classList.add('opacity-0', 'invisible');
 					}
 				});
-
 				backToTopButton.addEventListener('click', () => {
 					window.scrollTo({
 						top: 0,
@@ -79,37 +77,37 @@ templ Base(seo web.SEO) {
 }
 
 templ Header(blogName string) {
-	<header class="pb-4 mb-6 sticky top-0 bg-black z-50">
-		<div class="flex items-center gap-4">
-			<h1 class="text-xl font-medium">
-				<a href="/" class="hover:text-gray-300 text-gray-400">{ blogName }</a>
+	<header class="w-full py-6 bg-transparent">
+		<div class="flex flex-col sm:flex-row items-center justify-between max-w-3xl mx-auto px-4">
+			<h1 class="text-2xl font-bold font-heading tracking-tight mb-2 sm:mb-0">
+				<a href="/" class="text-blue-400 hover:text-blue-300 transition-colors">{ blogName }</a>
 			</h1>
-			<nav class="flex gap-4 ml-auto">
-				<a href="/archives" class="hover:text-gray-300 text-gray-400">Archives</a>
-				<a href="/tags" class="hover:text-gray-300 text-gray-400">Tags</a>
-				<a href="/about" class="hover:text-gray-300 text-gray-400">About</a>
+			<nav class="flex gap-6 text-base">
+				<a href="/archives" class="text-blue-400 hover:text-blue-300 transition-colors">Archives</a>
+				<a href="/tags" class="text-blue-400 hover:text-blue-300 transition-colors">Tags</a>
+				<a href="/about" class="text-blue-400 hover:text-blue-300 transition-colors">About</a>
 			</nav>
 		</div>
 	</header>
 }
 
 templ Footer(authorName string, sourceCodeURL string) {
-	<footer class="pt-4 mt-8 text-gray-600 text-xs">
-		<div class="flex justify-between items-center">
-			<div class="flex space-x-4">
+	<footer class="w-full py-6 mt-8 bg-transparent">
+		<div class="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between px-4 text-sm text-[var(--color-text-secondary)]">
+			<div class="flex items-center gap-2">
 				<span>&copy; { fmt.Sprintf("%d", time.Now().Year()) } { authorName }</span>
 				if sourceCodeURL != "" {
 					<a
 						href={ templ.URL(sourceCodeURL) }
 						target="_blank"
 						rel="noopener noreferrer"
-						class="hover:text-blue-800 hover:underline transition-colors duration-200"
+						class="ml-2 text-blue-400 hover:text-blue-300 underline"
 					>
 						Source
 					</a>
 				}
 			</div>
-			<span>Powered by Go</span>
+			<span class="mt-2 sm:mt-0">Powered by Go</span>
 		</div>
 	</footer>
 }
@@ -121,15 +119,15 @@ templ NotFound(blog config.Blog) {
 	seo.Canonical = fmt.Sprintf("%s/404", blog.URL)
 	}}
 	@Base(seo) {
-		<div class="space-y-8 flex flex-col items-center justify-center min-h-[50vh]">
-			<h1 class="text-4xl text-blue-300 font-bold">404</h1>
-			<h2 class="text-xl text-blue-300">Oops! The page you’re looking for doesn’t exist.</h2>
-			<p class="text-gray-400 text-center max-w-lg">
+		<div class="flex flex-col items-center justify-center py-16 text-center">
+			<h1 class="text-5xl font-bold text-blue-400 mb-3">404</h1>
+			<h2 class="text-2xl font-heading text-blue-300 mb-4">Oops! The page you’re looking for doesn’t exist.</h2>
+			<p class="mb-6 text-lg text-[var(--color-text-secondary)]">
 				It seems the page you were trying to access has either been moved, deleted, or never existed. Don’t worry, you can head back to the homepage and explore more!
 			</p>
 			<div>
-				<a href="/" class="inline-flex items-center px-4 py-2 bg-blue-800 text-blue-300 hover:bg-blue-700 hover:text-blue-200 rounded transition-all">
-					<span class="text-blue-500 mr-2">></span>
+				<a href="/" class="inline-flex items-center bg-blue-800 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded transition-colors">
+					<svg class="mr-2" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
 					Return to homepage
 				</a>
 			</div>
@@ -141,10 +139,9 @@ templ GoogleAnalytics(gtagID string) {
 	<!-- Google tag (gtag.js) -->
 	<script async src={ fmt.Sprintf("https://www.googletagmanager.com/gtag/js?id=%s", gtagID) }></script>
 	<script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-	 
-	 gtag('config', {{ gtagID }})
-        </script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ gtagID }}');
+    </script>
 }

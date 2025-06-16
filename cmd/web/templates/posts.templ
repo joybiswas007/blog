@@ -1,4 +1,4 @@
-package template 
+package template
 
 import (
 	"fmt"
@@ -20,39 +20,38 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 	seo.OG.Type = "article"
 	}}
 	@Base(seo) {
-		<div class="space-y-8">
-			<article class="pl-6 ml-4 space-y-8">
+		<div class="flex justify-center w-full">
+			<article class="w-full max-w-3xl space-y-8">
 				<header class="space-y-4">
-					<h1 class="text-2xl text-gray-300">{ post.Title }</h1>
-					<div class="text-gray-500 text-sm flex flex-wrap gap-3 items-center">
+					<h1 class="text-2xl text-[var(--color-text-primary)] font-heading">{ post.Title }</h1>
+					<div class="text-[var(--color-text-secondary)] text-sm flex flex-wrap gap-3 items-center font-mono">
 						<time>{ post.CreatedAt.Format("2006-01-02 3:04:05 PM") }</time>
 						<span>|</span>
 						<span>{ web.CalculateReadTime(post.Content) }</span>
 						<span>|</span>
 						<span>{ post.Author }</span>
-					</div>
-					if len(post.Tags) > 0 {
-						<div class="flex flex-wrap gap-3 text-sm">
+						if len(post.Tags) > 0 {
+							<span>|</span>
 							for _, tag := range post.Tags {
 								<a
 									href={ templ.URL(fmt.Sprintf("/?tag=%s", tag)) }
-									class="text-blue-500 hover:text-blue-400 bg-blue-900/30 px-3 py-1 rounded shadow-sm transition-shadow hover:shadow-md"
+									class="text-blue-400 hover:text-blue-300 transition-colors"
 								>
 									#{ tag }
 								</a>
 							}
-						</div>
-					}
+						}
+					</div>
 				</header>
 				<div class="prose prose-invert max-w-none">
 					@web.Unsafe(web.MarkdownToHTML(blog.MarkdownTheme, post.Content))
 				</div>
-				<div class="pt-6 border-t border-blue-800/50">
+				<div class="pt-6 mt-8">
 					<div class="flex flex-col sm:flex-row justify-between items-center gap-6">
 						if prevPost != nil {
 							<a
 								href={ templ.URL(fmt.Sprintf("/posts/%s", prevPost.Slug)) }
-								class="flex items-center text-gray-300 hover:text-gray-200 group w-full sm:w-auto"
+								class="flex items-center text-[var(--color-text-primary)] hover:text-blue-300 group w-full sm:w-auto"
 							>
 								<span class="text-blue-500 mr-2 group-hover:-translate-x-1 transition-transform">←</span>
 								<div class="truncate max-w-xs">
@@ -66,7 +65,7 @@ templ Post(blog config.Blog, post, prevPost, nextPost *database.Post) {
 						if nextPost != nil {
 							<a
 								href={ templ.URL(fmt.Sprintf("/posts/%s", nextPost.Slug)) }
-								class="flex items-center text-gray-300 hover:text-gray-200 group w-full sm:w-auto text-right justify-end"
+								class="flex items-center text-[var(--color-text-primary)] hover:text-blue-300 group w-full sm:w-auto text-right justify-end"
 							>
 								<div class="truncate max-w-xs">
 									<span class="text-xs text-blue-500 block">Next</span>
@@ -91,25 +90,27 @@ templ Tags(blog config.Blog, tags []*database.Tag) {
 	seo.Canonical = fmt.Sprintf("%s/tags", blog.URL)
 	}}
 	@Base(seo) {
-		<div class="space-y-6">
-			<div class="pl-4 ml-2 space-y-1">
-				if len(tags) > 0 {
-					for _, tag := range tags {
-						<a
-							href={ templ.URL(fmt.Sprintf("/?tag=%s", tag.Name)) }
-							class="flex items-baseline gap-2 hover:bg-blue-900/30 p-2 rounded group"
-						>
+		<div class="flex justify-center w-full">
+			<div class="space-y-6 w-full max-w-3xl">
+				<div class="pl-4 ml-2 space-y-1">
+					if len(tags) > 0 {
+						for _, tag := range tags {
+							<a
+								href={ templ.URL(fmt.Sprintf("/?tag=%s", tag.Name)) }
+								class="flex items-baseline gap-2 p-2 rounded group"
+							>
+								<span class="text-blue-400 group-hover:text-blue-300">></span>
+								<span class="text-blue-200 group-hover:text-blue-300 text-base">{ tag.Name }</span>
+								<span class="text-blue-500 group-hover:text-blue-300 text-sm">({ tag.PostCount })</span>
+							</a>
+						}
+					} else {
+						<div class="flex items-baseline gap-2 text-[var(--color-text-secondary)]">
 							<span class="text-blue-500">></span>
-							<span class="text-gray-300 group-hover:text-gray-200 text-base">{ tag.Name }</span>
-							<span class="text-gray-500 text-sm">({ tag.PostCount })</span>
-						</a>
+							<p>No tags found</p>
+						</div>
 					}
-				} else {
-					<div class="flex items-baseline gap-2 text-gray-500">
-						<span class="text-blue-500">></span>
-						<p>No tags found</p>
-					</div>
-				}
+				</div>
 			</div>
 		</div>
 	}
@@ -122,39 +123,43 @@ templ Archives(blog config.Blog, lists []database.YearlyStats) {
 	seo.Canonical = fmt.Sprintf("%s/archives", blog.URL)
 	}}
 	@Base(seo) {
-		<div class="space-y-6">
-			<div class="pl-4 ml-2 space-y-6">
-				<section class="space-y-4">
-					<div class="flex items-baseline gap-2">
-						<span class="text-blue-500">></span>
-						<p>Blog feed available at:</p>
-					</div>
-					<a
-						target="_blank"
-						href="/rss.xml"
-						class="flex items-center gap-2 p-3 hover:bg-blue-900/30 rounded border border-blue-800 hover:text-blue-300"
-					>
-						<span class="text-blue-500">></span>
-						<span class="underline">/rss.xml</span>
-					</a>
-				</section>
-				<section class="space-y-4">
-					<h2 class="text-lg text-gray-300">By year</h2>
-					<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-						for _, list := range lists {
-							<a
-								href={ templ.URL(fmt.Sprintf("/archives/%d", list.Year)) }
-								class="flex items-baseline gap-2 p-3 hover:bg-blue-900/30 rounded border border-blue-800 hover:text-blue-300"
-							>
-								<span class="text-blue-500">></span>
-								<span>
-									{ fmt.Sprintf("%d", list.Year) }
-									<span class="text-gray-500 text-xs ml-1">({ list.PostCount })</span>
-								</span>
-							</a>
-						}
-					</div>
-				</section>
+		<div class="flex justify-center w-full">
+			<div class="space-y-10 w-full max-w-3xl">
+				<div class="pl-4 ml-2 space-y-10">
+					<!-- Feed section -->
+					<section class="space-y-2">
+						<p class="flex items-baseline gap-2">
+							<span class="text-blue-500 text-lg">&gt;</span>
+							<span>Blog feed available at:</span>
+						</p>
+						<a
+							target="_blank"
+							href="/rss.xml"
+							class="inline-flex items-center gap-2 font-mono text-blue-400 hover:text-blue-300 transition-colors"
+						>
+							<span class="text-blue-400 text-lg">&gt;</span>
+							<span>/rss.xml</span>
+						</a>
+					</section>
+					<!-- Archives by year -->
+					<section class="space-y-3">
+						<h2 class="text-lg text-[var(--color-text-primary)] font-heading">By year</h2>
+						<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-2 gap-x-8">
+							for _, list := range lists {
+								<a
+									href={ templ.URL(fmt.Sprintf("/archives/%d", list.Year)) }
+									class="group flex items-center gap-2 font-mono text-blue-200 hover:text-blue-300 transition-colors"
+								>
+									<span class="text-blue-400 text-lg">&gt;</span>
+									<span>
+										{ fmt.Sprintf("%d", list.Year) }
+										<span class="text-[var(--color-text-secondary)] text-xs ml-1 group-hover:text-blue-300 transition-colors">({ list.PostCount })</span>
+									</span>
+								</a>
+							}
+						</div>
+					</section>
+				</div>
 			</div>
 		</div>
 	}
@@ -167,44 +172,46 @@ templ ArchiveByYear(blog config.Blog, year int, posts []database.Post) {
 	seo.Canonical = fmt.Sprintf("%s/archives/%d", blog.URL, year)
 	}}
 	@Base(seo) {
-		<div class="space-y-6">
-			<div class="pl-4 ml-2 space-y-4">
-				if len(posts) == 0 {
-					<div class="flex items-baseline gap-2 text-gray-500">
-						<span class="text-blue-500">></span>
-						<p>No posts found in archives</p>
-					</div>
-				} else {
-					<div class="space-y-2">
-						<div class="flex items-baseline gap-2 text-blue-500 text-xs">
-							<span>></span>
-							<span class="w-[28rem]">TITLE</span>
-							<span class="w-32">DATE</span>
+		<div class="flex justify-center w-full">
+			<div class="space-y-6 w-full max-w-3xl">
+				<div class="pl-4 ml-2 space-y-4">
+					if len(posts) == 0 {
+						<div class="flex items-baseline gap-2 text-[var(--color-text-secondary)]">
+							<span class="text-blue-500">&gt;</span>
+							<p>No posts found in archives</p>
 						</div>
-						for _, post := range posts {
-							<a
-								href={ templ.URL(fmt.Sprintf("/posts/%s", post.Slug)) }
-								class="flex items-baseline gap-2 hover:bg-blue-900/30 p-2 rounded group"
-							>
-								<span class="text-blue-500">></span>
-								<span class="w-[28rem] truncate group-hover:text-gray-300">
-									{ post.Title }
-								</span>
-								<span class="text-gray-500 text-xs w-32">
-									{ post.CreatedAt.Format("2006-01-02") }
-								</span>
-							</a>
-						}
-					</div>
-				}
-			</div>
-			<div class="pl-4 ml-2 pt-4">
-				<a
-					href="/archives"
-					class="flex items-center gap-2 text-blue-500 hover:text-blue-300"
-				>
-					<span>Back to archives</span>
-				</a>
+					} else {
+						<div class="space-y-2">
+							<div class="flex items-baseline gap-2 text-blue-500 text-xs font-mono">
+								<span>&gt;</span>
+								<span class="w-[22rem] sm:w-[28rem]">TITLE</span>
+								<span class="w-28 sm:w-32">DATE</span>
+							</div>
+							for _, post := range posts {
+								<a
+									href={ templ.URL(fmt.Sprintf("/posts/%s", post.Slug)) }
+									class="flex items-baseline gap-2 group transition-colors"
+								>
+									<span class="text-blue-500 group-hover:text-blue-300">&gt;</span>
+									<span class="w-[22rem] sm:w-[28rem] truncate text-blue-200 group-hover:text-blue-300 transition-colors">
+										{ post.Title }
+									</span>
+									<span class="text-blue-400 text-xs w-28 sm:w-32 group-hover:text-blue-300 transition-colors">
+										{ post.CreatedAt.Format("2006-01-02") }
+									</span>
+								</a>
+							}
+						</div>
+					}
+				</div>
+				<div class="pl-4 ml-2 pt-4">
+					<a
+						href="/archives"
+						class="flex items-center gap-2 text-blue-500 hover:text-blue-300 transition-colors"
+					>
+						<span>Back to archives</span>
+					</a>
+				</div>
 			</div>
 		</div>
 	}
