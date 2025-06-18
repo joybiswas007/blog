@@ -463,7 +463,7 @@ func (m PostModel) PreviousID(currentID int) (int, error) {
 		SELECT id 
 		FROM blog_posts
 		WHERE id < $1 AND is_published = true
-		ORDER BY id ASC
+		ORDER BY id DESC
 		LIMIT 1;
 	`
 
@@ -491,7 +491,7 @@ func (m PostModel) NextID(currentID int) (int, error) {
 		SELECT id 
 		FROM blog_posts
 		WHERE id > $1 AND is_published = true
-		ORDER BY id ASC
+		ORDER BY id DESC
 		LIMIT 1;
 	`
 
