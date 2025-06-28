@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../services/api";
 import { ErrorMessage, LoadingSpinner } from "./PostForm";
 
 const ResetPassword = () => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -79,7 +78,7 @@ const ResetPassword = () => {
           </p>
         </div>
 
-        <div className="p-8 shadow-inner bg-gradient-to-br from-[var(--color-background-primary)] to-[var(--color-shade-900)] rounded-lg">
+        <div className="space-y-6">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-heading font-bold text-blue-400">
@@ -88,7 +87,7 @@ const ResetPassword = () => {
             </div>
             <Link
               to="/dashboard"
-              className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium font-mono text-[var(--color-text-secondary)] hover:text-blue-400 bg-[var(--color-shade-900)] shadow-inner transition-colors"
+              className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium font-mono text-[var(--color-text-secondary)] hover:text-blue-400 bg-[var(--color-background-primary)] hover:bg-[var(--color-shade-900)] transition-colors"
             >
               <svg
                 className="w-5 h-5 mr-2"
@@ -111,7 +110,7 @@ const ResetPassword = () => {
             <ErrorMessage error={error} />
 
             {success && (
-              <div className="p-4 rounded-lg bg-blue-500/10 text-blue-400 shadow-inner font-mono">
+              <div className="p-4 rounded-lg bg-blue-500/10 text-blue-400 font-mono border border-blue-500/30">
                 Password has been reset successfully!
               </div>
             )}
@@ -131,7 +130,7 @@ const ResetPassword = () => {
                 autoComplete="email"
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-[var(--color-shade-900)] rounded-lg text-white placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors duration-200 shadow-inner font-mono"
+                className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
                 placeholder="Enter your email"
               />
             </div>
@@ -151,7 +150,7 @@ const ResetPassword = () => {
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
-                className="w-full px-4 py-3 bg-[var(--color-shade-900)] rounded-lg text-white placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors duration-200 shadow-inner font-mono"
+                className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
                 placeholder="Enter new password"
               />
               <p className="mt-1 text-xs text-[var(--color-text-secondary)] font-mono">
@@ -174,7 +173,7 @@ const ResetPassword = () => {
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
-                className="w-full px-4 py-3 bg-[var(--color-shade-900)] rounded-lg text-white placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors duration-200 shadow-inner font-mono"
+                className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
                 placeholder="Confirm new password"
               />
             </div>
@@ -182,7 +181,7 @@ const ResetPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg shadow-inner text-sm font-medium font-mono text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-sm font-medium font-mono text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -190,22 +189,7 @@ const ResetPassword = () => {
                   <span className="ml-2">Resetting Password...</span>
                 </>
               ) : (
-                <>
-                  <svg
-                    className="w-5 h-5 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-                    />
-                  </svg>
-                  Reset Password
-                </>
+                <>Reset Password</>
               )}
             </button>
           </form>

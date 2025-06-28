@@ -66,13 +66,13 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
   const tagsError = validateTags(formData.tags);
 
   return (
-    <>
+    <div className="space-y-6">
       <div>
         <label
           htmlFor="title"
           className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2 font-mono"
         >
-          Title <span className="text-red-500">*</span>
+          Title <span className="text-red-400">*</span>
         </label>
         <input
           type="text"
@@ -80,13 +80,13 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className="w-full px-4 py-3 bg-[var(--color-shade-900)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors duration-200 shadow-inner font-mono"
+          className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
           required
           maxLength={100}
           placeholder="Enter a title for your post"
         />
         {titleError && (
-          <p className="mt-1 text-sm text-red-500 font-mono">{titleError}</p>
+          <p className="mt-1 text-sm text-red-400 font-mono">{titleError}</p>
         )}
       </div>
 
@@ -103,7 +103,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           name="description"
           value={formData.description}
           onChange={handleChange}
-          className="w-full px-4 py-3 bg-[var(--color-shade-900)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors duration-200 shadow-inner font-mono"
+          className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
           maxLength={150}
           placeholder="Add a short description (optional)"
         />
@@ -114,18 +114,18 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           htmlFor="tags"
           className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2 font-mono"
         >
-          Tags <span className="text-red-500">*</span>
+          Tags <span className="text-red-400">*</span>
         </label>
         <div className="flex flex-wrap gap-2 mb-2">
           {formData.tags
             .split(",")
             .filter(Boolean)
-            .map(tag => (
+            .map((tag, index) => (
               <span
-                key={tag}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-[var(--color-shade-900)] text-[var(--color-text-secondary)] shadow-inner font-mono"
+                key={index}
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-600/20 text-blue-200 font-mono border border-blue-500/30"
               >
-                {tag.trim()}
+                #{tag.trim()}
                 <button
                   type="button"
                   onClick={() => {
@@ -135,7 +135,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
                       .join(",");
                     handleChange({ target: { name: "tags", value: newTags } });
                   }}
-                  className="ml-2 text-[var(--color-text-secondary)] hover:text-red-400 transition-colors"
+                  className="ml-2 text-blue-200 hover:text-red-400 transition-colors"
                 >
                   <svg
                     className="w-4 h-4"
@@ -161,21 +161,21 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           value={formData.tags}
           onChange={handleChange}
           placeholder="Add tags (comma-separated)"
-          className="w-full px-4 py-3 bg-[var(--color-shade-900)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors duration-200 shadow-inner font-mono"
+          className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
         />
         <p className="mt-1 text-xs text-[var(--color-text-secondary)] font-mono">
           Separate tags with commas (max 10 tags, 30 chars each)
         </p>
         {tagsError && (
-          <p className="mt-1 text-sm text-red-500 font-mono">{tagsError}</p>
+          <p className="mt-1 text-sm text-red-400 font-mono">{tagsError}</p>
         )}
       </div>
 
       <div>
         <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2 font-mono">
-          Content <span className="text-red-500">*</span>
+          Content <span className="text-red-400">*</span>
         </label>
-        <div className="rounded-lg overflow-hidden bg-[var(--color-shade-900)] shadow-inner">
+        <div className="rounded-lg overflow-hidden bg-[var(--color-background-primary)] border border-[var(--color-shade-800)]">
           <MarkdownEditor
             value={formData.content}
             onChange={value =>
@@ -184,14 +184,14 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
 export const ErrorMessage = ({ error }) => {
   if (!error) return null;
   return (
-    <div className="mb-4 p-4 rounded-lg bg-red-500/10 text-red-400 shadow-inner font-mono">
+    <div className="mb-4 p-4 rounded-lg bg-red-500/10 text-red-400 font-mono">
       {error}
     </div>
   );
@@ -200,7 +200,7 @@ export const ErrorMessage = ({ error }) => {
 export const LoadingSpinner = () => {
   return (
     <div className="flex justify-center items-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400"></div>
     </div>
   );
 };
@@ -251,63 +251,61 @@ const PostForm = ({ post, isEditing = false }) => {
   return (
     <div className="flex justify-center w-full">
       <div className="w-full max-w-3xl space-y-8">
-        <div className="p-8 shadow-inner bg-gradient-to-br from-[var(--color-background-primary)] to-[var(--color-shade-900)] rounded-lg">
-          <PostEditorHeader
-            title={isEditing ? "Edit Post" : "Create New Post"}
-            subtitle={
-              isEditing
-                ? "Update your post content and settings"
-                : "Fill in the details to create a new post"
-            }
+        <PostEditorHeader
+          title={isEditing ? "Edit Post" : "Create New Post"}
+          subtitle={
+            isEditing
+              ? "Update your post content and settings"
+              : "Fill in the details to create a new post"
+          }
+        />
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <ErrorMessage error={error} />
+          <PostFormFields
+            formData={formData}
+            handleChange={handleChange}
+            setFormData={setFormData}
           />
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <ErrorMessage error={error} />
-            <PostFormFields
-              formData={formData}
-              handleChange={handleChange}
-              setFormData={setFormData}
-            />
-
-            <div className="flex items-center justify-end space-x-4 pt-4">
-              <Link
-                to="/dashboard"
-                className="px-4 py-2 text-sm font-medium font-mono text-[var(--color-text-secondary)] hover:text-blue-400 transition-colors duration-200"
-              >
-                Cancel
-              </Link>
-              <button
-                type="submit"
-                disabled={loading}
-                className="inline-flex items-center px-4 py-2 rounded-lg shadow-inner text-sm font-medium font-mono text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <>
-                    <LoadingSpinner />
-                    <span className="ml-2">Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    {isEditing ? "Update Post" : "Create Post"}
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
+          <div className="flex items-center justify-end space-x-4 pt-4">
+            <Link
+              to="/dashboard"
+              className="px-4 py-2 text-sm font-medium font-mono text-[var(--color-text-secondary)] hover:text-blue-400 transition-colors duration-200"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              disabled={loading}
+              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium font-mono text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <LoadingSpinner />
+                  <span className="ml-2">Saving...</span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  {isEditing ? "Update Post" : "Create Post"}
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

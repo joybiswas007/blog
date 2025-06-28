@@ -27,7 +27,7 @@ const Post = () => {
       setPreviousPost(previous_post);
       setNextPost(next_post);
     } catch (error) {
-      setError(error.response?.data?.message || "Failed to fetch post");
+      setError(error.response?.data?.error || "Failed to fetch post");
     } finally {
       setLoading(false);
     }

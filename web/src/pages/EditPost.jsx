@@ -37,7 +37,7 @@ const EditPost = () => {
           setIsPublished(post.is_published);
         }
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to fetch post");
+        setError(err.response?.data?.error || "Failed to fetch post");
       } finally {
         setFetching(false);
       }
@@ -78,7 +78,7 @@ const EditPost = () => {
 
       navigate("/dashboard", { state: { success: true } });
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update post");
+      setError(err.response?.data?.error || "Failed to update post");
     } finally {
       setLoading(false);
     }
@@ -95,7 +95,7 @@ const EditPost = () => {
       setIsPublished(true);
       navigate("/dashboard", { state: { success: true } });
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to publish post");
+      setError(err.response?.data?.error || "Failed to publish post");
     } finally {
       setLoading(false);
     }
@@ -122,53 +122,65 @@ const EditPost = () => {
   return (
     <div className="flex justify-center w-full">
       <div className="w-full max-w-3xl space-y-8">
-        <div className="p-8 shadow-inner bg-gradient-to-br from-[var(--color-background-primary)] to-[var(--color-shade-900)] rounded-lg">
-          <PostEditorHeader
-            title="Edit Post"
-            subtitle="Make changes to your post below"
+        <PostEditorHeader
+          title="Edit Post"
+          subtitle="Make changes to your post below"
+        />
+
+        <ErrorMessage error={error} />
+
+        <div className="space-y-6">
+          <PostFormFields
+            formData={formData}
+            handleChange={handleChange}
+            setFormData={setFormData}
           />
 
-          <ErrorMessage error={error} />
+          <div className="flex flex-wrap gap-4 pt-4">
+            <Link
+              to="/dashboard"
+              className="flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium font-mono text-center text-[var(--color-text-secondary)] hover:text-blue-400 transition-colors bg-[var(--color-background-primary)] hover:bg-[var(--color-shade-900)]"
+            >
+              Cancel
+            </Link>
 
-          <div className="space-y-6">
-            <PostFormFields
-              formData={formData}
-              handleChange={handleChange}
-              setFormData={setFormData}
-            />
+            <button
+              type="button"
+              onClick={handleUpdate}
+              disabled={loading}
+              className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium font-mono bg-blue-600 hover:bg-blue-700 text-white transition-colors ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {loading ? (
+                <>
+                  <LoadingSpinner />
+                  <span className="ml-2">Updating...</span>
+                </>
+              ) : (
+                "Update Post"
+              )}
+            </button>
 
-            <div className="flex flex-wrap gap-4 pt-4">
-              <Link
-                to="/dashboard"
-                className="flex-1 sm:flex-none px-6 py-3 rounded-lg font-medium font-mono text-center text-[var(--color-text-secondary)] hover:text-blue-400 transition-colors shadow-inner bg-[var(--color-shade-900)]"
-              >
-                Cancel
-              </Link>
-
+            {!isPublished && (
               <button
                 type="button"
-                onClick={handleUpdate}
+                onClick={handlePublish}
                 disabled={loading}
-                className={`flex-1 sm:flex-none px-6 py-3 rounded-lg font-medium font-mono bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-inner ${
-                  loading ? "opacity-70 cursor-not-allowed" : ""
+                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium font-mono bg-blue-600 hover:bg-blue-700 text-white transition-colors ${
+                  loading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
-                {loading ? <LoadingSpinner /> : "Update Post"}
+                {loading ? (
+                  <>
+                    <LoadingSpinner />
+                    <span className="ml-2">Publishing...</span>
+                  </>
+                ) : (
+                  "Publish Post"
+                )}
               </button>
-
-              {!isPublished && (
-                <button
-                  type="button"
-                  onClick={handlePublish}
-                  disabled={loading}
-                  className={`flex-1 sm:flex-none px-6 py-3 rounded-lg font-medium font-mono bg-green-600 hover:bg-green-700 text-white transition-colors shadow-inner ${
-                    loading ? "opacity-70 cursor-not-allowed" : ""
-                  }`}
-                >
-                  {loading ? <LoadingSpinner /> : "Publish Post"}
-                </button>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -29,7 +29,7 @@ func registerBlogRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 func (s *APIV1Service) blogPostsHandler(c *gin.Context) {
 	posts, _, totalPost, err := getPosts(c, s)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -51,7 +51,7 @@ func (s *APIV1Service) blogTagsHandler(c *gin.Context) {
 	tags, err := s.db.Tags.GetAll()
 	if err != nil {
 		// Handle database error
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -71,7 +71,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 	post, err := s.db.Posts.GetBySlug(slug)
 	if err != nil {
 		// Handle database error (e.g., post not found)
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	var (
@@ -82,7 +82,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 	previousID, err := s.db.Posts.PreviousID(post.ID)
 	if err != nil {
 		// Handle database error (e.g., post not found)
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -91,7 +91,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 		previousPost, err = s.db.Posts.Get(previousID)
 		if err != nil {
 			// Handle database error (e.g., post not found)
-			c.JSON(http.StatusBadRequest, err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 	}
@@ -100,7 +100,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 	nextID, err := s.db.Posts.NextID(post.ID)
 	if err != nil {
 		// Handle database error (e.g., post not found)
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -109,7 +109,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 		nextPost, err = s.db.Posts.Get(nextID)
 		if err != nil {
 			// Handle database error (e.g., post not found)
-			c.JSON(http.StatusBadRequest, err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 	}
@@ -169,7 +169,7 @@ func (s *APIV1Service) rssHandler(c *gin.Context) {
 func (s *APIV1Service) archivesHandler(c *gin.Context) {
 	lists, err := s.db.Posts.YearlyStatsList()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -181,13 +181,13 @@ func (s *APIV1Service) archiveYearHandler(c *gin.Context) {
 
 	year, err := strconv.Atoi(yearStr)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	posts, err := s.db.Posts.GetByYear(year)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -222,7 +222,7 @@ func (s *APIV1Service) siteMapHandler(c *gin.Context) {
 
 		posts, _, err := s.db.Posts.GetAll(filter)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.String(http.StatusInternalServerError, err.Error())
 			return
 		}
 

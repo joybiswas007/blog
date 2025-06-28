@@ -36,9 +36,9 @@ const Login = () => {
           </h1>
         </div>
 
-        <div className="p-8 shadow-inner bg-gradient-to-br from-[var(--color-background-primary)] to-[var(--color-shade-900)] rounded-lg">
+        <div className="space-y-6">
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 rounded-lg text-red-400 text-sm flex items-center space-x-2 shadow-inner">
+            <div className="p-4 bg-red-500/10 rounded-lg text-red-400 text-sm flex items-center space-x-2 font-mono border border-red-500/30">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -73,7 +73,7 @@ const Login = () => {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   autoComplete="email"
-                  className="w-full px-4 py-3 bg-[var(--color-shade-900)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition shadow-inner font-mono"
+                  className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
                   placeholder="you@example.com"
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -110,7 +110,7 @@ const Login = () => {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   autoComplete="current-password"
-                  className="w-full px-4 py-3 bg-[var(--color-shade-900)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition shadow-inner font-mono"
+                  className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
                   placeholder="••••••••"
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -134,8 +134,8 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full flex justify-center items-center py-3 px-4 rounded-lg shadow-inner text-sm font-medium font-mono text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 ${
-                loading ? "opacity-70 cursor-not-allowed" : ""
+              className={`w-full flex justify-center items-center py-3 px-4 rounded-lg text-sm font-medium font-mono text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
               {loading ? (

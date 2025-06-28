@@ -12,6 +12,7 @@ import Tags from "./pages/Tags";
 import Archives from "./pages/Archives";
 import ArchiveByYear from "./pages/ArchiveByYear";
 import About from "./pages/About";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/auth/posts/:id/edit" element={<EditPost />} />
             <Route path="/auth/reset-password" element={<ResetPassword />} />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
     </Router>

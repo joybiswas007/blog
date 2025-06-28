@@ -15,7 +15,7 @@ const ArchiveByYear = () => {
       const response = await api.get(`/posts/archives/${year}`);
       setPosts(response.data?.archive?.posts || []);
     } catch (error) {
-      setError(error.response?.data?.message || "Failed to fetch posts");
+      setError(error.response?.data?.error || "Failed to fetch posts");
     } finally {
       setLoading(false);
     }

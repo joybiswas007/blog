@@ -16,7 +16,7 @@ const Archives = () => {
       const response = await api.get("/posts/archives");
       setArchives(response.data?.archives || []);
     } catch (error) {
-      setError(error.response?.data?.message || "Failed to fetch archives");
+      setError(error.response?.data?.error || "Failed to fetch archives");
     } finally {
       setLoading(false);
     }

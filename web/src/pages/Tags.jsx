@@ -16,7 +16,7 @@ const Tags = () => {
       const response = await api.get("/posts/tags");
       setTags(response.data?.tags || []);
     } catch (error) {
-      setError(error.response?.data?.message || "Failed to fetch tags");
+      setError(error.response?.data?.error || "Failed to fetch tags");
     } finally {
       setLoading(false);
     }
