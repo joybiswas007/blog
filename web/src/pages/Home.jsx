@@ -103,9 +103,9 @@ const Home = () => {
                 tag
               })}
               className={
-                `px-2 py-1 rounded font-mono transition-colors ` +
+                `px-2 py-1 font-mono transition-colors ` +
                 (orderBy === opt.orderBy && sort === opt.sort
-                  ? "bg-blue-900 text-[var(--color-text-primary)]"
+                  ? "text-blue-400"
                   : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]")
               }
               aria-label={`Sort by ${opt.label}`}
