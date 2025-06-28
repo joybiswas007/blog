@@ -12,10 +12,23 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@/": `${resolve(__dirname, "src")}/`
+      "@": resolve(__dirname, "src")
     }
   },
   build: {
-    manifest: true
+    manifest: true,
+    outDir: "dist",
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          router: ["react-router-dom"]
+        }
+      }
+    }
+  },
+  preview: {
+    host: "0.0.0.0",
+    port: 3002
   }
 });
