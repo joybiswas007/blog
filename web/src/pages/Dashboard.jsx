@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../services/api";
-import { ErrorMessage, LoadingSpinner } from "../components/PostForm";
-import { clearAuthTokens } from "../utils/auth";
+import api from "@/services/api";
+import { ErrorMessage, LoadingSpinner } from "@/components/PostForm";
+import { clearAuthTokens } from "@/utils/auth";
 import {
   FiEdit2,
   FiTrash2,

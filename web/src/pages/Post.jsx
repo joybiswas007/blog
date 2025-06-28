@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import api from "../services/api";
-import { CalculateReadTime } from "../utils/helpers";
+import api from "@/services/api";
+import { CalculateReadTime } from "@/utils/helpers";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import SEO from "@/components/SEO";
 
 const Post = () => {
   const { slug } = useParams();
@@ -13,7 +14,7 @@ const Post = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchPost = async () => {
+  const fetchPost = useCallback(async () => {
     if (!slug) return;
 
     try {
@@ -28,7 +29,7 @@ const Post = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
 
   const formatDate = dateString => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -44,7 +45,7 @@ const Post = () => {
 
   useEffect(() => {
     fetchPost();
-  }, [slug]);
+  }, [fetchPost]);
 
   if (loading) {
     return (
@@ -72,7 +73,12 @@ const Post = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <title>{`${post.title} - ${import.meta.env.VITE_BLOG_NAME}`}</title>
+      <SEO
+        title={post.title}
+        description={post.description}
+        keywords={post.tags.join(", ")}
+        ogType="article"
+      />
       <article className="w-full max-w-3xl space-y-8">
         <header className="space-y-4">
           <h1 className="text-2xl text-[var(--color-text-primary)] font-heading">

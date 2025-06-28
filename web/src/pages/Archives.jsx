@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../services/api";
+import api from "@/services/api";
+import SEO from "@/components/SEO";
 
 const Archives = () => {
   const [archives, setArchives] = useState([]);
@@ -43,7 +44,7 @@ const Archives = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <title>{`Archives - ${import.meta.env.VITE_BLOG_NAME}`}</title>
+      <SEO title="Archives" />
       <div className="space-y-10 w-full max-w-3xl">
         <div className="pl-4 ml-2 space-y-10">
           {/* Feed section */}

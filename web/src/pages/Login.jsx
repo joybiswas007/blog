@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api";
-import { setAuthTokens } from "../utils/auth";
+import api from "@/services/api";
+import { setAuthTokens } from "@/utils/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");

@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import api from "../services/api";
+import api from "@/services/api";
 import {
   PostFormFields,
   ErrorMessage,
   PostEditorHeader,
   LoadingSpinner
-} from "../components/PostForm";
+} from "@/components/PostForm";
 
 const EditPost = () => {
   const { id } = useParams();

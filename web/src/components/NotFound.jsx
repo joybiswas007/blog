@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import SEO from "./SEO";
 
 const NotFound = () => {
   return (
     <div className="flex justify-center w-full">
-      <title>404 Not Found</title>
+      <SEO title="404" />
       <div className="w-full max-w-2xl text-center space-y-6 py-8">
         {/* 404 Header */}
         <div className="space-y-4">

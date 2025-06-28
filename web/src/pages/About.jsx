@@ -8,11 +8,11 @@ import {
 } from "react-icons/fi";
 
 import { TbBrandUpwork, TbBrandFiverr } from "react-icons/tb";
-import { StripSchema } from "../utils/helpers";
+import { StripSchema } from "@/utils/helpers";
+import SEO from "@/components/SEO";
 
 const About = () => {
   const {
-    VITE_BLOG_NAME,
     VITE_AUTHOR_NAME,
     VITE_AUTHOR_PROFESSION,
     VITE_AUTHOR_EMAIL,
@@ -68,7 +68,7 @@ const About = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <title>{VITE_BLOG_NAME}</title>
+      <SEO />
       <div className="space-y-12 w-full max-w-3xl px-4">
         {/* Author Section */}
         <section>

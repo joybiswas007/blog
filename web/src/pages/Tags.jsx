@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../services/api";
+import api from "@/services/api";
+import SEO from "@/components/SEO";
 
 const Tags = () => {
   const [tags, setTags] = useState([]);
@@ -43,7 +44,7 @@ const Tags = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <title>{`Tags - ${import.meta.env.VITE_BLOG_NAME}`}</title>
+      <SEO title="Tags" />
       <div className="space-y-6 w-full max-w-3xl">
         <div className="pl-4 ml-2 space-y-1">
           {tags && tags.length > 0 ? (

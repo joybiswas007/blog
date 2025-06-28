@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import api from "../services/api";
+import api from "@/services/api";
+import SEO from "@/components/SEO";
 
 const ArchiveByYear = () => {
   const { year } = useParams();
@@ -8,7 +9,7 @@ const ArchiveByYear = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchArchiveByYear = async () => {
+  const fetchArchiveByYear = useCallback(async () => {
     try {
       setLoading(true);
       const response = await api.get(`/posts/archives/${year}`);
@@ -18,7 +19,7 @@ const ArchiveByYear = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [year]);
 
   const formatDate = dateString => {
     return new Date(dateString).toISOString().split("T")[0];
@@ -26,7 +27,7 @@ const ArchiveByYear = () => {
 
   useEffect(() => {
     fetchArchiveByYear();
-  }, [year]);
+  }, [fetchArchiveByYear]);
 
   if (loading) {
     return (
@@ -48,7 +49,7 @@ const ArchiveByYear = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <title>{`Archives - ${year}`}</title>
+      <SEO title={`Archives - ${year}`} />
       <div className="space-y-6 w-full max-w-3xl">
         <div className="pl-4 ml-2 space-y-4">
           {posts && posts.length === 0 ? (
