@@ -25,11 +25,6 @@ blog:
   description: "Enter your blog description"  # Short blog description
   source: https://github.com/joybiswas007/blog # replace it with your source 
   url: "https://sitename.com"          # Full blog URL
-  gtag_id: "G-XXXXXXX"                  # Google Analytics Measurement ID (GA4)
-
-  # Markdown theme for code blocks (from Splash themes)
-  # https://xyproto.github.io/splash/docs/all.html
-  md_theme: nord 
 
   # Keywords for SEO purposes
   keywords:
@@ -42,11 +37,3 @@ blog:
     name: "Your Name"                       # Your full name
     profession: "Your Profession Here"      # Your title/profession
 
-    # Social media and freelancing profiles
-    social:
-      github: https://github.com/username
-      twitter: https://x.com/username
-      linkedIn: https://linkedin.com/in/username/
-      email: example@mail.com
-      fiverr: https://fiverr.com/username
-      upwork: https://upwork.com/freelancers/username

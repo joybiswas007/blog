@@ -31,8 +31,8 @@ type Post struct {
 }
 
 type YearlyStats struct {
-	Year      int // Year of the posts
-	PostCount int // Number of posts in that year
+	Year      int `json:"year"`       // Year of the posts
+	PostCount int `json:"post_count"` // Number of posts in that year
 }
 
 // Get retrieves a single post by its ID including associated tags

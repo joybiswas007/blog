@@ -1,10 +1,10 @@
 services:
-  app:
+  blog-app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: blog
-    container_name: blog
+    image: blog-app
+    container_name: blog-app
     ports:
       - "8080:8080"
     volumes:

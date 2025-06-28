@@ -14,7 +14,7 @@ import (
 
 	"github.com/joybiswas007/blog/config"
 	"github.com/joybiswas007/blog/internal/database"
-	"github.com/joybiswas007/blog/internal/server"
+	"github.com/joybiswas007/blog/server"
 )
 
 func main() {

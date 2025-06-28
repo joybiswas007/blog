@@ -34,31 +34,18 @@ type RateLimiter struct {
 }
 
 type Blog struct {
-	Name          string   `mapstructure:"name" validate:"required"`        // Name of the blog
-	URL           string   `mapstructure:"url" validate:"required"`         // URL of the blog i.e: http(s)://sitename.com
-	Source        string   `mapstructure:"source"`                          // Source code of the blog i.e: https://github.com/username/blog
-	Description   string   `mapstructure:"description" validate:"required"` // Description of the blog
-	GTagID        string   `mapstructure:"gtag_id"`                         // Google Analytics Measurement ID (e.g., G-XXXXXXX)
-	Keywords      []string `mapstructure:"keywords" validate:"required"`    // Keywords for the SEO
-	MarkdownTheme string   `mapstructure:"md_theme"`                        // MarkdownTheme for displaying. See more themes: https://xyproto.github.io/splash/docs/all.html
-	Author        Author   `mapstructure:"author" validate:"required"`      // Author
+	Name        string   `mapstructure:"name" validate:"required"`                 // Name of the blog
+	URL         string   `mapstructure:"url" validate:"required"`                  // URL of the blog i.e: http(s)://sitename.com
+	Source      string   `mapstructure:"source"`                                   // Source code of the blog i.e: https://github.com/username/blog
+	Description string   `mapstructure:"description" validate:"required"`          // Description of the blog
+	Keywords    []string `mapstructure:"keywords" validate:"required"`             // Keywords for the SEO
+	Author      Author   `mapstructure:"author" validate:"required" json:"author"` // Author
 }
 
 // Author hold the info for who is posting
 type Author struct {
-	Name       string `mapstructure:"name" validate:"required"`       // Name of the author
-	Profession string `mapstructure:"profession" validate:"required"` // Profession of the author
-	Social     Social `mapstructure:"social" validate:"required"`     // Social media urls
-}
-
-// Social holds social media and contact information.
-type Social struct {
-	Github   string `mapstructure:"github" validate:"required"`      // GitHub profile URL or username (required)
-	LinkedIn string `mapstructure:"linkedIn" validate:"required"`    // LinkedIn profile URL or username (required)
-	Email    string `mapstructure:"email" validate:"email,required"` // Contact email address (required)
-	Twitter  string `mapstructure:"twitter"`                         // Twitter handle or profile URL
-	Fiverr   string `mapstructure:"fiverr"`                          // Fiverr handle or profile URL (required)
-	Upwork   string `mapstructure:"upwork"`                          // Upwork handle or profile URL (required)
+	Name       string `mapstructure:"name" validate:"required" json:"name"`             // Name of the author
+	Profession string `mapstructure:"profession" validate:"required" json:"profession"` // Profession of the author
 }
 
 // Init reads in config file and ENV variables if set.

@@ -1,69 +1,29 @@
-# Stage 1: Templ code generation
-FROM ghcr.io/a-h/templ:latest AS templgen
-WORKDIR /app
-COPY --chown=65532:65532 . /app
-RUN ["templ", "generate"]
+# Frontend build stage
+FROM node:lts-alpine3.21 AS frontend
+WORKDIR /frontend-build
+COPY web/package.json web/package-lock.json ./
+RUN npm install
+COPY web/ .
+RUN npm run build
 
-# Stage 2: Build stage
-FROM golang:1.24.4-bullseye AS builder
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y make
-
-# Download TailwindCSS using ADD (better cacheable)
-ADD https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 /usr/local/bin/tailwindcss
-RUN chmod +x /usr/local/bin/tailwindcss
-
-WORKDIR /app
-
-# Set Go proxy to direct
+# Backend build stage
+FROM golang:1.24.4-alpine AS backend
+WORKDIR /backend-build
+RUN apk --no-cache add git
 ENV GOPROXY=direct
-
-# Copy Go mod files and download dependencies
 COPY go.mod go.sum ./
-
-# Set cache
 ENV GOCACHE=/go-cache
 ENV GOMODCACHE=/gomod-cache 
-
-# Copy the rest of the source code
 COPY . .
-
-# Overwrite with Templ-generated files from stage 1
-COPY --from=templgen /app /app
-
-# Generate TailwindCSS output
-RUN make gen-css 
-
-# Build statically linked, optimized binary
+## remove the existing dummy ui and replace with react build
+COPY --from=frontend /frontend-build/dist /backend-build/server/router/frontend/dist
 RUN --mount=type=cache,target=/gomod-cache --mount=type=cache,target=/go-cache \
-	make build
+	go build -ldflags="-s -w" -o blog ./cmd/api/main.go
 
-# Stage 3: Minimal runtime image
-FROM debian:bullseye-slim
-
-# User name
-ARG user=blogger
-
-# Create non-root user
-RUN adduser --disabled-password ${user}
-
-# Set working directory
+FROM alpine:latest AS runtime
 WORKDIR /app
-
-# Copy compiled binary and assets from builder
-COPY --from=builder /app/blog /app/blog
-COPY --from=builder /app/cmd/web/assets /app/cmd/web/assets
-
-# Ensure correct permissions
-RUN chown -R ${user}:${user} /app
-
-# Switch to the non-root user
-USER ${user} 
-
-# Expose port
-EXPOSE 8080
-
-# Start the application
+RUN apk add --no-cache tzdata
+ENV TZ="UTC"
+COPY --from=backend /backend-build/blog /app/blog
 ENTRYPOINT [ "/app/blog" ]
 CMD [ "--conf", "/app/.blog.yaml" ]

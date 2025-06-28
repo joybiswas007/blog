@@ -9,9 +9,10 @@ blog_cli
 
 # Dependency directories
 vendor/
-dashboard/
+w
+web/node_modules
+web/dist
 migrations/
-node_modules/
 *.md
 tmp
 
@@ -41,6 +42,3 @@ logs
 .air.toml
 example.blog.yaml
 
-# Build artifacts and output
-*templ.go
-cmd/web/assets/css/output.css
