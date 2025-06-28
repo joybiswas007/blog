@@ -4,11 +4,8 @@ import api from "../services/api";
 import { CalculateReadTime } from "../utils/helpers";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import Title from "../components/Title";
 
 const Post = () => {
-  const { VITE_BLOG_NAME } = import.meta.env;
-
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [previousPost, setPreviousPost] = useState(null);
@@ -75,7 +72,7 @@ const Post = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <Title title={`${post.title} - ${VITE_BLOG_NAME}`} />
+      <title>{`${post.title} - ${import.meta.env.VITE_BLOG_NAME}`}</title>
       <article className="w-full max-w-3xl space-y-8">
         <header className="space-y-4">
           <h1 className="text-2xl text-[var(--color-text-primary)] font-heading">

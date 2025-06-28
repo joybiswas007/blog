@@ -91,6 +91,7 @@ const CreatePost = () => {
 
   return (
     <div className="flex justify-center w-full">
+      <title>Create Post</title>
       <div className="w-full max-w-3xl space-y-8">
         <PostEditorHeader
           title="Create New Post"

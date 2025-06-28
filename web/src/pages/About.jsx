@@ -9,20 +9,30 @@ import {
 
 import { TbBrandUpwork, TbBrandFiverr } from "react-icons/tb";
 import { StripSchema } from "../utils/helpers";
-import Title from "../components/Title";
 
 const About = () => {
-  const { VITE_BLOG_NAME } = import.meta.env;
+  const {
+    VITE_BLOG_NAME,
+    VITE_AUTHOR_NAME,
+    VITE_AUTHOR_PROFESSION,
+    VITE_AUTHOR_EMAIL,
+    VITE_AUTHOR_GITHUB,
+    VITE_AUTHOR_LINKEDIN,
+    VITE_AUTHOR_TWITTER,
+    VITE_AUTHOR_FIVERR,
+    VITE_AUTHOR_UPWORK
+  } = import.meta.env;
+
   // Read from environment variables
   const author = {
-    name: import.meta.env.VITE_AUTHOR_NAME || "Your Name",
-    profession: import.meta.env.VITE_AUTHOR_PROFESSION || "Developer",
-    email: import.meta.env.VITE_AUTHOR_EMAIL || "your.email@example.com",
-    github: import.meta.env.VITE_AUTHOR_GITHUB || "",
-    linkedin: import.meta.env.VITE_AUTHOR_LINKEDIN || "",
-    twitter: import.meta.env.VITE_AUTHOR_TWITTER || "",
-    fiverr: import.meta.env.VITE_AUTHOR_FIVERR || "",
-    upwork: import.meta.env.VITE_AUTHOR_UPWORK || ""
+    name: VITE_AUTHOR_NAME || "Your Name",
+    profession: VITE_AUTHOR_PROFESSION || "Developer",
+    email: VITE_AUTHOR_EMAIL || "your.email@example.com",
+    github: VITE_AUTHOR_GITHUB || "",
+    linkedin: VITE_AUTHOR_LINKEDIN || "",
+    twitter: VITE_AUTHOR_TWITTER || "",
+    fiverr: VITE_AUTHOR_FIVERR || "",
+    upwork: VITE_AUTHOR_UPWORK || ""
   };
 
   const getSocialIcon = url => {
@@ -58,7 +68,7 @@ const About = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <Title title={VITE_BLOG_NAME} />
+      <title>{VITE_BLOG_NAME}</title>
       <div className="space-y-12 w-full max-w-3xl px-4">
         {/* Author Section */}
         <section>

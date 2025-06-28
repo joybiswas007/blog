@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../services/api";
-import Title from "../components/Title";
 
 const ArchiveByYear = () => {
   const { year } = useParams();
@@ -49,10 +48,10 @@ const ArchiveByYear = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <Title title={`Archives - ${year}`} />
+      <title>{`Archives - ${year}`}</title>
       <div className="space-y-6 w-full max-w-3xl">
         <div className="pl-4 ml-2 space-y-4">
-          {posts.length === 0 ? (
+          {posts && posts.length === 0 ? (
             <div className="flex items-baseline gap-2 text-[var(--color-text-secondary)]">
               <span className="text-blue-500">&gt;</span>
               <p>No posts found in archives</p>

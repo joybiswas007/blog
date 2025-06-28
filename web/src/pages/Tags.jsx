@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
-import Title from "../components/Title";
 
 const Tags = () => {
-  const { VITE_BLOG_NAME } = import.meta.env;
-
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -46,7 +43,7 @@ const Tags = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <Title title={`Tags - ${VITE_BLOG_NAME}`} />
+      <title>{`Tags - ${import.meta.env.VITE_BLOG_NAME}`}</title>
       <div className="space-y-6 w-full max-w-3xl">
         <div className="pl-4 ml-2 space-y-1">
           {tags && tags.length > 0 ? (

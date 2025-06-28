@@ -118,7 +118,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 
 func (s *APIV1Service) rssHandler(c *gin.Context) {
 	filter := database.Filter{
-		Limit:       10,
+		Limit:       100,
 		Offset:      0,
 		OrderBy:     "created_at",
 		Sort:        "DESC",
@@ -132,11 +132,9 @@ func (s *APIV1Service) rssHandler(c *gin.Context) {
 	}
 
 	feed := &feeds.Feed{
-		Title:       s.config.Blog.Name,
-		Description: s.config.Blog.Description,
-		Author:      &feeds.Author{Name: s.config.Blog.Author.Name},
-		Created:     time.Now(),
-		Link:        &feeds.Link{Href: s.config.Blog.URL},
+		Title:   s.config.Blog.Name,
+		Created: time.Now(),
+		Link:    &feeds.Link{Href: s.config.Blog.URL},
 	}
 
 	var items []*feeds.Item

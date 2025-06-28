@@ -121,6 +121,7 @@ const EditPost = () => {
 
   return (
     <div className="flex justify-center w-full">
+      <title>Edit Post</title>
       <div className="w-full max-w-3xl space-y-8">
         <PostEditorHeader
           title="Edit Post"

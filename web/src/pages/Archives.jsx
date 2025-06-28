@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
-import Title from "../components/Title";
 
 const Archives = () => {
-  const { VITE_BLOG_NAME } = import.meta.env;
-
   const [archives, setArchives] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -46,7 +43,7 @@ const Archives = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <Title title={`Archives - ${VITE_BLOG_NAME}`} />
+      <title>{`Archives - ${import.meta.env.VITE_BLOG_NAME}`}</title>
       <div className="space-y-10 w-full max-w-3xl">
         <div className="pl-4 ml-2 space-y-10">
           {/* Feed section */}

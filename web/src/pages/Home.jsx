@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import api from "../services/api";
 import { CalculateReadTime } from "../utils/helpers";
-import Title from "../components/Title";
 
 // Helper to parse query params
 const useQuery = () => {
@@ -19,7 +18,6 @@ const SORT_OPTIONS = [
 ];
 
 const Home = () => {
-  const { VITE_BLOG_NAME } = import.meta.env;
   const query = useQuery();
 
   // Filters from query params
@@ -87,7 +85,7 @@ const Home = () => {
 
   return (
     <div className="flex justify-center w-full">
-      <Title title={VITE_BLOG_NAME} />
+      <title>{import.meta.env.VITE_BLOG_NAME}</title>
       <div className="space-y-8 w-full max-w-3xl font-sans">
         {/* Sorting controls */}
         <div className="flex justify-start items-center space-x-4 pl-4 ml-2">

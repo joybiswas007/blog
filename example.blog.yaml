@@ -16,24 +16,9 @@ rate_limiter:
   rate: 1     # Allowed requests per second
   burst: 25   # Maximum burst size (temporary request overflow)
 
-# Set to true in production environment
-is_production: false
+is_production: true
 
 # Blog-specific configuration
 blog:
   name: "A name for your blog"          # Blog title
-  description: "Enter your blog description"  # Short blog description
-  source: https://github.com/joybiswas007/blog # replace it with your source 
   url: "https://sitename.com"          # Full blog URL
-
-  # Keywords for SEO purposes
-  keywords:
-    - keyword1
-    - keyword2
-    - keyword3
-
-  # Author details
-  author:
-    name: "Your Name"                       # Your full name
-    profession: "Your Profession Here"      # Your title/profession
-

@@ -114,6 +114,7 @@ func (m PostModel) GetBySlug(slug string) (*Post, error) {
             tags t ON t.id = bt.tag_id
         WHERE
             bp.slug = $1
+	    AND bp.is_published = true
         GROUP BY
             bp.id, u.name;
     `

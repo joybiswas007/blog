@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
-import Title from "../components/Title";
 
 const NotFound = () => {
-  const { VITE_BLOG_NAME: blogName } = import.meta.env;
-
   return (
     <div className="flex justify-center w-full">
-      <Title title={`404 - ${blogName}`} />
+      <title>404 Not Found</title>
       <div className="w-full max-w-2xl text-center space-y-6 py-8">
         {/* 404 Header */}
         <div className="space-y-4">

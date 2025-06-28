@@ -41,25 +41,7 @@ rate_limiter:
 is_production: true
 blog:
   name: "A name for your blog"
-  description: "Enter your blog description"
-  source: https://github.com/joybiswas007/blog
   url: "https://sitename.com"
-  gtag_id: "G-XXXXXXX"
-  md_theme: nord
-  keywords:
-    - keyword1
-    - keyword2
-    - keyword3
-  author:
-    name: "Your Name"
-    profession: "Your Profession Here"
-    social:
-      github: https://github.com/username
-      twitter: https://x.com/username
-      linkedIn: https://linkedin.com/in/username/
-      email: example@mail.com
-      fiverr: https://fiverr.com/username
-      upwork: https://upwork.com/freelancers/username
 `
 	configPath := writeTempConfig(t, cfgContent)
 	Init(configPath)

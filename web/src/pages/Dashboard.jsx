@@ -87,6 +87,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex justify-center w-full">
+      <title>Dashboard</title>
       <div className="space-y-8 w-full max-w-3xl">
         {/* Top actions bar */}
         <div className="flex justify-center items-center gap-4 pl-4 ml-2">
