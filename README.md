@@ -54,6 +54,7 @@ You can run the blog with Docker or manually.
    ```
 - Ensure `.blog.yaml` is in your working directory and mounted into the container.
 - Access the blog at [http://localhost:8080](http://localhost:8080).
+- Login to access the dashboard at [http://localhost:3001/login](http://localhost:3001/login).
 
 ---
 
@@ -62,9 +63,9 @@ You can run the blog with Docker or manually.
 #### Frontend
 
 1. Install Node.js and npm.
-2. In the `dashboard` directory:
+2. In the `web` directory:
    ```bash
-   cd dashboard
+   cd web
    npm install
    cp env.example .env
    # Edit .env as needed
@@ -79,6 +80,8 @@ You can run the blog with Docker or manually.
    ```
 - Access the frontend at [http://localhost:3001](http://localhost:3001).
 - Login requires a user created via the backend CLI.
+- Login to access the dashboard at [http://localhost:3001/login](http://localhost:3001/login).
+
 
 #### Backend
 
