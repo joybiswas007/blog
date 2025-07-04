@@ -1,11 +1,6 @@
 import { Link } from "react-router-dom";
-import {
-  FiGithub,
-  FiLinkedin,
-  FiTwitter,
-  FiMail,
-  FiExternalLink
-} from "react-icons/fi";
+import { FiGithub, FiLinkedin, FiMail, FiExternalLink } from "react-icons/fi";
+import { FaXTwitter } from "react-icons/fa6";
 
 import { TbBrandUpwork, TbBrandFiverr } from "react-icons/tb";
 import { StripSchema } from "@/utils/helpers";
@@ -40,7 +35,7 @@ const About = () => {
     if (lowerUrl.includes("github")) return <FiGithub className="w-5 h-5" />;
     if (lowerUrl.includes("linkedin"))
       return <FiLinkedin className="w-5 h-5" />;
-    if (lowerUrl.includes("twitter")) return <FiTwitter className="w-5 h-5" />;
+    if (lowerUrl.includes("x")) return <FaXTwitter className="w-5 h-5" />;
     if (lowerUrl.includes("fiverr"))
       return <TbBrandFiverr className="w-5 h-5" />;
     if (lowerUrl.includes("upwork"))

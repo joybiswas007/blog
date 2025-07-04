@@ -11,7 +11,9 @@ import (
 // registerUserRoutes handles user-specific actions
 func registerUserRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	users := rg.Group("users")
-	users.POST("reset-password", s.resetPasswdHandler)
+	{
+		users.POST("reset-password", s.resetPasswdHandler)
+	}
 }
 
 func (s *APIV1Service) resetPasswdHandler(c *gin.Context) {

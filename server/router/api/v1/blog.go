@@ -16,13 +16,17 @@ import (
 // registerBlogRoutes handles posts display
 func registerBlogRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	posts := rg.Group("posts")
-	posts.GET("", s.blogPostsHandler)
-	posts.GET(":slug", s.getBlogPostBySlugHandler)
-	posts.GET("tags", s.blogTagsHandler)
+	{
+		posts.GET("", s.blogPostsHandler)
+		posts.GET(":slug", s.getBlogPostBySlugHandler)
+		posts.GET("tags", s.blogTagsHandler)
+	}
 
 	archives := posts.Group("archives")
-	archives.GET("", s.archivesHandler)
-	archives.GET(":year", s.archiveYearHandler)
+	{
+		archives.GET("", s.archivesHandler)
+		archives.GET(":year", s.archiveYearHandler)
+	}
 }
 
 // blogPostsHandler display posts

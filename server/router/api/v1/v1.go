@@ -47,13 +47,6 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 		ServerErrorLevel: slog.LevelError,
 	}))
 
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"}, // Add your frontend URL
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
-		AllowHeaders:     []string{"Accept", "Authorization", "Content-Type"},
-		AllowCredentials: true, // Enable cookies/auth
-	}))
-
 	if !s.config.IsProduction {
 		// Publish the number of active goroutines.
 		expvar.Publish("goroutines", expvar.Func(func() any {
@@ -63,17 +56,22 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 		expvar.Publish("timestamp", expvar.Func(func() any {
 			return time.Now().Unix()
 		}))
+		r.Use(cors.New(cors.Config{
+			AllowOrigins:     []string{"http://localhost:3001"},
+			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
+			AllowHeaders:     []string{"Accept", "Authorization", "Content-Type"},
+			AllowCredentials: true,
+		}))
+
 		r.GET("debug/vars", ginexp.Handler())
 	}
-	r.NoMethod(func(c *gin.Context) {
-		c.JSON(http.StatusMethodNotAllowed, gin.H{"error": "Method not allowed"})
-	})
+
 	r.GET("robots.txt", func(c *gin.Context) {
 		siteMapURL := fmt.Sprintf("%s/sitemap.xml", s.config.Blog.URL)
 		robotsContent := []byte("User-agent: *\nAllow: /\nSitemap: " + siteMapURL)
 		_, err := c.Writer.Write(robotsContent)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.String(http.StatusInternalServerError, err.Error())
 			return
 		}
 	})
@@ -88,9 +86,8 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 		c.JSON(http.StatusOK, gin.H{"message": "OK"})
 	})
 
-	registerBlogRoutes(v1, s)
-
 	//api routes
+	registerBlogRoutes(v1, s)
 	registerAuthRoutes(v1, s)
 
 	//server the frontend
