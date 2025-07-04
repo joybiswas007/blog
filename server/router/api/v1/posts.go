@@ -14,13 +14,15 @@ import (
 // registerPostRoutes handles CRUD for posts, protected by auth
 func registerPostRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	posts := rg.Group("posts")
-	posts.Use(s.checkJWT())
-	posts.GET("", s.postsHandler)
-	posts.GET(":id", s.getPostByIDHandler)
-	posts.POST("", s.createPostHandler)
-	posts.PATCH(":id", s.updatePostHandler)
-	posts.DELETE(":id", s.deletePostHandler)
-	posts.POST("publish/:id", s.publishDraftHandler)
+	{
+		posts.Use(s.checkJWT())
+		posts.GET("", s.postsHandler)
+		posts.GET(":id", s.getPostByIDHandler)
+		posts.POST("", s.createPostHandler)
+		posts.PATCH(":id", s.updatePostHandler)
+		posts.DELETE(":id", s.deletePostHandler)
+		posts.POST("publish/:id", s.publishDraftHandler)
+	}
 }
 
 func (s *APIV1Service) postsHandler(c *gin.Context) {

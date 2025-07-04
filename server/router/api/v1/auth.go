@@ -10,18 +10,20 @@ import (
 // registerAuthRoutes registers the routes related to authentication
 func registerAuthRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	auth := rg.Group("auth")
-	auth.POST("login", s.loginHandler)
-	auth.POST("refresh", s.refreshTokenHandler)
+	{
+		auth.POST("login", s.loginHandler)
+		auth.POST("refresh", s.refreshTokenHandler)
 
-	auth.Use(s.checkJWT())
-	auth.GET("status", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "OK"})
-	})
+		auth.Use(s.checkJWT())
+		auth.GET("status", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{"message": "OK"})
+		})
 
-	registerUserRoutes(auth, s)
+		registerUserRoutes(auth, s)
 
-	//this route is only being used to securely manage the posts
-	registerPostRoutes(auth, s)
+		//this route is only being used to securely manage the posts
+		registerPostRoutes(auth, s)
+	}
 }
 
 func (s *APIV1Service) loginHandler(c *gin.Context) {

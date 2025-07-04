@@ -1,5 +1,5 @@
 # Frontend build stage
-FROM node:lts-alpine3.21 AS frontend
+FROM node:lts-alpine AS frontend
 WORKDIR /frontend-build
 COPY web/package.json web/package-lock.json ./
 RUN npm install
@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/gomod-cache --mount=type=cache,target=/go-cache \
 
 FROM alpine:latest AS runtime
 WORKDIR /app
-RUN apk add --no-cache tzdata
+RUN apk add --no-cache tzdata curl
 ENV TZ="UTC"
 COPY --from=backend /backend-build/blog /app/blog
 ENTRYPOINT [ "/app/blog" ]

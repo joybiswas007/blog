@@ -54,7 +54,7 @@ You can run the blog with Docker or manually.
    ```
 - Ensure `.blog.yaml` is in your working directory and mounted into the container.
 - Access the blog at [http://localhost:8080](http://localhost:8080).
-- Login to access the dashboard at [http://localhost:3001/login](http://localhost:3001/login).
+- Login to access the dashboard at [http://localhost:8080/login](http://localhost:8080/login).
 
 ---
 
