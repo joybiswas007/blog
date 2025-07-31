@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	cache "github.com/chenyahui/gin-cache"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/feeds"
 	"github.com/joybiswas007/blog/internal/database"
@@ -17,15 +18,15 @@ import (
 func registerBlogRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	posts := rg.Group("posts")
 	{
-		posts.GET("", s.blogPostsHandler)
-		posts.GET(":slug", s.getBlogPostBySlugHandler)
-		posts.GET("tags", s.blogTagsHandler)
+		posts.GET("", cache.CacheByRequestURI(s.redisStore, 10*time.Minute), s.blogPostsHandler)
+		posts.GET(":slug", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.getBlogPostBySlugHandler)
+		posts.GET("tags", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.blogTagsHandler)
 	}
 
 	archives := posts.Group("archives")
 	{
-		archives.GET("", s.archivesHandler)
-		archives.GET(":year", s.archiveYearHandler)
+		archives.GET("", cache.CacheByRequestURI(s.redisStore, 1*time.Hour), s.archivesHandler)
+		archives.GET(":year", cache.CacheByRequestURI(s.redisStore, 1*time.Hour), s.archiveYearHandler)
 	}
 }
 
