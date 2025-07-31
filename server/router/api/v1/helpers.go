@@ -2,12 +2,16 @@ package v1
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
+	"log"
+	"maps"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/yuin/goldmark"
@@ -61,7 +65,7 @@ func getBearerToken(c *gin.Context) (string, error) {
 
 // generateJWT creates a signed JSON Web Token (JWT) with the provided data as claims.
 // The token is signed using the provided secret key and the HS256 (HMAC-SHA256) algorithm.
-func generateJWT(data map[string]interface{}, secretKey string) (string, error) {
+func generateJWT(data map[string]any, secretKey string) (string, error) {
 	// Create a new JWT token using the HS256 (HMAC-SHA256) signing method.
 	t := jwt.New(jwt.SigningMethodHS256)
 
@@ -69,9 +73,7 @@ func generateJWT(data map[string]interface{}, secretKey string) (string, error) 
 	claims := t.Claims.(jwt.MapClaims)
 
 	// Add the provided key-value pairs to the token's claims.
-	for key, value := range data {
-		claims[key] = value
-	}
+	maps.Copy(claims, data)
 
 	// Sign the token using the provided secret key.
 	token, err := t.SignedString([]byte(secretKey))
@@ -84,7 +86,7 @@ func generateJWT(data map[string]interface{}, secretKey string) (string, error) 
 
 // parseJWT parses a JWT token and validates it, returning the claims if valid.
 func parseJWT(tokenString, secretKey string) (jwt.MapClaims, error) {
-	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
 		// Ensure the signing method is HMAC
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
@@ -218,4 +220,38 @@ func MarkdownToHTML(content string) string {
 		return fmt.Sprintf("<div class='error'>Error rendering markdown: %v</div>", err)
 	}
 	return buf.String()
+}
+
+// deleteCacheKey invalidates cached data for blog posts, tags, and archives by deleting matching keys from Redis.
+func deleteCacheKey(cacheStore *persist.RedisStore) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	patterns := []string{
+		"/api/v1/posts*",           // All post lists
+		"/api/v1/posts/tags",       // Single tag key
+		"/api/v1/posts/archives",   // Single archive key
+		"/api/v1/posts/archives/*", // All archive keys
+	}
+
+	for _, pattern := range patterns {
+		// For pattern keys, use SCAN
+		var cursor uint64
+		for {
+			keys, nextCursor, err := cacheStore.RedisClient.Scan(ctx, cursor, pattern, 100).Result()
+			if err != nil {
+				log.Printf("Scan error for pattern %s: %v", pattern, err)
+				break
+			}
+			if len(keys) > 0 {
+				if err := cacheStore.RedisClient.Del(ctx, keys...).Err(); err != nil {
+					log.Printf("Failed to delete keys %v: %v", keys, err)
+				}
+			}
+			cursor = nextCursor
+			if cursor == 0 {
+				break
+			}
+		}
+	}
 }

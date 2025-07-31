@@ -26,6 +26,9 @@ Follow these steps to set up the project for development or production.
    migrate -path=./migrations -database="postgres://bloguser:yourpassword@localhost:5432/blogdb?sslmode=disable" down
    ```
 
+## Redis
+Make sure to redis is already installed and setuped as we're using redis for cacheing.
+
 ---
 
 ## 2. Installation

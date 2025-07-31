@@ -17,6 +17,7 @@ type Config struct {
 	RateLimiter  RateLimiter `mapstructure:"rate_limiter" validate:"required"` // Rate limiter configuration
 	IsProduction bool        `mapstructure:"is_production"`                    // Indicates if the application is running in production mode (true) or development mode (false)
 	Blog         Blog        `mapstructure:"blog" validate:"required"`         // Blog configuration
+	Redis        Redis       `mapstructure:"redis" validate:"required"`        // Redis config
 }
 
 // JWT holds configuration related to JSON Web Tokens.
@@ -36,6 +37,12 @@ type RateLimiter struct {
 type Blog struct {
 	Name string `mapstructure:"name" validate:"required"` // Name of the blog
 	URL  string `mapstructure:"url" validate:"required"`  // URL of the blog i.e: http(s)://sitename.com
+}
+
+type Redis struct {
+	Address  string `mapstructure:"address" validate:"required"`  // Redis server address (IP or hostname)
+	Username string `mapstructure:"username" validate:"required"` // Redis ACL username (if any)
+	Password string `mapstructure:"password" validate:"required"` // Redis password
 }
 
 // Init reads in config file and ENV variables if set.

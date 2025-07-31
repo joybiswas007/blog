@@ -1,16 +1,20 @@
 package v1
 
 import (
+	"context"
 	"expvar"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"runtime"
 	"time"
 
+	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-contrib/cors"
 	ginexp "github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/joybiswas007/blog/config"
 	"github.com/joybiswas007/blog/internal/database"
 	"github.com/joybiswas007/blog/server/router/frontend"
@@ -18,9 +22,10 @@ import (
 )
 
 type APIV1Service struct {
-	config config.Config
-	logger *slog.Logger
-	db     database.Models
+	config     config.Config
+	logger     *slog.Logger
+	db         database.Models
+	redisStore *persist.RedisStore
 }
 
 func NewAPIV1Service(cfg config.Config, logger *slog.Logger, db database.Models) *APIV1Service {
@@ -39,6 +44,27 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 	if s.config.IsProduction {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	redisOptions := &redis.Options{
+		Addr:     s.config.Redis.Address,
+		Username: s.config.Redis.Username,
+		Password: s.config.Redis.Password,
+	}
+
+	redisStore := persist.NewRedisStore(redis.NewClient(redisOptions))
+
+	s.redisStore = redisStore
+
+	//create a 3 second context for redis
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	redisPing, err := s.redisStore.RedisClient.Ping(ctx).Result()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Redis ping:", redisPing)
 
 	r.Use(sloggin.NewWithConfig(s.logger, sloggin.Config{
 		WithUserAgent:    true,

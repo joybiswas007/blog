@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/joybiswas007/blog/internal/database"
 )
 
@@ -18,8 +17,8 @@ func registerUserRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 
 func (s *APIV1Service) resetPasswdHandler(c *gin.Context) {
 	var input struct {
-		Email    string `json:"email" validate:"required,email"`
-		Password string `json:"password" validate:"required,min=8,max=72"`
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required,min=8,max=72"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -27,12 +26,6 @@ func (s *APIV1Service) resetPasswdHandler(c *gin.Context) {
 		return
 	}
 
-	validate := validator.New(validator.WithRequiredStructEnabled())
-
-	if err := validate.Struct(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
 	uid := c.GetFloat64("user_id")
 	if uid == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": ErrNotEnoughPerm})

@@ -129,6 +129,9 @@ func (s *APIV1Service) createPostHandler(c *gin.Context) {
 		return
 	}
 
+	// delete cache keys after creating new posts
+	deleteCacheKey(s.redisStore)
+
 	// Respond with a success message
 	c.JSON(http.StatusCreated, gin.H{"message": "Post created successfully!", "post": createdPost})
 }
@@ -159,6 +162,9 @@ func (s *APIV1Service) updatePostHandler(c *gin.Context) {
 		return
 	}
 
+	//delete all other cache key
+	deleteCacheKey(s.redisStore)
+
 	updatedPost, err := s.db.Posts.Get(pid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -184,6 +190,8 @@ func (s *APIV1Service) deletePostHandler(c *gin.Context) {
 		return
 	}
 
+	deleteCacheKey(s.redisStore)
+
 	c.JSON(http.StatusOK, gin.H{"message": "Post deleted successfully!"})
 }
 
@@ -206,6 +214,9 @@ func (s *APIV1Service) publishDraftHandler(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
+		//delete cache keys
+		deleteCacheKey(s.redisStore)
+
 		c.JSON(http.StatusOK, gin.H{"message": "Post published successfully"})
 		return
 	}

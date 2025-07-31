@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 // registerAuthRoutes registers the routes related to authentication
@@ -28,18 +27,11 @@ func registerAuthRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 
 func (s *APIV1Service) loginHandler(c *gin.Context) {
 	var input struct {
-		Email    string `json:"email" validate:"required,email"`
-		Password string `json:"password" validate:"required"`
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	validate := validator.New(validator.WithRequiredStructEnabled())
-
-	if err := validate.Struct(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

@@ -22,3 +22,10 @@ is_production: true
 blog:
   name: "A name for your blog"          # Blog title
   url: "https://sitename.com"          # Full blog URL
+
+# Redis for cacheing
+redis:
+  address: 127.0.0.1:6379
+  username: username
+  password: password
+
