@@ -84,7 +84,7 @@ const Post = () => {
           <h1 className="text-2xl text-[var(--color-text-primary)] font-heading">
             {post.title}
           </h1>
-          <div className="text-[var(--color-text-secondary)] text-sm flex flex-wrap gap-3 items-center font-mono">
+          <div className="text-[var(--color-text-primary)] text-sm flex flex-wrap gap-3 items-center font-mono">
             <time>{formatDate(post.created_at)}</time>
             <span>|</span>
             <span>{CalculateReadTime(post.content)}</span>

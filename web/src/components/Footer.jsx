@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const Footer = ({ authorName, sourceCode }) => {
   return (
     <footer className="w-full py-6 mt-8 bg-transparent">
-      <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between px-4 text-sm text-[var(--color-text-secondary)] font-mono">
+      <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between px-4 text-sm text-[var(--color-text-primary)] font-mono">
         <div className="flex items-center gap-2">
           <span>
             &copy; {new Date().getFullYear()} {authorName}

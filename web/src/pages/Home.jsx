@@ -90,7 +90,7 @@ const Home = () => {
       <div className="space-y-8 w-full max-w-3xl font-sans">
         {/* Sorting controls */}
         <div className="flex justify-start items-center space-x-4 pl-4 ml-2">
-          <p className="text-[var(--color-text-secondary)] text-sm">Sort by:</p>
+          <p className="text-[var(--color-text-primary)] text-sm">Sort by:</p>
           {SORT_OPTIONS.map(opt => (
             <Link
               key={opt.label}
@@ -135,7 +135,7 @@ const Home = () => {
                     {post.title}
                   </Link>
                 </div>
-                <div className="ml-4 mt-1 text-[var(--color-text-secondary)] text-xs flex flex-wrap gap-2 items-center font-mono">
+                <div className="ml-4 mt-1 text-[var(--color-text-primary)] text-xs flex flex-wrap gap-2 items-center font-mono">
                   <time>{formatDate(post.created_at)}</time>
                   <span>|</span>
                   <span>{CalculateReadTime(post.content)}</span>
