@@ -13,6 +13,8 @@ import Archives from "./pages/Archives";
 import ArchiveByYear from "./pages/ArchiveByYear";
 import About from "./pages/About";
 import NotFound from "./components/NotFound";
+import Tools from "./pages/Tools";
+import Sessions from "./components/Sessions";
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
             <Route path="/auth/posts/create" element={<CreatePost />} />
             <Route path="/auth/posts/:id/edit" element={<EditPost />} />
             <Route path="/auth/reset-password" element={<ResetPassword />} />
+            <Route path="/auth/tools" element={<Tools />} />
+            <Route path="/auth/tools/sessions" element={<Sessions />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

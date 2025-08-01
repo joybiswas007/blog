@@ -13,6 +13,7 @@ import (
 // Define the UserModel type.
 type UserModel struct {
 	DB *pgxpool.Pool
+	IP IPModel
 }
 
 // Define a User struct to represent an individual user. Importantly, notice how we are

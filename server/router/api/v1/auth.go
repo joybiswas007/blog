@@ -1,9 +1,13 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
+	"github.com/joybiswas007/blog/internal/database"
 )
 
 // registerAuthRoutes registers the routes related to authentication
@@ -17,6 +21,7 @@ func registerAuthRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 		auth.GET("status", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"message": "OK"})
 		})
+		auth.GET("sessions", s.fetchSessionsHandler)
 
 		registerUserRoutes(auth, s)
 
@@ -56,6 +61,12 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 	accessToken, refreshToken, err := generateTokens(user.ID, s)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = s.handleIPHistoryOnLogin(user.ID, c.ClientIP())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -103,4 +114,70 @@ func (s *APIV1Service) refreshTokenHandler(c *gin.Context) {
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
 	})
+}
+
+// handleIPHistoryOnLogin manages IP history when user logs in
+func (s *APIV1Service) handleIPHistoryOnLogin(userID int64, currentIP string) error {
+	// Get the user's most recent active IP session
+	activeSession, err := s.db.Users.IP.GetActiveSessionByUserID(userID)
+	if err != nil {
+		// If no active session found, create a new one
+		if errors.Is(err, database.ErrRecordNotFound) {
+			return s.db.Users.IP.CreateHistory(userID, currentIP)
+		}
+		return err
+	}
+
+	// If user is logging in from the same IP as their active session, do nothing
+	if activeSession.IP == currentIP {
+		return nil
+	}
+
+	// User is logging in from a different IP
+	// Close the previous session and create a new one
+	err = s.db.Users.IP.CloseActiveSession(userID, activeSession.IP)
+	if err != nil {
+		return err
+	}
+	// Create new IP history record for the current IP
+	return s.db.Users.IP.CreateHistory(userID, currentIP)
+}
+
+func (s *APIV1Service) fetchSessionsHandler(c *gin.Context) {
+	limitStr := c.DefaultQuery("limit", "10")
+	offsetStr := c.DefaultQuery("offset", "0")
+
+	uid := c.GetFloat64("user_id")
+	if uid == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrNotEnoughPerm})
+		return
+	}
+
+	limit, err := strconv.ParseInt(limitStr, 10, 64)
+	if err != nil {
+		s.logger.Error(err.Error())
+		limit = 10
+	}
+
+	offset, err := strconv.ParseInt(offsetStr, 10, 64)
+	if err != nil {
+		s.logger.Error(err.Error())
+		offset = 0
+	}
+
+	iphistory, totalCount, err := s.db.Users.IP.GetAllIPHistory(int64(uid), limit, offset)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": database.ErrRecordNotFound})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"sessions": gin.H{
+			"history":     iphistory,
+			"total_count": totalCount,
+		}})
 }
