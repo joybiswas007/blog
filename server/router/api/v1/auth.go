@@ -61,7 +61,6 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":       "Login successfull!",
-		"user":          user,
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
 	})
