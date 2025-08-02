@@ -27,7 +27,7 @@ Follow these steps to set up the project for development or production.
    ```
 
 ## Redis
-Make sure to redis is already installed and setuped as we're using redis for cacheing.
+Make sure redis is already installed and setuped as we're using redis for cacheing.
 
 ---
 

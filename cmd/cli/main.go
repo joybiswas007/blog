@@ -4,12 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"math/rand"
 	"strings"
-	"time"
 
 	"github.com/joybiswas007/blog/config"
 	"github.com/joybiswas007/blog/internal/database"
+	"github.com/joybiswas007/blog/pkg"
 )
 
 // application represents the configuration for the blog application
@@ -119,7 +118,7 @@ func main() {
 	}
 
 	if app.password.password == "" {
-		app.password.password = generatePassword(30, true, true, true)
+		app.password.password = pkg.GeneratePassword(30, true, true, true)
 	}
 
 	if app.password.reset {
@@ -169,42 +168,4 @@ func main() {
 	fmt.Println("Email: " + app.email)
 	fmt.Println("Password: " + app.password.password)
 	fmt.Println("Use the ^^ creds for login")
-}
-
-const (
-	letterBytes  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	specialBytes = "!@#$%^&*()-_=+,.?/:;{}[]~"
-	numBytes     = "0123456789"
-)
-
-// generatePassword creates a random password with specified character sets.
-// Parameters:
-//   - length:      Desired password length
-//   - useLetters:  Include alphabetic characters
-//   - useSpecial:  Include special characters
-//   - useNum:      Include numeric characters
-func generatePassword(length int, useLetters, useSpecial, useNum bool) string {
-	rand.NewSource(time.Now().UnixNano())
-
-	var charPool string
-	if useLetters {
-		charPool += letterBytes
-	}
-	if useSpecial {
-		charPool += specialBytes
-	}
-	if useNum {
-		charPool += numBytes
-	}
-
-	// Fallback if no character sets are selected
-	if charPool == "" {
-		charPool = letterBytes + numBytes // Default to letters+numbers
-	}
-
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = charPool[rand.Intn(len(charPool))]
-	}
-	return string(b)
 }

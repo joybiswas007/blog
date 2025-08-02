@@ -1,9 +1,12 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
 	"github.com/joybiswas007/blog/internal/database"
 )
 
@@ -11,6 +14,7 @@ import (
 func registerUserRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	users := rg.Group("users")
 	{
+		users.GET("sessions", s.sessionsHandler)
 		users.POST("reset-password", s.resetPasswdHandler)
 	}
 }
@@ -58,4 +62,44 @@ func (s *APIV1Service) resetPasswdHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Password updated successfully!"})
+}
+
+// sessionsHandler fetches users serssions
+func (s *APIV1Service) sessionsHandler(c *gin.Context) {
+	limitStr := c.DefaultQuery("limit", "10")
+	offsetStr := c.DefaultQuery("offset", "0")
+
+	uid := c.GetFloat64("user_id")
+	if uid == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrNotEnoughPerm})
+		return
+	}
+
+	limit, err := strconv.ParseInt(limitStr, 10, 64)
+	if err != nil {
+		s.logger.Error(err.Error())
+		limit = 10
+	}
+
+	offset, err := strconv.ParseInt(offsetStr, 10, 64)
+	if err != nil {
+		s.logger.Error(err.Error())
+		offset = 0
+	}
+
+	iphistory, totalCount, err := s.db.Users.IP.GetAllIPHistory(int64(uid), limit, offset)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": database.ErrRecordNotFound})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"sessions": gin.H{
+			"history":     iphistory,
+			"total_count": totalCount,
+		}})
 }

@@ -39,7 +39,8 @@ func NewAPIV1Service(cfg config.Config, logger *slog.Logger, db database.Models)
 func (s *APIV1Service) RegisterRoutes() http.Handler {
 	r := gin.Default()
 
-	r.Use(s.rateLimiter())
+	r.Use(s.CheckIP())
+	r.Use(s.RateLimiter())
 
 	if s.config.IsProduction {
 		gin.SetMode(gin.ReleaseMode)

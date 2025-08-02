@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joybiswas007/blog/pkg"
 	"golang.org/x/time/rate"
 )
 
@@ -13,7 +14,7 @@ import (
 // Ensures the "Authorization" header exists and is in "Bearer <token>" format.
 // Verifies the token signature, expiration, and required claims (user_id).
 // Cross-checks the token's user_id against the database for validity.
-func (s *APIV1Service) checkJWT() gin.HandlerFunc {
+func (s *APIV1Service) CheckJWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token, err := getBearerToken(c)
 		if err != nil {
@@ -60,7 +61,7 @@ func (s *APIV1Service) checkJWT() gin.HandlerFunc {
 
 // rateLimiter returns a Gin middleware function for rate limiting requests.
 // It uses a token bucket algorithm to limit the number of requests allowed per client.
-func (s *APIV1Service) rateLimiter() gin.HandlerFunc {
+func (s *APIV1Service) RateLimiter() gin.HandlerFunc {
 	// Create a new rate limiter that allows 1 request per second with a burst capacity of 10.
 	// The burst capacity allows short-term spikes in traffic up to 10 requests.
 	limiter := rate.NewLimiter(rate.Limit(s.config.RateLimiter.Rate), s.config.RateLimiter.Burst)
@@ -75,6 +76,35 @@ func (s *APIV1Service) rateLimiter() gin.HandlerFunc {
 		}
 
 		// If the request is allowed, proceed to the next handler in the chain.
+		c.Next()
+	}
+}
+
+// CheckIP returns a Gin middleware handler that checks if the client's IP address is banned.
+// If banned, it aborts the request with a forbidden error response using AbortWithError.
+// If an internal error occurs during the check, it aborts with an internal server error.
+// Otherwise, it calls c.Next() to proceed with the handler chain.
+// This middleware should be used to protect routes from banned IPs.
+func (s *APIV1Service) CheckIP() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Convert client's IP to int64 for ban range checking.
+		ipInt := pkg.IpToInt64(c.ClientIP())
+
+		// Check if the IP is banned using the database model.
+		isBanned, _, err := s.db.Users.IP.IsBanned(ipInt)
+		if err != nil {
+			// Abort on internal errors (e.g., DB connection issues).
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		// If banned, abort with forbidden error and message.
+		if isBanned {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Your ip has been banned!"})
+			return
+		}
+
+		// IP is not banned; proceed to the next handler.
 		c.Next()
 	}
 }

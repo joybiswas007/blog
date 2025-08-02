@@ -15,7 +15,6 @@ import (
 func registerPostRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	posts := rg.Group("posts")
 	{
-		posts.Use(s.checkJWT())
 		posts.GET("", s.postsHandler)
 		posts.GET(":id", s.getPostByIDHandler)
 		posts.POST("", s.createPostHandler)

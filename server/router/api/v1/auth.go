@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"github.com/joybiswas007/blog/internal/database"
+	"github.com/joybiswas007/blog/pkg"
 )
 
 // registerAuthRoutes registers the routes related to authentication
@@ -17,11 +18,17 @@ func registerAuthRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 		auth.POST("login", s.loginHandler)
 		auth.POST("refresh", s.refreshTokenHandler)
 
-		auth.Use(s.checkJWT())
+		auth.Use(s.CheckJWT())
 		auth.GET("status", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"message": "OK"})
 		})
-		auth.GET("sessions", s.fetchSessionsHandler)
+
+		ip := auth.Group("ip")
+		{
+			ip.POST("ban", s.banIPHandler)
+			ip.POST("unban/:id", s.unbanIPHandler)
+			ip.GET("ban-lists", s.bannedIPLists)
+		}
 
 		registerUserRoutes(auth, s)
 
@@ -143,15 +150,41 @@ func (s *APIV1Service) handleIPHistoryOnLogin(userID int64, currentIP string) er
 	return s.db.Users.IP.CreateHistory(userID, currentIP)
 }
 
-func (s *APIV1Service) fetchSessionsHandler(c *gin.Context) {
-	limitStr := c.DefaultQuery("limit", "10")
-	offsetStr := c.DefaultQuery("offset", "0")
+// banIPHandler ban IPAddresses
+func (s *APIV1Service) banIPHandler(c *gin.Context) {
+	var input struct {
+		FromIP string `json:"from_ip" binding:"required,ip"`
+		ToIP   string `json:"to_ip" binding:"required,ip"`
+		Reason string `json:"reason" binding:"required"`
+	}
 
-	uid := c.GetFloat64("user_id")
-	if uid == 0 {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrNotEnoughPerm})
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	ban := &database.IPBan{
+		FromIP: pkg.IpToInt64(input.FromIP),
+		ToIP:   pkg.IpToInt64(input.ToIP),
+		Reason: input.Reason,
+	}
+
+	err := s.db.Users.IP.Ban(ban)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "IP has been banned!"})
+}
+
+func (s *APIV1Service) unbanIPHandler(c *gin.Context) {
+
+}
+
+func (s *APIV1Service) bannedIPLists(c *gin.Context) {
+	limitStr := c.DefaultQuery("limit", "25")
+	offsetStr := c.DefaultQuery("offset", "0")
 
 	limit, err := strconv.ParseInt(limitStr, 10, 64)
 	if err != nil {
@@ -165,19 +198,16 @@ func (s *APIV1Service) fetchSessionsHandler(c *gin.Context) {
 		offset = 0
 	}
 
-	iphistory, totalCount, err := s.db.Users.IP.GetAllIPHistory(int64(uid), limit, offset)
+	lists, totalCount, err := s.db.Users.IP.GetIPBansList(limit, offset)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": database.ErrRecordNotFound})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "IP Bans List is Empty!"})
 			return
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"sessions": gin.H{
-			"history":     iphistory,
-			"total_count": totalCount,
-		}})
+	c.JSON(http.StatusOK, gin.H{"lists": lists, "total_count": totalCount})
+
 }
