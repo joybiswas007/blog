@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "@/services/api";
 
-// Blog-style, table layout for Sessions
 const Sessions = () => {
   const { VITE_BLOG_NAME: blogName } = import.meta.env;
   const [sessions, setSessions] = useState([]);

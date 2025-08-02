@@ -1,13 +1,8 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Tools = () => {
   const { VITE_BLOG_NAME: blogName } = import.meta.env;
   const pageTitle = `Tools :: ${blogName}`;
-
-  useEffect(() => {
-    document.title = pageTitle;
-  }, [pageTitle]);
 
   const tools = [
     {
@@ -19,22 +14,12 @@ const Tools = () => {
       name: "IP Ban",
       path: "/auth/tools/ip-bans",
       desc: "Ban IPs or view banned IPs."
-    },
-    { name: "Logs", path: "/auth/tools/logs", desc: "Review system logs." },
-    {
-      name: "Backups",
-      path: "/auth/tools/backups",
-      desc: "Manage and restore backups."
-    },
-    {
-      name: "Settings",
-      path: "/auth/tools/settings",
-      desc: "Site & admin settings."
     }
   ];
 
   return (
     <div className="flex justify-center w-full">
+      <title>{pageTitle}</title>
       <div className="w-full max-w-3xl px-4 py-4 space-y-8">
         {/* Header with Dashboard Link */}
         <div className="flex items-center justify-between mb-6">
