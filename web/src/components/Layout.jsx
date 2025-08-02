@@ -11,7 +11,7 @@ export default function Layout({ children }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header blogName={blogName} />
-      <main className="flex-1 mx-auto w-full max-w-3xl py-8 px-4 prose">
+      <main className="flex-1 mx-auto w-full max-w-3xl py-4 px-4 prose">
         {children}
       </main>
       <Footer authorName={author} sourceCode={sourceCode} />

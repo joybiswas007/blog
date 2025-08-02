@@ -9,10 +9,13 @@ import {
   FiLogOut,
   FiKey,
   FiPlus,
-  FiSend
+  FiSend,
+  FiTool
 } from "react-icons/fi";
 
 const Dashboard = () => {
+  const { VITE_BLOG_NAME: blogName } = import.meta.env;
+
   const [posts, setPosts] = useState([]);
   const [totalPosts, setTotalPosts] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -85,15 +88,24 @@ const Dashboard = () => {
     }
   };
 
+  const pageTitle = `Dashboard :: ${blogName}`;
   return (
     <div className="flex justify-center w-full">
-      <title>Dashboard</title>
+      <title>{pageTitle}</title>
       <div className="space-y-8 w-full max-w-3xl">
         {/* Top actions bar */}
         <div className="flex justify-center items-center gap-4 pl-4 ml-2">
           <Link
+            to="/auth/tools"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded font-medium font-mono text-blue-300 hover:text-blue-200 text-white text-sm transition-colors"
+          >
+            <FiTool className="w-5 h-5" />
+            Toolbox
+          </Link>
+
+          <Link
             to="/auth/posts/create"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded font-medium font-mono bg-blue-700 hover:bg-blue-700 text-white text-sm transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded font-medium font-mono text-blue-300 hover:text-blue-200 text-white text-sm transition-colors"
           >
             <FiPlus className="w-5 h-5" />
             New Post
