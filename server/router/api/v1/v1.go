@@ -39,7 +39,9 @@ func NewAPIV1Service(cfg config.Config, logger *slog.Logger, db database.Models)
 func (s *APIV1Service) RegisterRoutes() http.Handler {
 	r := gin.Default()
 
-	r.Use(s.CheckIP())
+	if s.config.IsProduction {
+		r.Use(s.CheckIP())
+	}
 	r.Use(s.RateLimiter())
 
 	if s.config.IsProduction {
@@ -92,16 +94,6 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 
 		r.GET("debug/vars", ginexp.Handler())
 	}
-
-	r.GET("robots.txt", func(c *gin.Context) {
-		siteMapURL := fmt.Sprintf("%s/sitemap.xml", s.config.Blog.URL)
-		robotsContent := []byte("User-agent: *\nAllow: /\nSitemap: " + siteMapURL)
-		_, err := c.Writer.Write(robotsContent)
-		if err != nil {
-			c.String(http.StatusInternalServerError, err.Error())
-			return
-		}
-	})
 	r.GET("rss.xml", s.rssHandler)
 	r.GET("sitemap.xml", s.siteMapHandler)
 

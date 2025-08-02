@@ -2,13 +2,20 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "@/services/api";
 
+// Blog-style, table layout for Sessions
 const Sessions = () => {
+  const { VITE_BLOG_NAME: blogName } = import.meta.env;
   const [sessions, setSessions] = useState([]);
   const [totalSessions, setTotalSessions] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const sessionsPerPage = 10;
+
+  useEffect(() => {
+    fetchSessions(1);
+    // eslint-disable-next-line
+  }, []);
 
   const fetchSessions = async (page = 1) => {
     try {
@@ -29,10 +36,6 @@ const Sessions = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchSessions(1);
-  }, []);
 
   const formatDateTime = timestamp => {
     if (!timestamp) return "Active";
@@ -80,179 +83,155 @@ const Sessions = () => {
     return pages;
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center w-full min-h-screen bg-[var(--color-background-primary)]">
-        <div className="w-full max-w-3xl px-4 py-6">
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl text-blue-300 font-heading">Sessions</h1>
-            <Link
-              to="/auth/tools"
-              className="px-4 py-2 bg-blue-900/20 hover:bg-blue-900/30 text-blue-400 hover:text-blue-300 border border-blue-800 hover:border-blue-700 rounded-lg transition-colors font-mono text-sm"
-            >
-              ← Back to Tools
-            </Link>
-          </div>
-          <div className="text-center text-[var(--color-text-secondary)] font-mono">
-            Loading sessions...
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const pageTitle = `Sessions :: ${blogName}`;
 
   return (
-    <div className="flex justify-center w-full min-h-screen bg-[var(--color-background-primary)]">
-      <div className="w-full max-w-3xl px-4 py-6">
+    <div className="flex justify-center w-full">
+      <title>{pageTitle}</title>
+      <div className="w-full max-w-3xl px-4 py-4 space-y-8">
         {/* Header with Back to Tools Link */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl text-blue-300 font-heading">Sessions</h1>
+            <h1 className="text-2xl font-heading text-blue-300">Sessions</h1>
             <p className="text-[var(--color-text-secondary)] font-mono text-sm mt-1">
               Total: {totalSessions} sessions
             </p>
           </div>
           <Link
             to="/auth/tools"
-            className="px-4 py-2 bg-blue-900/20 hover:bg-blue-900/30 text-blue-400 hover:text-blue-300 border border-blue-800 hover:border-blue-700 rounded-lg transition-colors font-mono text-sm"
+            className="inline-flex items-center px-4 py-2 text-sm font-mono font-medium text-[var(--color-text-secondary)] hover:text-blue-400 transition-colors duration-200"
           >
-            ← Back to Tools
+            <span className="text-blue-500 mr-2 text-lg">←</span>
+            Back to Tools
           </Link>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-900/20 border border-red-800 rounded-lg">
-            <p className="text-red-400 font-mono text-sm">{error}</p>
+          <div className="p-4 rounded-lg bg-blue-500/10 text-blue-400 font-mono border border-blue-500/30 mb-4">
+            {error}
           </div>
         )}
 
-        {/* Sessions List */}
-        {sessions.length === 0 && !error ? (
-          <div className="text-center py-12">
-            <p className="text-[var(--color-text-secondary)] font-mono text-lg">
-              No sessions found
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="space-y-4 mb-8">
-              {sessions &&
+        {/* Sessions Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full bg-[var(--color-background-primary)] border border-[var(--color-border-primary)] rounded-lg font-mono text-sm">
+            <thead>
+              <tr>
+                <th className="py-2 px-3 text-left text-xs text-blue-300 font-heading border-b border-[var(--color-border-primary)]">
+                  IP Address
+                </th>
+                <th className="py-2 px-3 text-left text-xs text-blue-300 font-heading border-b border-[var(--color-border-primary)]">
+                  Started
+                </th>
+                <th className="py-2 px-3 text-left text-xs text-blue-300 font-heading border-b border-[var(--color-border-primary)]">
+                  Status
+                </th>
+                <th className="py-2 px-3 text-left text-xs text-blue-300 font-heading border-b border-[var(--color-border-primary)]">
+                  Ended
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="py-8 text-center text-blue-400 font-heading"
+                  >
+                    Loading sessions…
+                  </td>
+                </tr>
+              ) : sessions.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="py-8 text-center text-[var(--color-text-secondary)]"
+                  >
+                    No sessions found.
+                  </td>
+                </tr>
+              ) : (
                 sessions.map((session, index) => (
-                  <div
+                  <tr
                     key={index}
-                    className="p-4 bg-blue-900/20 border border-blue-800 rounded-lg hover:bg-blue-900/30 hover:border-blue-700 transition-colors"
+                    className="border-b border-[var(--color-border-primary)] hover:bg-blue-900/20 transition-colors"
                   >
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      {/* <div> */}
-                      {/*   <span className="text-[var(--color-text-secondary)] text-xs font-mono uppercase tracking-wide"> */}
-                      {/*     User ID */}
-                      {/*   </span> */}
-                      {/*   <p className="text-blue-400 font-mono text-sm mt-1"> */}
-                      {/*     {session.user_id} */}
-                      {/* </p> */}
-                      {/* </div> */}
-
-                      {/* IP Address */}
-                      <div>
-                        <span className="text-[var(--color-text-secondary)] text-xs font-mono uppercase tracking-wide">
-                          IP Address
-                        </span>
-                        <p className="text-blue-400 font-mono text-sm mt-1">
-                          {session.ip}
-                        </p>
-                      </div>
-
-                      {/* Start Time */}
-                      <div>
-                        <span className="text-[var(--color-text-secondary)] text-xs font-mono uppercase tracking-wide">
-                          Started
-                        </span>
-                        <p className="text-[var(--color-text-primary)] font-mono text-sm mt-1">
-                          {formatDateTime(session.start_time)}
-                        </p>
-                      </div>
-
-                      {/* Status & End Time */}
-                      <div>
-                        <span className="text-[var(--color-text-secondary)] text-xs font-mono uppercase tracking-wide">
-                          Status
-                        </span>
-                        <div className="mt-1">
-                          <span
-                            className={`inline-block px-2 py-1 rounded text-xs font-mono ${
-                              session.end_time
-                                ? "bg-red-900/30 text-red-400 border border-red-800/50"
-                                : "bg-green-900/30 text-green-400 border border-green-800/50"
-                            }`}
-                          >
-                            {getSessionStatus(session.end_time)}
-                          </span>
-                          {session.end_time && (
-                            <p className="text-[var(--color-text-primary)] font-mono text-xs mt-1">
-                              Ended: {formatDateTime(session.end_time)}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between">
-                <div className="text-[var(--color-text-secondary)] font-mono text-sm">
-                  Page {currentPage} of {totalPages}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {/* Previous Button */}
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="px-3 py-2 bg-blue-900/20 hover:bg-blue-900/30 disabled:bg-blue-950/20 text-blue-400 hover:text-blue-300 disabled:text-blue-600 border border-blue-800 hover:border-blue-700 disabled:border-blue-900 rounded-lg transition-colors font-mono text-sm disabled:cursor-not-allowed"
-                  >
-                    ←
-                  </button>
-
-                  {/* Page Numbers */}
-                  {generatePageNumbers().map((page, index) =>
-                    page === "..." ? (
+                    <td className="py-2 px-3 text-blue-400">{session.ip}</td>
+                    <td className="py-2 px-3 text-[var(--color-text-primary)]">
+                      {formatDateTime(session.start_time)}
+                    </td>
+                    <td className="py-2 px-3">
                       <span
-                        key={index}
-                        className="px-3 py-2 text-[var(--color-text-secondary)] font-mono text-sm"
-                      >
-                        ...
-                      </span>
-                    ) : (
-                      <button
-                        key={index}
-                        onClick={() => handlePageChange(page)}
-                        className={`px-3 py-2 border rounded-lg transition-colors font-mono text-sm ${
-                          currentPage === page
-                            ? "bg-blue-600 text-white border-blue-500"
-                            : "bg-blue-900/20 hover:bg-blue-900/30 text-blue-400 hover:text-blue-300 border-blue-800 hover:border-blue-700"
+                        className={`inline-block px-2 py-1 rounded text-xs font-mono ${
+                          session.end_time
+                            ? "bg-red-900/30 text-red-400 border border-red-800/50"
+                            : "bg-green-900/30 text-green-400 border border-green-800/50"
                         }`}
                       >
-                        {page}
-                      </button>
-                    )
-                  )}
+                        {getSessionStatus(session.end_time)}
+                      </span>
+                    </td>
+                    <td className="py-2 px-3 text-[var(--color-text-primary)]">
+                      {session.end_time
+                        ? formatDateTime(session.end_time)
+                        : "-"}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-                  {/* Next Button */}
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-2 bg-blue-900/20 hover:bg-blue-900/30 disabled:bg-blue-950/20 text-blue-400 hover:text-blue-300 disabled:text-blue-600 border border-blue-800 hover:border-blue-700 disabled:border-blue-900 rounded-lg transition-colors font-mono text-sm disabled:cursor-not-allowed"
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between">
+            <div className="text-[var(--color-text-secondary)] font-mono text-sm">
+              Page {currentPage} of {totalPages}
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Previous Button */}
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-3 py-2 bg-blue-900/20 hover:bg-blue-900/30 disabled:bg-blue-950/20 text-blue-400 hover:text-blue-300 disabled:text-blue-600 border border-blue-800 hover:border-blue-700 disabled:border-blue-900 rounded-lg transition-colors font-mono text-sm disabled:cursor-not-allowed"
+              >
+                ←
+              </button>
+              {/* Page Numbers */}
+              {generatePageNumbers().map((page, index) =>
+                page === "..." ? (
+                  <span
+                    key={index}
+                    className="px-3 py-2 text-[var(--color-text-secondary)] font-mono text-sm"
                   >
-                    →
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={index}
+                    onClick={() => handlePageChange(page)}
+                    className={`px-3 py-2 border rounded-lg transition-colors font-mono text-sm ${
+                      currentPage === page
+                        ? "bg-blue-600 text-white border-blue-500"
+                        : "bg-blue-900/20 hover:bg-blue-900/30 text-blue-400 hover:text-blue-300 border-blue-800 hover:border-blue-700"
+                    }`}
+                  >
+                    {page}
                   </button>
-                </div>
-              </div>
-            )}
-          </>
+                )
+              )}
+              {/* Next Button */}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-3 py-2 bg-blue-900/20 hover:bg-blue-900/30 disabled:bg-blue-950/20 text-blue-400 hover:text-blue-300 disabled:text-blue-600 border border-blue-800 hover:border-blue-700 disabled:border-blue-900 rounded-lg transition-colors font-mono text-sm disabled:cursor-not-allowed"
+              >
+                →
+              </button>
+            </div>
+          </div>
         )}
 
         {/* Actions */}

@@ -22,15 +22,15 @@ func registerAuthRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 		auth.GET("status", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"message": "OK"})
 		})
+		auth.GET("sessions", s.sessionsHandler)
+		auth.POST("reset-password", s.resetPasswdHandler)
 
 		ip := auth.Group("ip")
 		{
 			ip.POST("ban", s.banIPHandler)
 			ip.POST("unban/:id", s.unbanIPHandler)
-			ip.GET("ban-lists", s.bannedIPLists)
+			ip.GET("bans-list", s.bannedIPLists)
 		}
-
-		registerUserRoutes(auth, s)
 
 		//this route is only being used to securely manage the posts
 		registerPostRoutes(auth, s)
@@ -150,6 +150,46 @@ func (s *APIV1Service) handleIPHistoryOnLogin(userID int64, currentIP string) er
 	return s.db.Users.IP.CreateHistory(userID, currentIP)
 }
 
+// sessionsHandler fetches users serssions
+func (s *APIV1Service) sessionsHandler(c *gin.Context) {
+	limitStr := c.DefaultQuery("limit", "10")
+	offsetStr := c.DefaultQuery("offset", "0")
+
+	uid := c.GetFloat64("user_id")
+	if uid == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrNotEnoughPerm})
+		return
+	}
+
+	limit, err := strconv.ParseInt(limitStr, 10, 64)
+	if err != nil {
+		s.logger.Error(err.Error())
+		limit = 10
+	}
+
+	offset, err := strconv.ParseInt(offsetStr, 10, 64)
+	if err != nil {
+		s.logger.Error(err.Error())
+		offset = 0
+	}
+
+	iphistory, totalCount, err := s.db.Users.IP.GetAllHistory(int64(uid), limit, offset)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": database.ErrRecordNotFound})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"sessions": gin.H{
+			"history":     iphistory,
+			"total_count": totalCount,
+		}})
+}
+
 // banIPHandler ban IPAddresses
 func (s *APIV1Service) banIPHandler(c *gin.Context) {
 	var input struct {
@@ -178,8 +218,21 @@ func (s *APIV1Service) banIPHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "IP has been banned!"})
 }
 
+// unbanIPHandler removes ip from the bans list
 func (s *APIV1Service) unbanIPHandler(c *gin.Context) {
+	banID, err := getIDFromParam(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	err = s.db.Users.IP.Unban(int64(banID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "IP has been unbanned!"})
 }
 
 func (s *APIV1Service) bannedIPLists(c *gin.Context) {
@@ -198,7 +251,7 @@ func (s *APIV1Service) bannedIPLists(c *gin.Context) {
 		offset = 0
 	}
 
-	lists, totalCount, err := s.db.Users.IP.GetIPBansList(limit, offset)
+	lists, totalCount, err := s.db.Users.IP.GetBansList(limit, offset)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "IP Bans List is Empty!"})
@@ -210,4 +263,50 @@ func (s *APIV1Service) bannedIPLists(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"lists": lists, "total_count": totalCount})
 
+}
+
+// resetPasswdHandler reset password
+func (s *APIV1Service) resetPasswdHandler(c *gin.Context) {
+	var input struct {
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required,min=8,max=72"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	uid := c.GetFloat64("user_id")
+	if uid == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": ErrNotEnoughPerm})
+		return
+	}
+
+	user, err := s.db.Users.GetByEmail(input.Email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if user.ID != int64(uid) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrUnauthorized})
+		return
+	}
+
+	updateUser := &database.User{
+		ID: user.ID,
+	}
+
+	err = updateUser.Password.Set(input.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := s.db.Users.UpdatePassword(updateUser); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password updated successfully!"})
 }

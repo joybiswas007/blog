@@ -28,10 +28,12 @@ type IPHistory struct {
 // IPBan represents a record from the ip_bans table.
 // This table stores banned IP ranges with a reason for the ban.
 type IPBan struct {
-	ID     int64  `json:"id"`      // Unique ban ID
-	FromIP int64  `json:"from_ip"` // Start of the banned IP range
-	ToIP   int64  `json:"to_ip"`   // End of the banned IP range
-	Reason string `json:"reason"`  // Reason for the ban
+	ID        int64  `json:"id"`      // Unique ban ID
+	FromIP    int64  `json:"-"`       // Start of the banned IP range
+	ToIP      int64  `json:"-"`       // End of the banned IP range
+	FromIPStr string `json:"from_ip"` // Readable 1.2.3.4
+	ToIPStr   string `json:"to_ip"`   // Readable 1.2.3.255
+	Reason    string `json:"reason"`  // Reason for the ban
 }
 
 // CreateHistory adds a new IP history record.
@@ -89,8 +91,8 @@ func (m IPModel) GetActiveSessionByUserID(userID int64) (*IPHistory, error) {
 	return &history, nil
 }
 
-// GetAllIPHistory retrieves IP history for a specific user with pagination
-func (m IPModel) GetAllIPHistory(userID, limit, offset int64) ([]IPHistory, int64, error) {
+// GetAllHistory retrieves IP history for a specific user with pagination
+func (m IPModel) GetAllHistory(userID, limit, offset int64) ([]IPHistory, int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -183,9 +185,9 @@ func (m IPModel) IsBanned(ip int64) (bool, *IPBan, error) {
 	return true, &ban, nil
 }
 
-// GetIPBansList retrieves a paginated list of IP bans from the database.
+// GetBansList retrieves a paginated list of IP bans from the database.
 // It returns an ordered slice of IPBan records with proper error handling.
-func (m IPModel) GetIPBansList(limit, offset int64) ([]IPBan, int64, error) {
+func (m IPModel) GetBansList(limit, offset int64) ([]IPBan, int64, error) {
 	if limit <= 0 {
 		return nil, 0, fmt.Errorf("limit must be greater than 0, got: %d", limit)
 	}
@@ -197,10 +199,14 @@ func (m IPModel) GetIPBansList(limit, offset int64) ([]IPBan, int64, error) {
 	defer cancel()
 
 	var totalCount int64
-	query := `SELECT COUNT(*) OVER() AS total_count, id, from_ip, to_ip, reason 
-              FROM ip_bans 
-              ORDER BY id 
-              LIMIT $1 OFFSET $2`
+	query := `SELECT COUNT(*) OVER() AS total_count, 
+	                 id, 
+	                 host('0.0.0.0'::inet + from_ip) as from_ip,
+	                 host('0.0.0.0'::inet + to_ip) as to_ip,
+	                 reason
+	          FROM ip_bans 
+	          ORDER BY id 
+	          LIMIT $1 OFFSET $2`
 
 	rows, err := m.DB.Query(ctx, query, limit, offset)
 	if err != nil {
@@ -215,7 +221,7 @@ func (m IPModel) GetIPBansList(limit, offset int64) ([]IPBan, int64, error) {
 	for rows.Next() {
 		var ban IPBan
 
-		if err := rows.Scan(&totalCount, &ban.ID, &ban.FromIP, &ban.ToIP, &ban.Reason); err != nil {
+		if err := rows.Scan(&totalCount, &ban.ID, &ban.FromIPStr, &ban.ToIPStr, &ban.Reason); err != nil {
 			return nil, 0, fmt.Errorf("failed to scan ip_ban row: %w", err)
 		}
 
@@ -227,4 +233,19 @@ func (m IPModel) GetIPBansList(limit, offset int64) ([]IPBan, int64, error) {
 	}
 
 	return ipBans, totalCount, nil
+}
+
+// Unban removes an ip from the ban lists
+func (m IPModel) Unban(banID int64) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `DELETE FROM ip_bans WHERE id = $1`
+
+	_, err := m.DB.Exec(ctx, query, banID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

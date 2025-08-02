@@ -1,63 +1,86 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Tools = () => {
+  const { VITE_BLOG_NAME: blogName } = import.meta.env;
+  const pageTitle = `Tools :: ${blogName}`;
+
+  useEffect(() => {
+    document.title = pageTitle;
+  }, [pageTitle]);
+
   const tools = [
-    { name: "Sessions", path: "/auth/tools/sessions" },
-    { name: "IP Ban", path: "/auth/tools/ip-ban" },
-    { name: "Logs", path: "/auth/tools/logs" },
-    { name: "Backups", path: "/auth/tools/backups" },
-    { name: "Settings", path: "/auth/tools/settings" }
+    {
+      name: "Sessions",
+      path: "/auth/tools/sessions",
+      desc: "View and manage session history."
+    },
+    {
+      name: "IP Ban",
+      path: "/auth/tools/ip-bans",
+      desc: "Ban IPs or view banned IPs."
+    },
+    { name: "Logs", path: "/auth/tools/logs", desc: "Review system logs." },
+    {
+      name: "Backups",
+      path: "/auth/tools/backups",
+      desc: "Manage and restore backups."
+    },
+    {
+      name: "Settings",
+      path: "/auth/tools/settings",
+      desc: "Site & admin settings."
+    }
   ];
 
   return (
-    <div className="flex justify-center w-full min-h-screen bg-[var(--color-background-primary)]">
-      <div className="w-full max-w-3xl px-4 py-6">
+    <div className="flex justify-center w-full">
+      <div className="w-full max-w-3xl px-4 py-4 space-y-8">
         {/* Header with Dashboard Link */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl text-blue-300 font-heading">Toolbox</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-heading text-blue-300">Toolbox</h1>
           <Link
             to="/dashboard"
-            className="inline-flex items-center px-4 py-2 text-sm font-medium font-mono text-[var(--color-text-secondary)] hover:text-blue-400 transition-colors duration-200"
+            className="inline-flex items-center px-4 py-2 text-sm font-mono font-medium text-[var(--color-text-secondary)] hover:text-blue-400 transition-colors duration-200"
           >
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
+            <span className="text-blue-500 mr-2 text-lg">←</span>
             Back to Dashboard
           </Link>
         </div>
 
-        {/* Tools Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Tools Section Label */}
+        <div className="mb-2">
+          <h2 className="text-lg font-heading text-blue-400">
+            Available Tools
+          </h2>
+          <p className="text-sm font-mono text-[var(--color-text-secondary)]">
+            Quick access to admin & maintenance features
+          </p>
+        </div>
+
+        {/* Redesigned Tools List (vertical, with left accent bar) */}
+        <ul className="space-y-2">
           {tools.map((tool, i) => (
-            <Link
-              key={i}
-              to={tool.path}
-              className="group block p-6 bg-blue-900/20 border border-blue-800 rounded-lg hover:bg-blue-900/30 hover:border-blue-700 transition-all duration-200 hover:shadow-lg hover:shadow-blue-900/20"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-blue-400 group-hover:text-blue-300 font-heading text-lg transition-colors">
-                  {tool.name}
-                </span>
-                <span className="text-blue-600 group-hover:text-blue-400 text-xl transition-colors">
+            <li key={i}>
+              <Link
+                to={tool.path}
+                className="flex items-center group px-0 py-0 rounded-lg border-l-4 border-blue-900 hover:border-blue-400 bg-[var(--color-background-primary)] hover:bg-blue-900/10 transition-colors"
+              >
+                <div className="flex-1 px-4 py-3">
+                  <span className="font-heading text-blue-400 group-hover:text-blue-300 text-lg transition-colors block">
+                    {tool.name}
+                  </span>
+                  <span className="text-[var(--color-text-secondary)] font-mono text-xs group-hover:text-blue-400 transition-colors block mt-1">
+                    {tool.desc}
+                  </span>
+                </div>
+                <span className="text-blue-600 group-hover:text-blue-400 text-xl transition-colors px-4 font-mono">
                   →
                 </span>
-              </div>
-              <p className="text-[var(--color-text-secondary)] text-sm mt-2 font-mono">
-                Manage {tool.name.toLowerCase()}
-              </p>
-            </Link>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </div>
   );

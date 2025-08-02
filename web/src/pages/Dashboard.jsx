@@ -14,6 +14,8 @@ import {
 } from "react-icons/fi";
 
 const Dashboard = () => {
+  const { VITE_BLOG_NAME: blogName } = import.meta.env;
+
   const [posts, setPosts] = useState([]);
   const [totalPosts, setTotalPosts] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -86,9 +88,10 @@ const Dashboard = () => {
     }
   };
 
+  const pageTitle = `Dashboard :: ${blogName}`;
   return (
     <div className="flex justify-center w-full">
-      <title>Dashboard</title>
+      <title>{pageTitle}</title>
       <div className="space-y-8 w-full max-w-3xl">
         {/* Top actions bar */}
         <div className="flex justify-center items-center gap-4 pl-4 ml-2">
