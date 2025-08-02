@@ -86,11 +86,16 @@ api.interceptors.response.use(
           throw new Error("No refresh token available");
         }
 
-        const response = await axios.post(`${VITE_BASE_URL}/auth/refresh`, "", {
-          headers: {
-            Authorization: `Bearer ${refresh_token}`
+        const response = await axios.post(
+          `${VITE_BASE_URL}/api/v1/auth/refresh`,
+          "",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${refresh_token}`
+            }
           }
-        });
+        );
 
         const { access_token, refresh_token: newRefreshToken } = response.data;
         setAuthTokens({ access_token, refresh_token: newRefreshToken });
