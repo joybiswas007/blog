@@ -33,13 +33,14 @@ type User struct {
 // LoginAttempt represents a record from the login_attempts table.
 // This table tracks failed login attempts per user and IP for security and rate limiting.
 type LoginAttempt struct {
-	ID          int64        `json:"id"`           // Unique attempt ID (primary key, auto-generated)
-	UserID      int64        `json:"user_id"`      // Foreign key reference to users.id
-	IP          string       `json:"ip"`           // IP address of the login attempt (defaults to '0.0.0.0')
-	LastAttempt time.Time    `json:"last_attempt"` // Timestamp of the last attempt (defaults to NOW())
-	Attempts    int64        `json:"attempts"`     // Number of failed attempts in the current window
-	BannedUntil sql.NullTime `json:"banned_until"` // Timestamp until which the user/IP is banned (nullable)
-	Bans        int64        `json:"bans"`         // Number of times this user/IP has been banned
+	ID              int64        `json:"id"`           // Unique attempt ID (primary key, auto-generated)
+	UserID          int64        `json:"user_id"`      // Foreign key reference to users.id
+	IP              string       `json:"ip"`           // IP address of the login attempt (defaults to '0.0.0.0')
+	LastAttempt     time.Time    `json:"last_attempt"` // Timestamp of the last attempt (defaults to NOW())
+	Attempts        int64        `json:"attempts"`     // Number of failed attempts in the current window
+	BannedUntil     sql.NullTime `json:"-"`            // Timestamp until which the user/IP is banned
+	BannedUntilJSON *time.Time   `json:"banned_until"` // Timestamp until which the user/IP is banned
+	Bans            int64        `json:"bans"`         // Number of times this user/IP has been banned
 }
 
 // Create a custom password type which is a struct containing the plaintext and hashed
@@ -291,6 +292,60 @@ func (m UserModel) GetLoginAttempt(userID int64, ip string) (*LoginAttempt, erro
 	}
 
 	return &attempt, nil
+}
+
+// GetAllLoginAttempts retrieves all login attempt records for user and IP address, with limit and offset for pagination.
+func (m UserModel) GetAllLoginAttempts(limit, offset int64) ([]LoginAttempt, int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+        	SELECT COUNT(*) OVER() AS total_count, id, user_id, host(ip), last_attempt, attempts, banned_until, bans
+        	FROM login_attempts
+        	ORDER BY last_attempt DESC
+        	LIMIT $1 OFFSET $2`
+
+	args := []any{limit, offset}
+
+	var totalCount int64
+
+	// Use Query to fetch multiple rows
+	rows, err := m.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	var attempts []LoginAttempt
+	for rows.Next() {
+		var attempt LoginAttempt
+		err := rows.Scan(
+			&totalCount,
+			&attempt.ID,
+			&attempt.UserID,
+			&attempt.IP,
+			&attempt.LastAttempt,
+			&attempt.Attempts,
+			&attempt.BannedUntil,
+			&attempt.Bans,
+		)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		if attempt.BannedUntil.Valid {
+			attempt.BannedUntilJSON = &attempt.BannedUntil.Time
+		}
+
+		attempts = append(attempts, attempt)
+	}
+
+	// Check for errors during iteration
+	if err := rows.Err(); err != nil {
+		return nil, 0, err
+	}
+
+	return attempts, totalCount, nil
 }
 
 // UpdateLoginAttempt updates the attempts, banned_until, and bans fields for a specific login attempt record by its ID.

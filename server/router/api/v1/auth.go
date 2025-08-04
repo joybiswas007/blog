@@ -25,6 +25,8 @@ func registerAuthRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 			c.JSON(http.StatusOK, gin.H{"message": "OK"})
 		})
 		auth.GET("sessions", s.sessionsHandler)
+		auth.GET("attempts", s.handleLoginAttemptsViewer)
+
 		auth.POST("reset-password", s.resetPasswdHandler)
 
 		ip := auth.Group("ip")
@@ -398,4 +400,32 @@ func (s *APIV1Service) resetPasswdHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Password updated successfully!"})
+}
+
+// handleLoginAttemptsViewer handle login attempts data
+func (s *APIV1Service) handleLoginAttemptsViewer(c *gin.Context) {
+	limitStr := c.DefaultQuery("limit", "25")
+	offsetStr := c.DefaultQuery("offset", "0")
+
+	limit, err := strconv.ParseInt(limitStr, 10, 64)
+	if err != nil {
+		s.logger.Error(err.Error())
+		limit = 10
+	}
+
+	offset, err := strconv.ParseInt(offsetStr, 10, 64)
+	if err != nil {
+		s.logger.Error(err.Error())
+		offset = 0
+	}
+
+	attempts, attemptsCount, err := s.db.Users.GetAllLoginAttempts(limit, offset)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"login_attempts": attempts,
+		"total_count":    attemptsCount,
+	})
 }

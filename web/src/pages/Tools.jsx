@@ -14,6 +14,11 @@ const Tools = () => {
       name: "IP Ban",
       path: "/auth/tools/ip-bans",
       desc: "Ban IPs or view banned IPs."
+    },
+    {
+      name: "Login Attempts",
+      path: "/auth/tools/login-attempts",
+      desc: "View recent login attempts"
     }
   ];
 
