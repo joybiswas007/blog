@@ -2,8 +2,10 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
@@ -54,6 +56,86 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		return
 	}
 
+	userAttempts, err := s.db.Users.GetLoginAttempt(user.ID, c.ClientIP())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	var (
+		currentAttempt, currentBans int64 = 1, 1
+	)
+
+	if userAttempts != nil {
+		// check if ban time is still in effect
+		if time.Now().Before(userAttempts.BannedUntil.Time) {
+			timeRemaining := time.Until(userAttempts.BannedUntil.Time)
+			c.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("Time remaining: %s", timeRemaining.String())})
+			return
+		}
+		// if ban time passed we lift the temp ban
+		if time.Now().After(userAttempts.BannedUntil.Time) {
+			err := s.db.Users.ClearLoginAttemptBan(userAttempts.ID, userAttempts.UserID)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+		}
+
+		currentAttempt = userAttempts.Attempts + 1
+		currentBans = userAttempts.Bans + 1
+	}
+
+	// Check if user login attempts exceeds user defined limit
+	//  if yes then ban the ip for defined hours
+	if userAttempts != nil && userAttempts.Attempts > int64(s.config.MaxLoginAttempts)-1 {
+		bannedUntil := time.Now().Add(time.Hour * time.Duration(s.config.BanDuration))
+
+		err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, bannedUntil, currentBans)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Automated bruteforce prevention
+		if userAttempts.Bans > 9 {
+			ipInt := pkg.IpToInt64(c.ClientIP())
+
+			isBanned, banDetails, err := s.db.Users.IP.IsBanned(ipInt)
+			if err != nil {
+				c.JSON(http.StatusForbidden, gin.H{"error": banDetails.Reason})
+				return
+			}
+			switch isBanned {
+			case true:
+				c.JSON(http.StatusForbidden, gin.H{"error": banDetails.Reason})
+			case false:
+				ipBan := &database.IPBan{
+					FromIP: ipInt,
+					ToIP:   ipInt,
+					Reason: database.DEFAULT_BAN_RESON,
+				}
+				err = s.db.Users.IP.Ban(ipBan)
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+
+					return
+				}
+				c.JSON(http.StatusForbidden, gin.H{"error": "This ip adddress has been banned."})
+			}
+			return
+		}
+
+		ipBanMsg := fmt.Sprintf("This ip address has been banned for %d hours.", s.config.BanDuration)
+		c.JSON(http.StatusForbidden, gin.H{"error": ipBanMsg})
+		return
+	}
+
+	attemptID, err := s.db.Users.LogAttempt(user.ID, c.ClientIP(), currentAttempt, currentBans)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	match, err := user.Password.Match(input.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -72,6 +154,13 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 	}
 
 	err = s.handleIPHistoryOnLogin(user.ID, c.ClientIP())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	//successful login reset all login_attempts restriction
+	err = s.db.Users.ResetAllLoginAttempt(user.ID, attemptID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

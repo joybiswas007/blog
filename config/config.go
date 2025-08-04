@@ -11,13 +11,15 @@ import (
 // Config holds all configuration values for the application.
 // Values are loaded via Viper and validated using go-playground/validator.
 type Config struct {
-	Port         int         `mapstructure:"port" validate:"required"`         // HTTP server port
-	DB           string      `mapstructure:"db" validate:"required"`           // Database connection string (DSN)
-	JWT          JWT         `mapstructure:"jwt" validate:"required"`          // JWT-related configuration
-	RateLimiter  RateLimiter `mapstructure:"rate_limiter" validate:"required"` // Rate limiter configuration
-	IsProduction bool        `mapstructure:"is_production"`                    // Indicates if the application is running in production mode (true) or development mode (false)
-	Blog         Blog        `mapstructure:"blog" validate:"required"`         // Blog configuration
-	Redis        Redis       `mapstructure:"redis" validate:"required"`        // Redis config
+	Port             int         `mapstructure:"port" validate:"required"`               // HTTP server port
+	DB               string      `mapstructure:"db" validate:"required"`                 // Database connection string (DSN)
+	JWT              JWT         `mapstructure:"jwt" validate:"required"`                // JWT-related configuration
+	RateLimiter      RateLimiter `mapstructure:"rate_limiter" validate:"required"`       // Rate limiter configuration
+	IsProduction     bool        `mapstructure:"is_production"`                          // Indicates if the application is running in production mode (true) or development mode (false)
+	Blog             Blog        `mapstructure:"blog" validate:"required"`               // Blog configuration
+	Redis            Redis       `mapstructure:"redis" validate:"required"`              // Redis config
+	MaxLoginAttempts int         `mapstructure:"max_login_attempts" validate:"required"` // Max Login Attempts per session
+	BanDuration      int         `mapstructure:"ban_duration" validate:"required"`       // Ban Duration
 }
 
 // JWT holds configuration related to JSON Web Tokens.

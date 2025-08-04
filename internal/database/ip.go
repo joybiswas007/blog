@@ -19,10 +19,10 @@ type IPModel struct {
 // IPHistory represents a record from the users_history_ips table.
 // This table tracks the history of IP addresses used by users.
 type IPHistory struct {
-	UserID    int64      `json:"user_id"`    // Foreign key reference to users.id
-	IP        string     `json:"ip"`         // IP address used by the user (defaults to '0.0.0.0')
-	StartTime time.Time  `json:"start_time"` // When the user started using this IP (defaults to NOW())
-	EndTime   *time.Time `json:"end_time"`   // When the user stopped using this IP (nullable)
+	UserID    int64     `json:"user_id"`    // Foreign key reference to users.id
+	IP        string    `json:"ip"`         // IP address used by the user (defaults to '0.0.0.0')
+	StartTime time.Time `json:"start_time"` // When the user started using this IP (defaults to NOW())
+	EndTime   time.Time `json:"end_time"`   // When the user stopped using this IP
 }
 
 // IPBan represents a record from the ip_bans table.
