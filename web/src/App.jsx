@@ -16,6 +16,7 @@ import NotFound from "./components/NotFound";
 import Tools from "./pages/Tools";
 import Sessions from "./components/Sessions";
 import IPBan from "./components/IPBan";
+import LoginAttempts from "./components/LoginAttempts";
 
 function App() {
   return (
@@ -37,6 +38,10 @@ function App() {
             <Route path="/auth/tools" element={<Tools />} />
             <Route path="/auth/tools/sessions" element={<Sessions />} />
             <Route path="/auth/tools/ip-bans" element={<IPBan />} />
+            <Route
+              path="/auth/tools/login-attempts"
+              element={<LoginAttempts />}
+            />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

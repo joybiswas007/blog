@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -27,6 +28,19 @@ type User struct {
 	Password  password  `json:"-"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+// LoginAttempt represents a record from the login_attempts table.
+// This table tracks failed login attempts per user and IP for security and rate limiting.
+type LoginAttempt struct {
+	ID              int64        `json:"id"`           // Unique attempt ID (primary key, auto-generated)
+	UserID          int64        `json:"user_id"`      // Foreign key reference to users.id
+	IP              string       `json:"ip"`           // IP address of the login attempt (defaults to '0.0.0.0')
+	LastAttempt     time.Time    `json:"last_attempt"` // Timestamp of the last attempt (defaults to NOW())
+	Attempts        int64        `json:"attempts"`     // Number of failed attempts in the current window
+	BannedUntil     sql.NullTime `json:"-"`            // Timestamp until which the user/IP is banned
+	BannedUntilJSON *time.Time   `json:"banned_until"` // Timestamp until which the user/IP is banned
+	Bans            int64        `json:"bans"`         // Number of times this user/IP has been banned
 }
 
 // Create a custom password type which is a struct containing the plaintext and hashed
@@ -213,5 +227,186 @@ func (m UserModel) UpdatePassword(user *User) error {
 	}
 
 	// Return nil if everything was successful.
+	return nil
+}
+
+// LogAttempt logs a user's login attempt into the login_attempts table.
+// It inserts a new record with the provided userID, IP, and attempts, bans count.
+// Returns the generated attempt ID or an error.
+func (m UserModel) LogAttempt(userID int64, ip string, attempts, bans int64) (attemptID int64, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+		INSERT INTO login_attempts (
+			user_id, 
+			ip,
+			attempts,
+			bans
+		) VALUES ($1, $2, $3, $4)
+		RETURNING id`
+
+	args := []any{userID, ip, attempts, bans}
+
+	err = m.DB.QueryRow(ctx, query, args...).Scan(&attemptID)
+	if err != nil {
+		return 0, err
+	}
+
+	return attemptID, nil
+}
+
+// GetLoginAttempt retrieves the most recent login attempt record for a specific user and IP.
+// It fetches the record with the latest last_attempt timestamp.
+func (m UserModel) GetLoginAttempt(userID int64, ip string) (*LoginAttempt, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+		SELECT id, user_id, host(ip), last_attempt, attempts, banned_until, bans
+		FROM login_attempts
+		WHERE user_id = $1 AND ip = $2
+		ORDER BY last_attempt DESC
+		LIMIT 1`
+
+	args := []any{userID, ip}
+
+	var attempt LoginAttempt
+	err := m.DB.QueryRow(ctx, query, args...).Scan(
+		&attempt.ID,
+		&attempt.UserID,
+		&attempt.IP,
+		&attempt.LastAttempt,
+		&attempt.Attempts,
+		&attempt.BannedUntil,
+		&attempt.Bans,
+	)
+	if err != nil {
+		// If no rows found (pgx.ErrNoRows), treat it as "ok" - no previous attempt exists.
+		// Return nil attempt and nil error to indicate success with no data.
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
+		// For all other errors (e.g., connection issues), return the error.
+		return nil, err
+	}
+
+	return &attempt, nil
+}
+
+// GetAllLoginAttempts retrieves all login attempt records for user and IP address, with limit and offset for pagination.
+func (m UserModel) GetAllLoginAttempts(limit, offset int64) ([]LoginAttempt, int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+        	SELECT COUNT(*) OVER() AS total_count, id, user_id, host(ip), last_attempt, attempts, banned_until, bans
+        	FROM login_attempts
+        	ORDER BY last_attempt DESC
+        	LIMIT $1 OFFSET $2`
+
+	args := []any{limit, offset}
+
+	var totalCount int64
+
+	// Use Query to fetch multiple rows
+	rows, err := m.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	var attempts []LoginAttempt
+	for rows.Next() {
+		var attempt LoginAttempt
+		err := rows.Scan(
+			&totalCount,
+			&attempt.ID,
+			&attempt.UserID,
+			&attempt.IP,
+			&attempt.LastAttempt,
+			&attempt.Attempts,
+			&attempt.BannedUntil,
+			&attempt.Bans,
+		)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		if attempt.BannedUntil.Valid {
+			attempt.BannedUntilJSON = &attempt.BannedUntil.Time
+		}
+
+		attempts = append(attempts, attempt)
+	}
+
+	// Check for errors during iteration
+	if err := rows.Err(); err != nil {
+		return nil, 0, err
+	}
+
+	return attempts, totalCount, nil
+}
+
+// UpdateLoginAttempt updates the attempts, banned_until, and bans fields for a specific login attempt record by its ID.
+func (m UserModel) UpdateLoginAttempt(attemptID int64, attempts int64, bannedUntil time.Time, bans int64) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+		UPDATE login_attempts
+		SET attempts = $2, banned_until = $3, bans = $4
+		WHERE id = $1`
+
+	args := []any{attemptID, attempts, bannedUntil, bans}
+
+	_, err := m.DB.Exec(ctx, query, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ResetAllLoginAttempt resets the attempts, banned_until, and bans fields for a specific login attempt record
+// identified by attemptID and associated userID. This ensures only the correct user's attempt is reset.
+// If no matching record is found (no rows affected), it returns nil (considered "ok" with no action taken).
+// Returns an error for any database issues.
+func (m UserModel) ResetAllLoginAttempt(userID, attemptID int64) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+		UPDATE login_attempts
+		SET attempts = 0, banned_until = NULL, bans = 0
+		WHERE id = $1 AND user_id = $2`
+
+	args := []any{attemptID, userID}
+
+	_, err := m.DB.Exec(ctx, query, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ClearLoginAttemptBan removes the temporary ban (banned_until) for a specific login attempt and user.
+func (m UserModel) ClearLoginAttemptBan(attemptID, userID int64) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+        UPDATE login_attempts
+        SET banned_until = NULL
+        WHERE id = $1 AND user_id = $2`
+
+	args := []any{attemptID, userID}
+
+	_, err := m.DB.Exec(ctx, query, args...)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

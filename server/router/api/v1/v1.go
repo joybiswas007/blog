@@ -40,13 +40,10 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 	r := gin.Default()
 
 	if s.config.IsProduction {
+		gin.SetMode(gin.ReleaseMode)
 		r.Use(s.CheckIP())
 	}
 	r.Use(s.RateLimiter())
-
-	if s.config.IsProduction {
-		gin.SetMode(gin.ReleaseMode)
-	}
 
 	redisOptions := &redis.Options{
 		Addr:     s.config.Redis.Address,

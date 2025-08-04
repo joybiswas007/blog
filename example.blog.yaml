@@ -29,3 +29,8 @@ redis:
   username: username
   password: password
 
+# Maximum number of allowed login attempts before banning ip
+max_login_attempts: 6
+
+# Duration of ban in hours after exceeding max attempts
+ban_duration: 6

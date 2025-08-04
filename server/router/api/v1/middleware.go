@@ -100,7 +100,7 @@ func (s *APIV1Service) CheckIP() gin.HandlerFunc {
 
 		// If banned, abort with forbidden error and message.
 		if isBanned {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Your ip has been banned!"})
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "This ip address has been banned."})
 			return
 		}
 
