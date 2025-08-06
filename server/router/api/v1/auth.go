@@ -63,18 +63,24 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
 	var (
-		currentAttempt, currentBans int64 = 1, 1
+		currentAttempt, currentBans int64 = 1, 0
+		attemptID                   int64
+		bannedUntil                 time.Time
 	)
 
+	// Handle existing attempt record
 	if userAttempts != nil {
-		// check if ban time is still in effect
+		// Check ban state
 		if time.Now().Before(userAttempts.BannedUntil.Time) {
 			timeRemaining := time.Until(userAttempts.BannedUntil.Time)
-			c.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("Time remaining: %s", timeRemaining.String())})
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": "Too many bad login attempts. Ban expires in " + timeRemaining.String(),
+			})
 			return
 		}
-		// if ban time passed we lift the temp ban
+		// Lift temp ban if ban time passed
 		if time.Now().After(userAttempts.BannedUntil.Time) {
 			err := s.db.Users.ClearLoginAttemptBan(userAttempts.ID, userAttempts.UserID)
 			if err != nil {
@@ -84,58 +90,67 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		}
 
 		currentAttempt = userAttempts.Attempts + 1
-		currentBans = userAttempts.Bans + 1
-	}
+		currentBans = userAttempts.Bans
+		attemptID = userAttempts.ID
+		bannedUntil = userAttempts.BannedUntil.Time
 
-	// Check if user login attempts exceeds user defined limit
-	//  if yes then ban the ip for defined hours
-	if userAttempts != nil && userAttempts.Attempts > int64(s.config.MaxLoginAttempts)-1 {
-		bannedUntil := time.Now().Add(time.Hour * time.Duration(s.config.BanDuration))
+		// If attempts exceed limit, apply ban
+		if currentAttempt > int64(s.config.MaxLoginAttempts) {
+			bannedUntil = time.Now().Add(time.Hour * time.Duration(s.config.BanDuration))
+			currentBans++ // Increment ban count
 
-		err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, bannedUntil, currentBans)
+			err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, &bannedUntil, currentBans)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			// Automated bruteforce prevention
+			if currentBans > 9 {
+				ipInt := pkg.IpToInt64(c.ClientIP())
+				isBanned, banDetails, err := s.db.Users.IP.IsBanned(ipInt)
+				if err != nil {
+					c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+					return
+				}
+				switch isBanned {
+				case true:
+					c.JSON(http.StatusForbidden, gin.H{"error": banDetails.Reason})
+				case false:
+					ipBan := &database.IPBan{
+						FromIP: ipInt,
+						ToIP:   ipInt,
+						Reason: database.DEFAULT_BAN_RESON,
+					}
+					err = s.db.Users.IP.Ban(ipBan)
+					if err != nil {
+						c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					c.JSON(http.StatusForbidden, gin.H{"error": "This ip address has been banned."})
+				}
+				return
+			}
+			ipBanMsg := fmt.Sprintf("This ip address has been banned for %d hours.", s.config.BanDuration)
+			c.JSON(http.StatusForbidden, gin.H{"error": ipBanMsg})
+			return
+		}
+
+		// Always update the attempt count on each request
+		err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, nil, currentBans)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		// Automated bruteforce prevention
-		if userAttempts.Bans > 9 {
-			ipInt := pkg.IpToInt64(c.ClientIP())
-
-			isBanned, banDetails, err := s.db.Users.IP.IsBanned(ipInt)
-			if err != nil {
-				c.JSON(http.StatusForbidden, gin.H{"error": banDetails.Reason})
-				return
-			}
-			switch isBanned {
-			case true:
-				c.JSON(http.StatusForbidden, gin.H{"error": banDetails.Reason})
-			case false:
-				ipBan := &database.IPBan{
-					FromIP: ipInt,
-					ToIP:   ipInt,
-					Reason: database.DEFAULT_BAN_RESON,
-				}
-				err = s.db.Users.IP.Ban(ipBan)
-				if err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-
-					return
-				}
-				c.JSON(http.StatusForbidden, gin.H{"error": "This ip adddress has been banned."})
-			}
+	} else {
+		// No record exists, so create one
+		aid, err := s.db.Users.LogAttempt(user.ID, c.ClientIP(), currentAttempt, currentBans)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-
-		ipBanMsg := fmt.Sprintf("This ip address has been banned for %d hours.", s.config.BanDuration)
-		c.JSON(http.StatusForbidden, gin.H{"error": ipBanMsg})
-		return
-	}
-
-	attemptID, err := s.db.Users.LogAttempt(user.ID, c.ClientIP(), currentAttempt, currentBans)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		attemptID = aid
 	}
 
 	match, err := user.Password.Match(input.Password)
@@ -161,7 +176,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		return
 	}
 
-	//successful login reset all login_attempts restriction
+	// Successful login, reset all login_attempts restriction
 	err = s.db.Users.ResetAllLoginAttempt(user.ID, attemptID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -169,7 +184,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":       "Login successfull!",
+		"message":       "Login successful!",
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
 	})

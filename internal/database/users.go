@@ -349,7 +349,7 @@ func (m UserModel) GetAllLoginAttempts(limit, offset int64) ([]LoginAttempt, int
 }
 
 // UpdateLoginAttempt updates the attempts, banned_until, and bans fields for a specific login attempt record by its ID.
-func (m UserModel) UpdateLoginAttempt(attemptID int64, attempts int64, bannedUntil time.Time, bans int64) error {
+func (m UserModel) UpdateLoginAttempt(attemptID int64, attempts int64, bannedUntil *time.Time, bans int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
