@@ -53,6 +53,13 @@ func (s *APIV1Service) CheckJWT() gin.HandlerFunc {
 			return
 		}
 
+		// track ip changes
+		err = s.updateIPHistory(u.ID, c.ClientIP())
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
 		// Pass user ID to handlers
 		c.Set("user_id", uid)
 		c.Next()

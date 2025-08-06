@@ -170,7 +170,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		return
 	}
 
-	err = s.handleIPHistoryOnLogin(user.ID, c.ClientIP())
+	err = s.updateIPHistory(user.ID, c.ClientIP())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -216,6 +216,12 @@ func (s *APIV1Service) refreshTokenHandler(c *gin.Context) {
 		return
 	}
 
+	err = s.updateIPHistory(int64(uid), c.ClientIP())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	accessToken, refreshToken, err := generateTokens(int64(uid), s)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -227,33 +233,6 @@ func (s *APIV1Service) refreshTokenHandler(c *gin.Context) {
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
 	})
-}
-
-// handleIPHistoryOnLogin manages IP history when user logs in
-func (s *APIV1Service) handleIPHistoryOnLogin(userID int64, currentIP string) error {
-	// Get the user's most recent active IP session
-	activeSession, err := s.db.Users.IP.GetActiveSessionByUserID(userID)
-	if err != nil {
-		// If no active session found, create a new one
-		if errors.Is(err, database.ErrRecordNotFound) {
-			return s.db.Users.IP.CreateHistory(userID, currentIP)
-		}
-		return err
-	}
-
-	// If user is logging in from the same IP as their active session, do nothing
-	if activeSession.IP == currentIP {
-		return nil
-	}
-
-	// User is logging in from a different IP
-	// Close the previous session and create a new one
-	err = s.db.Users.IP.CloseActiveSession(userID, activeSession.IP)
-	if err != nil {
-		return err
-	}
-	// Create new IP history record for the current IP
-	return s.db.Users.IP.CreateHistory(userID, currentIP)
 }
 
 // sessionsHandler fetches users serssions
