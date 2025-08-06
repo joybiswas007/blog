@@ -17,17 +17,17 @@ type PostModel struct {
 
 // Post represents a blog post in the database
 type Post struct {
-	ID          int       `json:"id"`                          // Unique identifier for the post
-	UserID      int64     `json:"-"`                           // UserID of the user who created the post
-	Author      string    `json:"author"`                      // Author the guy who posted the blog
-	Title       string    `json:"title" validate:"required"`   // Title of the post
-	Description *string   `json:"description,omitempty"`       // Short summary of the post
-	Content     string    `json:"content" validate:"required"` // Main content of the post
-	Slug        string    `json:"slug"`                        // Slug of post title
-	IsPublished bool      `json:"is_published"`                // Indicates if the post is published or not
-	Tags        []string  `json:"tags" validate:"required"`    // List of tags associated with the post
-	CreatedAt   time.Time `json:"created_at"`                  // When the post was created
-	UpdatedAt   time.Time `json:"updated_at"`                  // When the post was last updated
+	ID          int       `json:"id"`                    // Unique identifier for the post
+	UserID      int64     `json:"-"`                     // UserID of the user who created the post
+	Author      string    `json:"author"`                // Author the guy who posted the blog
+	Title       string    `json:"title"`                 // Title of the post
+	Description *string   `json:"description,omitempty"` // Short summary of the post
+	Content     string    `json:"content" `              // Main content of the post
+	Slug        string    `json:"slug"`                  // Slug of post title
+	IsPublished bool      `json:"is_published"`          // Indicates if the post is published or not
+	Tags        []string  `json:"tags"`                  // List of tags associated with the post
+	CreatedAt   time.Time `json:"created_at"`            // When the post was created
+	UpdatedAt   time.Time `json:"updated_at"`            // When the post was last updated
 }
 
 type YearlyStats struct {
@@ -88,6 +88,23 @@ func (m PostModel) Get(postID int) (*Post, error) {
 	}
 
 	return &p, nil
+}
+
+// Exists checks if a blog post with the given slug already exists in the database.
+// Returns true if it exists, false otherwise, or an error on failure.
+func (m PostModel) Exists(slug string) (exists bool, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	// SQL query to efficiently check existence by slug
+	query := `SELECT EXISTS(SELECT 1 FROM blog_posts WHERE slug = $1)`
+
+	err = m.DB.QueryRow(ctx, query, slug).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
 }
 
 // GetBySlug retrieves a single post by its slug including author name and associated tags

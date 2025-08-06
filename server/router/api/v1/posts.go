@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/gosimple/slug"
 	"github.com/joybiswas007/blog/internal/database"
 )
@@ -55,23 +54,35 @@ func (s *APIV1Service) getPostByIDHandler(c *gin.Context) {
 }
 
 func (s *APIV1Service) createPostHandler(c *gin.Context) {
+	var input struct {
+		Title       string   `json:"title" binding:"required,max=255"`
+		Description string   `json:"description,omitempty"`
+		Content     string   `json:"content" binding:"required"`
+		IsPublished bool     `json:"is_published" binding:"required"`
+		Tags        []string `json:"tags" binding:"required"`
+	}
+
 	// Parse the post data from the request body
-	var post database.Post
-	err := c.ShouldBindJSON(&post)
+	err := c.ShouldBindJSON(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		inputValidationErrors(c, err)
 		return
 	}
 
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err := validate.Struct(&post); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	exists, err := s.db.Posts.Exists(slug.Make(input.Title))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "A post with this Title already exists. Please choose a unique Title."})
 		return
 	}
 
 	// Process tags: fetch existing or create new ones
 	var tagIDs []int
-	for _, tagName := range post.Tags {
+	for _, tagName := range input.Tags {
 		var tagID int
 		tag, err := s.db.Tags.Get(tagName)
 		if err != nil {
@@ -100,11 +111,14 @@ func (s *APIV1Service) createPostHandler(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrNotEnoughPerm})
 		return
 	}
-
-	titleSlug := slug.Make(post.Title)
-
-	post.UserID = int64(uid)
-	post.Slug = titleSlug
+	post := database.Post{
+		Title:       input.Title,
+		Slug:        slug.Make(input.Title),
+		UserID:      int64(uid),
+		Description: &input.Description,
+		Content:     input.Content,
+		IsPublished: input.IsPublished,
+	}
 
 	// Create the post in the database
 	postID, err := s.db.Posts.Create(post)

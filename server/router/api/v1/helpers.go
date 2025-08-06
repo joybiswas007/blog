@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"log"
 	"maps"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
@@ -283,4 +285,34 @@ func (s *APIV1Service) updateIPHistory(userID int64, currentIP string) error {
 	}
 	// Create new IP history record for the current IP
 	return s.db.Users.IP.CreateHistory(userID, currentIP)
+}
+
+// inputValidationErrors processes validator errors and responds with a formatted JSON error.
+func inputValidationErrors(c *gin.Context, err error) {
+	if errs, ok := err.(validator.ValidationErrors); ok {
+		var errMessages []map[string]string
+		for _, err := range errs {
+			field := strings.ToLower(err.Field())
+			tag := err.Tag()
+			var message string
+
+			switch tag {
+			case "required":
+				message = fmt.Sprintf("%s must be provided", field)
+			case "min", "gte":
+				message = fmt.Sprintf("%s must be at least %s character long", field, err.Param())
+			case "max", "lte":
+				message = fmt.Sprintf("%s must not be more than %s character long", field, err.Param())
+			case "email":
+				message = fmt.Sprintf("%s must be a valid address", field)
+			default:
+				message = fmt.Sprintf("Invalid input for %s", field)
+			}
+
+			errMessages = append(errMessages, map[string]string{field: message})
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errMessages})
+		return
+	}
+	c.JSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
 }
