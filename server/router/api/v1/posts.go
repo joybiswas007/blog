@@ -58,7 +58,7 @@ func (s *APIV1Service) createPostHandler(c *gin.Context) {
 		Title       string   `json:"title" binding:"required,max=255"`
 		Description string   `json:"description,omitempty"`
 		Content     string   `json:"content" binding:"required"`
-		IsPublished bool     `json:"is_published" binding:"required"`
+		IsPublished bool     `json:"is_published"`
 		Tags        []string `json:"tags" binding:"required"`
 	}
 

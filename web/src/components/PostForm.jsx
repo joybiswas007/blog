@@ -46,7 +46,7 @@ export const PostEditorHeader = ({
 export const PostFormFields = ({ formData, handleChange, setFormData }) => {
   const validateTitle = title => {
     if (title.length < 3) return "Title must be at least 3 characters long";
-    if (title.length > 100) return "Title must be less than 100 characters";
+    if (title.length > 150) return "Title must be less than 150 characters";
     return null;
   };
 
