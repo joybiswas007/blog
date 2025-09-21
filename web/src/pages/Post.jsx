@@ -5,6 +5,7 @@ import { CalculateReadTime } from "@/utils/helpers";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import SEO from "@/components/SEO";
+import { BsCalendar, BsClock, BsPencil, BsTags } from "react-icons/bs";
 
 const Post = () => {
   const { slug } = useParams();
@@ -50,7 +51,9 @@ const Post = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-[var(--color-text-secondary)]">Loading...</div>
+        <div className="text-[var(--color-text-secondary)] font-mono">
+          Loading...
+        </div>
       </div>
     );
   }
@@ -58,7 +61,7 @@ const Post = () => {
   if (error) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500">{error}</div>
+        <div className="text-red-500 font-mono">{error}</div>
       </div>
     );
   }
@@ -66,7 +69,9 @@ const Post = () => {
   if (!post) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-[var(--color-text-secondary)]">Post not found</div>
+        <div className="text-[var(--color-text-secondary)] font-mono">
+          Post not found
+        </div>
       </div>
     );
   }
@@ -79,20 +84,27 @@ const Post = () => {
         keywords={post.tags.join(", ")}
         ogType="article"
       />
-      <article className="w-full max-w-3xl space-y-8">
+      <article className="w-full max-w-3xl space-y-8 p-6">
         <header className="space-y-4">
-          <h1 className="text-2xl text-[var(--color-text-primary)] font-heading">
+          <h1 className="text-3xl text-[var(--color-text-primary)] font-heading">
             {post.title}
           </h1>
-          <div className="text-[var(--color-text-primary)] text-sm flex flex-wrap gap-3 items-center font-mono">
-            <time>{formatDate(post.created_at)}</time>
-            <span>|</span>
-            <span>{CalculateReadTime(post.content)}</span>
-            <span>|</span>
-            <span>{post.author}</span>
+          <div className="text-[var(--color-text-secondary)] text-sm flex flex-wrap gap-4 items-center font-mono">
+            <span className="flex items-center">
+              <BsCalendar className="text-blue-500 mr-1" />
+              {formatDate(post.created_at)}
+            </span>
+            <span className="flex items-center">
+              <BsClock className="text-blue-500 mr-1" />
+              {CalculateReadTime(post.content)}
+            </span>
+            <span className="flex items-center">
+              <BsPencil className="text-blue-500 mr-1" />
+              {post.author}
+            </span>
             {post.tags && post.tags.length > 0 && (
-              <>
-                <span>|</span>
+              <div className="flex items-center gap-2">
+                <BsTags className="text-blue-500" />
                 {post.tags.map((tag, index) => (
                   <Link
                     key={index}
@@ -104,12 +116,12 @@ const Post = () => {
                     #{tag}
                   </Link>
                 ))}
-              </>
+              </div>
             )}
           </div>
         </header>
 
-        <div className="prose prose-invert max-w-none">
+        <div className="prose prose-invert max-w-none pt-6">
           <Markdown remarkPlugins={[remarkGfm]}>{post.content}</Markdown>
         </div>
 
@@ -118,7 +130,7 @@ const Post = () => {
             {previousPost ? (
               <Link
                 to={`/posts/${previousPost.slug}`}
-                className="flex items-center text-[var(--color-text-primary)] hover:text-blue-300 group w-full sm:w-auto"
+                className="flex items-center text-[var(--color-text-primary)] hover:text-blue-300 group w-full sm:w-auto p-3 transition-colors rounded"
                 tabIndex={0}
                 aria-label={`Previous post: ${previousPost.title}`}
               >
@@ -137,11 +149,11 @@ const Post = () => {
             {nextPost ? (
               <Link
                 to={`/posts/${nextPost.slug}`}
-                className="flex items-center text-[var(--color-text-primary)] hover:text-blue-300 group w-full sm:w-auto text-right justify-end"
+                className="flex items-center text-[var(--color-text-primary)] hover:text-blue-300 group w-full sm:w-auto p-3 transition-colors rounded justify-end"
                 tabIndex={0}
                 aria-label={`Next post: ${nextPost.title}`}
               >
-                <div className="truncate max-w-xs">
+                <div className="truncate max-w-xs text-right">
                   <span className="text-xs text-blue-500 block">Next</span>
                   <span className="font-medium">{nextPost.title}</span>
                 </div>

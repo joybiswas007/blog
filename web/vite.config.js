@@ -22,7 +22,14 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ["react", "react-dom"],
-          router: ["react-router-dom"]
+          router: ["react-router-dom"],
+          icons: [
+            "react-icons",
+            "react-icons/fi",
+            "react-icons/tb",
+            "react-icons/fa6",
+            "react-icons/bs"
+          ]
         }
       }
     }

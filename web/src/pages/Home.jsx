@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import api from "@/services/api";
 import { CalculateReadTime } from "@/utils/helpers";
 import SEO from "@/components/SEO";
+import { BsCalendar, BsClock, BsTags } from "react-icons/bs";
 
 // Helper to parse query params
 const useQuery = () => {
@@ -33,6 +34,12 @@ const Home = () => {
   const [totalPost, setTotalPost] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Selected sort state for dropdown
+  const [selectedSort, setSelectedSort] = useState(
+    SORT_OPTIONS.find(opt => opt.orderBy === orderBy && opt.sort === sort) ||
+      SORT_OPTIONS[0]
+  );
 
   // Fetch posts
   useEffect(() => {
@@ -68,6 +75,19 @@ const Home = () => {
     return `/?${searchParams.toString()}`;
   };
 
+  // Handle sort change
+  const handleSortChange = e => {
+    const selected = SORT_OPTIONS.find(opt => opt.label === e.target.value);
+    setSelectedSort(selected);
+    window.location.href = buildQueryString({
+      limit,
+      offset: 0,
+      order_by: selected.orderBy,
+      sort: selected.sort,
+      tag
+    });
+  };
+
   // Format date to match original template
   const formatDate = dateString => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -89,59 +109,55 @@ const Home = () => {
       <SEO />
       <div className="space-y-8 w-full max-w-3xl font-sans">
         {/* Sorting controls */}
-        <div className="flex justify-start items-center space-x-4 pl-4 ml-2">
+        <div className="flex justify-start items-center space-x-4 pl-4">
           <p className="text-[var(--color-text-primary)] text-sm">Sort by:</p>
-          {SORT_OPTIONS.map(opt => (
-            <Link
-              key={opt.label}
-              to={buildQueryString({
-                limit,
-                offset: 0,
-                order_by: opt.orderBy,
-                sort: opt.sort,
-                tag
-              })}
-              className={
-                `px-2 py-1 font-mono transition-colors ` +
-                (orderBy === opt.orderBy && sort === opt.sort
-                  ? "text-blue-400"
-                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]")
-              }
-              aria-label={`Sort by ${opt.label}`}
-              tabIndex={0}
-            >
-              {opt.label}
-            </Link>
-          ))}
+          <select
+            value={selectedSort.label}
+            onChange={handleSortChange}
+            className="bg-[var(--color-background-primary)] text-[var(--color-text-primary)] rounded px-2 py-1 font-mono transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
+            aria-label="Sort options"
+          >
+            {SORT_OPTIONS.map(opt => (
+              <option key={opt.label} value={opt.label}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Posts list */}
-        <div className="space-y-6 pl-4 ml-2">
+        <div className="space-y-4 pl-4">
           {loading ? (
             <div className="text-blue-400 font-mono">Loading...</div>
           ) : error ? (
             <div className="text-red-500 font-mono">{error}</div>
           ) : posts && posts.length > 0 ? (
             posts.map(post => (
-              <article className="group" key={post.id}>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-blue-500">&gt;</span>
-                  <Link
-                    to={`/posts/${post.slug}`}
-                    className="text-[var(--color-text-primary)] hover:text-blue-300 hover:underline font-medium font-mono transition-colors"
-                    aria-label={`Read post: ${post.title}`}
-                    tabIndex={0}
-                  >
-                    {post.title}
-                  </Link>
-                </div>
-                <div className="ml-4 mt-1 text-[var(--color-text-primary)] text-xs flex flex-wrap gap-2 items-center font-mono">
-                  <time>{formatDate(post.created_at)}</time>
-                  <span>|</span>
-                  <span>{CalculateReadTime(post.content)}</span>
+              <article
+                key={post.id}
+                className="group rounded p-4 transition-colors"
+                role="article"
+              >
+                <Link
+                  to={`/posts/${post.slug}`}
+                  className="text-[var(--color-text-primary)] hover:text-blue-300 font-medium font-mono transition-colors block mb-2"
+                  aria-label={`Read post: ${post.title}`}
+                >
+                  <span className="text-blue-500 mr-2">&gt;</span>
+                  {post.title}
+                </Link>
+                <div className="text-[var(--color-text-secondary)] text-xs flex flex-wrap gap-4 items-center font-mono">
+                  <span className="flex items-center">
+                    <BsCalendar className="text-blue-500 mr-1" />
+                    {formatDate(post.created_at)}
+                  </span>
+                  <span className="flex items-center">
+                    <BsClock className="text-blue-500 mr-1" />
+                    {CalculateReadTime(post.content)}
+                  </span>
                   {post.tags && post.tags.length > 0 && (
-                    <>
-                      <span>|</span>
+                    <div className="flex items-center gap-2">
+                      <BsTags className="text-blue-500" />
                       {post.tags.map((tagVal, index) => (
                         <Link
                           key={index}
@@ -154,12 +170,11 @@ const Home = () => {
                           })}
                           className="text-blue-400 hover:text-blue-300 transition-colors"
                           aria-label={`Filter by tag ${tagVal}`}
-                          tabIndex={0}
                         >
                           #{tagVal}
                         </Link>
                       ))}
-                    </>
+                    </div>
                   )}
                 </div>
               </article>
@@ -175,51 +190,47 @@ const Home = () => {
         {/* Pagination */}
         {totalPost > limit && (
           <div className="flex justify-center items-center space-x-4 mt-8">
-            {offset > 0 ? (
-              <Link
-                to={buildQueryString({
-                  limit,
-                  offset: Math.max(0, offset - limit),
-                  order_by: orderBy,
-                  sort,
-                  tag
-                })}
-                className="px-4 py-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] font-mono transition-colors"
-                aria-label="Previous page"
-                tabIndex={0}
-              >
-                <span className="text-blue-500">&lt;</span>
-                Prev
-              </Link>
-            ) : (
-              <span className="px-4 py-2 text-gray-500 cursor-not-allowed font-mono">
-                Prev
-              </span>
-            )}
+            <Link
+              to={buildQueryString({
+                limit,
+                offset: Math.max(0, offset - limit),
+                order_by: orderBy,
+                sort,
+                tag
+              })}
+              className={`px-4 py-2 font-mono transition-colors rounded ${
+                offset > 0
+                  ? "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-shade-900)]"
+                  : "text-gray-500 cursor-not-allowed"
+              }`}
+              aria-label="Previous page"
+              tabIndex={offset > 0 ? 0 : -1}
+            >
+              <span className="text-blue-500 mr-1">&lt;</span>
+              Prev
+            </Link>
             <p className="text-[var(--color-text-secondary)] text-sm font-mono">
               Page {currentPage} of {totalPages}
             </p>
-            {offset + limit < totalPost ? (
-              <Link
-                to={buildQueryString({
-                  limit,
-                  offset: offset + limit,
-                  order_by: orderBy,
-                  sort,
-                  tag
-                })}
-                className="px-4 py-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] font-mono transition-colors"
-                aria-label="Next page"
-                tabIndex={0}
-              >
-                Next
-                <span className="text-blue-500">&gt;</span>
-              </Link>
-            ) : (
-              <span className="px-4 py-2 text-gray-500 cursor-not-allowed font-mono">
-                Next
-              </span>
-            )}
+            <Link
+              to={buildQueryString({
+                limit,
+                offset: offset + limit,
+                order_by: orderBy,
+                sort,
+                tag
+              })}
+              className={`px-4 py-2 font-mono transition-colors rounded ${
+                offset + limit < totalPost
+                  ? "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-shade-900)]"
+                  : "text-gray-500 cursor-not-allowed"
+              }`}
+              aria-label="Next page"
+              tabIndex={offset + limit < totalPost ? 0 : -1}
+            >
+              Next
+              <span className="text-blue-500 ml-1">&gt;</span>
+            </Link>
           </div>
         )}
       </div>
