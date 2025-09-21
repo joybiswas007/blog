@@ -49,9 +49,9 @@ const TopPostsPanel = ({ topPosts, topError, onClose }) => {
             {topError}
           </div>
         ) : (
-          <ul className="space-y-2 font-mono text-xs">
+          <div className="space-y-2 font-mono text-xs">
             {topPosts.map((topPost, index) => (
-              <li key={topPost.id} className="py-1">
+              <div key={topPost.id} className="py-1">
                 <Link
                   to={`/posts/${topPost.slug}`}
                   target="_blank"
@@ -64,9 +64,9 @@ const TopPostsPanel = ({ topPosts, topError, onClose }) => {
                   </span>
                   <span className="line-clamp-2">{topPost.title}</span>
                 </Link>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>
