@@ -26,8 +26,16 @@ type Post struct {
 	Slug        string    `json:"slug"`                  // Slug of post title
 	IsPublished bool      `json:"is_published"`          // Indicates if the post is published or not
 	Tags        []string  `json:"tags"`                  // List of tags associated with the post
+	Views       int64     `json:"-"`                     // Views tracks the number of times a post has been viewed.
 	CreatedAt   time.Time `json:"created_at"`            // When the post was created
 	UpdatedAt   time.Time `json:"updated_at"`            // When the post was last updated
+}
+
+// TopPost represents a simplified blog post for top posts api responses.
+type TopPost struct {
+	ID    int    `json:"id"`
+	Title string `json:"title"`
+	Slug  string `json:"slug"`
 }
 
 type YearlyStats struct {
@@ -528,4 +536,48 @@ func (m PostModel) NextID(currentID int) (int, error) {
 		}
 	}
 	return postID, nil
+}
+
+// UpdateViews increments the view count for a specific blog post by ID.
+func (m PostModel) UpdateViews(postID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `UPDATE blog_posts SET views = views + 1 WHERE id = $1`
+
+	_, err := m.DB.Exec(ctx, query, postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetTop10Posts fetches the top 10 blog posts by views
+func (m PostModel) GetTop10Posts() ([]TopPost, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `SELECT id, title, slug FROM blog_posts WHERE is_published = true ORDER BY views DESC LIMIT 10`
+
+	rows, err := m.DB.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var topPosts []TopPost
+
+	for rows.Next() {
+		var post TopPost
+		if err := rows.Scan(&post.ID, &post.Title, &post.Slug); err != nil {
+			return nil, err
+		}
+		topPosts = append(topPosts, post)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return topPosts, nil
 }

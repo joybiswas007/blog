@@ -20,6 +20,7 @@ func registerBlogRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	{
 		posts.GET("", cache.CacheByRequestURI(s.redisStore, 10*time.Minute), s.blogPostsHandler)
 		posts.GET(":slug", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.getBlogPostBySlugHandler)
+		posts.GET("top-posts", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.topPostsHandler)
 		posts.GET("tags", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.blogTagsHandler)
 	}
 
@@ -49,6 +50,16 @@ func (s *APIV1Service) blogPostsHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"total_post": totalPost, "posts": filteredPosts})
+}
+
+func (s *APIV1Service) topPostsHandler(c *gin.Context) {
+	topPosts, err := s.db.Posts.GetTop10Posts()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"top_posts": topPosts})
 }
 
 func (s *APIV1Service) blogTagsHandler(c *gin.Context) {
@@ -118,6 +129,13 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 			return
 		}
 	}
+	// Update Post views
+	err = s.db.Posts.UpdateViews(post.ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"post": post, "previous_post": previousPost, "next_post": nextPost})
 }
 
