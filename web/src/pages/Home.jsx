@@ -3,13 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import api from "@/services/api";
 import { CalculateReadTime } from "@/utils/helpers";
 import SEO from "@/components/SEO";
-import {
-  BsCalendar,
-  BsClock,
-  BsTags,
-  BsFire,
-  BsArrowRight
-} from "react-icons/bs";
+import { BsCalendar, BsClock, BsTags, BsArrowRight } from "react-icons/bs";
 
 // Helper to parse query params
 const useQuery = () => {
@@ -24,54 +18,6 @@ const SORT_OPTIONS = [
   { orderBy: "created_at", sort: "ASC", label: "Oldest" },
   { orderBy: "title", sort: "ASC", label: "A-Z" }
 ];
-
-const TopPostsPanel = ({ topPosts, topError, onClose }) => {
-  if (topPosts.length === 0) return null; // Don't display if empty
-
-  return (
-    <div className="fixed right-6 bottom-6 z-10">
-      <div className="bg-[var(--color-background-primary)] rounded-lg p-4 w-64 shadow-lg">
-        <div className="flex items-center mb-3">
-          <BsFire className="text-orange-500 mr-2" />
-          <h3 className="text-[var(--color-text-primary)] font-mono text-sm">
-            Top 10 posts
-          </h3>
-          <button
-            onClick={onClose}
-            className="ml-auto text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] text-xs"
-            aria-label="Close top posts"
-          >
-            &times;
-          </button>
-        </div>
-        {topError ? (
-          <div className="text-red-500 font-mono text-xs text-center py-2">
-            {topError}
-          </div>
-        ) : (
-          <div className="space-y-2 font-mono text-xs">
-            {topPosts.map((topPost, index) => (
-              <div key={topPost.id} className="py-1">
-                <Link
-                  to={`/posts/${topPost.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 transition-colors flex items-start"
-                  aria-label={`Read top post: ${topPost.title}`}
-                >
-                  <span className="text-orange-500 font-bold mr-2 shrink-0">
-                    #{index + 1}
-                  </span>
-                  <span className="line-clamp-2">{topPost.title}</span>
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 const SortingControls = ({
   selectedSort,
@@ -138,14 +84,14 @@ const PostsList = ({
   <div className="space-y-8">
     {loading ? (
       <div className="flex justify-center py-12">
-        <div className="text-blue-400 font-mono">Loading articles...</div>
+        <div className="text-blue-400 font-mono">Loading posts...</div>
       </div>
     ) : error ? (
       <div className="text-red-500 font-mono text-center py-8">{error}</div>
-    ) : posts.length > 0 ? (
+    ) : posts && posts.length > 0 ? (
       posts.map(post => (
         <article
-          key={post.id} // Fixed key to use post.id instead of index
+          key={post.id}
           className="group transition-all duration-300"
           role="article"
         >
@@ -301,12 +247,9 @@ const Home = () => {
 
   // Data state
   const [posts, setPosts] = useState([]);
-  const [topPosts, setTopPosts] = useState([]);
   const [totalPost, setTotalPost] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [topError, setTopError] = useState("");
-  const [showTopPosts, setShowTopPosts] = useState(false);
 
   // Selected sort state for dropdown
   const [selectedSort, setSelectedSort] = useState(
@@ -341,42 +284,6 @@ const Home = () => {
     };
     fetchPosts();
   }, [limit, offset, orderBy, sort, tag]);
-
-  // Fetch top posts
-  useEffect(() => {
-    const fetchTopPosts = async () => {
-      setTopError("");
-      try {
-        const response = await api.get("/posts/top-posts");
-        setTopPosts(response.data.top_posts || []); // Ensure array
-      } catch (err) {
-        setTopError(err.response?.data?.error || "Failed to fetch top posts");
-      }
-    };
-    fetchTopPosts();
-  }, []);
-
-  // Set up intersection observer to show top posts after user scrolls
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShowTopPosts(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
-    }
-
-    return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
-      }
-    };
-  }, []);
 
   // Helper to build query string
   const buildQueryString = params => {
@@ -420,15 +327,6 @@ const Home = () => {
   return (
     <div className="flex justify-center w-full relative">
       <SEO />
-
-      {showTopPosts && (
-        <TopPostsPanel
-          topPosts={topPosts}
-          topError={topError}
-          onClose={() => setShowTopPosts(false)}
-        />
-      )}
-
       <div className="space-y-4 w-full max-w-3xl font-sans">
         <SortingControls
           selectedSort={selectedSort}

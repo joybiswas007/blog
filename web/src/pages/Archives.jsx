@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "@/services/api";
 import SEO from "@/components/SEO";
+import { BsFire } from "react-icons/bs";
 
 const Archives = () => {
   const [archives, setArchives] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [topPosts, setTopPosts] = useState([]);
+  const [topError, setTopError] = useState("");
 
   const fetchArchives = async () => {
     try {
@@ -20,8 +23,20 @@ const Archives = () => {
     }
   };
 
+  // Fetch top posts
+  const fetchTopPosts = async () => {
+    setTopError("");
+    try {
+      const response = await api.get("/posts/top-posts");
+      setTopPosts(response.data.top_posts || []); // Ensure array fallback
+    } catch (err) {
+      setTopError(err.response?.data?.error || "Failed to fetch top posts");
+    }
+  };
+
   useEffect(() => {
     fetchArchives();
+    fetchTopPosts();
   }, []);
 
   if (loading) {
@@ -45,8 +60,8 @@ const Archives = () => {
   return (
     <div className="flex justify-center w-full">
       <SEO title="Archives" />
-      <div className="space-y-10 w-full max-w-3xl">
-        <div className="pl-4 ml-2 space-y-10">
+      <div className="space-y-6 w-full max-w-3xl">
+        <div className="pl-4 space-y-6">
           {/* Feed section */}
           <section className="space-y-2">
             <p className="flex items-baseline gap-2">
@@ -64,6 +79,37 @@ const Archives = () => {
               <span className="text-blue-400 text-lg">&gt;</span>
               <span>/rss.xml</span>
             </a>
+          </section>
+
+          {/* Top Posts Section */}
+          <section className="space-y-3">
+            <h2 className="text-lg text-[var(--color-text-primary)] font-heading flex items-center gap-2">
+              <BsFire className="text-orange-500" /> Top 10 Posts
+            </h2>
+            {topError ? (
+              <p className="text-red-500 font-mono text-sm">{topError}</p>
+            ) : topPosts && topPosts.length > 0 ? (
+              <ul className="space-y-1 font-mono text-sm">
+                {topPosts.map((topPost, index) => (
+                  <li key={topPost.id} className="flex items-center gap-2">
+                    <span className="text-orange-500 font-bold">
+                      #{index + 1}
+                    </span>
+                    <Link
+                      to={`/posts/${topPost.slug}`}
+                      className="text-blue-400 hover:text-blue-300 transition-colors truncate"
+                      aria-label={`Read top post: ${topPost.title}`}
+                    >
+                      {topPost.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[var(--color-text-secondary)] font-mono text-sm">
+                No top posts available.
+              </p>
+            )}
           </section>
 
           {/* Archives by year */}
