@@ -193,7 +193,7 @@ const Dashboard = () => {
                   to="/auth/posts/create"
                   className="text-blue-400 hover:text-blue-300 transition-colors font-mono"
                 >
-                  Create your first post
+                  Create post
                 </Link>
               </div>
             </div>

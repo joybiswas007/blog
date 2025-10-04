@@ -1,5 +1,5 @@
 import axios from "axios";
-import { clearAuthTokens, getAuthTokens, setAuthTokens } from "../utils/auth";
+import { clearAuthTokens, getAuthTokens, setAuthTokens } from "@/utils/auth";
 
 const { VITE_BASE_URL } = import.meta.env;
 

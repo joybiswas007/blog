@@ -1,22 +1,22 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import PrivateRoute from "./components/PrivateRoute";
-import Dashboard from "./pages/Dashboard";
-import CreatePost from "./pages/CreatePost";
-import EditPost from "./pages/EditPost";
-import ResetPassword from "./components/ResetPassword";
-import Layout from "./components/Layout";
-import Home from "./pages/Home";
-import Post from "./pages/Post";
-import Tags from "./pages/Tags";
-import Archives from "./pages/Archives";
-import ArchiveByYear from "./pages/ArchiveByYear";
-import About from "./pages/About";
-import NotFound from "./components/NotFound";
-import Tools from "./pages/Tools";
-import Sessions from "./components/Sessions";
-import IPBan from "./components/IPBan";
-import LoginAttempts from "./components/LoginAttempts";
+import Login from "@/pages/Login";
+import PrivateRoute from "@/components/PrivateRoute";
+import Dashboard from "@/pages/Dashboard";
+import CreatePost from "@/pages/CreatePost";
+import EditPost from "@/pages/EditPost";
+import ResetPassword from "@/components/ResetPassword";
+import Layout from "@/components/Layout";
+import Home from "@/pages/Home";
+import Post from "@/pages/Post";
+import Tags from "@/pages/Tags";
+import Archives from "@/pages/Archives";
+import ArchiveByYear from "@/pages/ArchiveByYear";
+import About from "@/pages/About";
+import NotFound from "@/components/NotFound";
+import Tools from "@/pages/Tools";
+import Sessions from "@/components/Sessions";
+import IPBan from "@/components/IPBan";
+import LoginAttempts from "@/components/LoginAttempts";
 
 function App() {
   return (

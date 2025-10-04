@@ -1,6 +1,6 @@
 module github.com/joybiswas007/blog
 
-go 1.24.5
+go 1.25.0
 
 require (
 	github.com/chenyahui/gin-cache v1.10.0
@@ -65,7 +65,7 @@ require (
 	golang.org/x/arch v0.19.0 // indirect
 	golang.org/x/net v0.42.0 // indirect
 	golang.org/x/sync v0.16.0 // indirect
-	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.27.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
