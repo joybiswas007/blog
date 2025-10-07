@@ -42,6 +42,12 @@ is_production: true
 blog:
   name: "A name for your blog"
   url: "https://sitename.com"
+redis:
+  address: 127.0.0.1:6349
+  username: username
+  password: password
+max_login_attempts: 6
+ban_duration: 6 #hours
 `
 	configPath := writeTempConfig(t, cfgContent)
 	Init(configPath)
