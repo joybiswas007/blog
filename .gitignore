@@ -28,6 +28,9 @@ tmp/
 # .env file
 .env
 
+# redis config
+redis.conf
+
 # Project build
 blog
 blog_cli

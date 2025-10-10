@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "@/services/api";
-import MarkdownEditor from "./MarkdownEditor";
+const MarkdownEditor = lazy(() => import("@/components/MarkdownEditor"));
+import EditorSkeleton from "@/components/EditorSkeleton";
 
 export const PostEditorHeader = ({
   title,
@@ -176,12 +177,14 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           Content <span className="text-red-400">*</span>
         </label>
         <div className="rounded-lg overflow-hidden bg-[var(--color-background-primary)] border border-[var(--color-shade-800)]">
-          <MarkdownEditor
-            value={formData.content}
-            onChange={value =>
-              setFormData(prev => ({ ...prev, content: value }))
-            }
-          />
+          <Suspense fallback={<EditorSkeleton />}>
+            <MarkdownEditor
+              value={formData.content}
+              onChange={value =>
+                setFormData(prev => ({ ...prev, content: value }))
+              }
+            />
+          </Suspense>
         </div>
       </div>
     </div>

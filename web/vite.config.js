@@ -29,7 +29,8 @@ export default defineConfig({
             "react-icons/tb",
             "react-icons/fa6",
             "react-icons/bs"
-          ]
+          ],
+          markdown: ["react-markdown", "remark-gfm"]
         }
       }
     }

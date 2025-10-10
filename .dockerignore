@@ -9,7 +9,6 @@ blog_cli
 
 # Dependency directories
 vendor/
-w
 web/node_modules
 web/dist
 migrations/
@@ -41,4 +40,5 @@ logs
 .blog.yaml
 .air.toml
 example.blog.yaml
-
+redis.conf
+example.redis.conf

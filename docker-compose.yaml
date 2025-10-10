@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     image: blog-app
     container_name: blog-app
+    depends_on:
+      - redis
     ports:
       - "8080:8080"
     volumes:
@@ -21,3 +23,16 @@ services:
       timeout: 3s
       retries: 3
       start_period: 40s
+
+  redis:
+    image: redis:8-alpine
+    container_name: redis-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+    restart: unless-stopped
+volumes:
+  redis-data:

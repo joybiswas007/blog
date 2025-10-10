@@ -28,6 +28,7 @@ Follow these steps to set up the project for development or production.
 
 ## Redis
 Make sure redis is already installed and setuped as we're using redis for cacheing.
+__Note__: Redis is **automatically configured** when using Docker Compose - no manual setup required:
 
 ---
 
@@ -38,6 +39,13 @@ You can run the blog with Docker or manually.
 ### Docker
 
 1. **Prepare Environment Variables:**  
+   - Copy `example.blog.yaml` to `.blog.yaml`
+   - Copy `example.redis.conf` to `redis.conf`
+   ```bash
+    cp example.blog.yaml .blog.yaml
+    cp example.redis.conf redis.conf
+    # Edit .blog.yaml, redis.conf as you need
+   ```
    - Copy `env.example` to `.env` inside the `web` directory and configure as needed:
      ```bash
      cp web/env.example web/.env
@@ -92,6 +100,7 @@ You can run the blog with Docker or manually.
 2. Copy and edit config:
    ```bash
    cp example.blog.yaml .blog.yaml
+   cp example.redis.conf redis.conf
    ```
 3. Build:
    ```bash
