@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gosimple/slug"
+
 	"github.com/joybiswas007/blog/internal/database"
 )
 

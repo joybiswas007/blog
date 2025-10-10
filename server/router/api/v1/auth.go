@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
+
 	"github.com/joybiswas007/blog/internal/database"
 	"github.com/joybiswas007/blog/pkg"
 )

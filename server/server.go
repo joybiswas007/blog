@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/joybiswas007/blog/config"
 	"github.com/joybiswas007/blog/internal/database"
 	v1 "github.com/joybiswas007/blog/server/router/api/v1"
