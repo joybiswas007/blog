@@ -1,3 +1,4 @@
+// Package v1 provides HTTP handlers for the blog API version 1 endpoints.
 package v1
 
 import (
@@ -15,10 +16,11 @@ import (
 	ginexp "github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
+	sloggin "github.com/samber/slog-gin"
+
 	"github.com/joybiswas007/blog/config"
 	"github.com/joybiswas007/blog/internal/database"
 	"github.com/joybiswas007/blog/server/router/frontend"
-	sloggin "github.com/samber/slog-gin"
 )
 
 // APIV1Service handles all API v1 endpoints and dependencies.

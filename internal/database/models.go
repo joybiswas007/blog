@@ -1,3 +1,4 @@
+// Package database provides PostgreSQL database access and models for the blog.
 package database
 
 import (
