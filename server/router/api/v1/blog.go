@@ -14,24 +14,20 @@ import (
 	"github.com/joybiswas007/blog/internal/database"
 )
 
-// registerBlogRoutes handles posts display
+// registerBlogRoutes handles posts display.
 func registerBlogRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	posts := rg.Group("posts")
-	{
-		posts.GET("", cache.CacheByRequestURI(s.redisStore, 10*time.Minute), s.blogPostsHandler)
-		posts.GET(":slug", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.getBlogPostBySlugHandler)
-		posts.GET("top-posts", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.topPostsHandler)
-		posts.GET("tags", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.blogTagsHandler)
-	}
+	posts.GET("", cache.CacheByRequestURI(s.redisStore, 10*time.Minute), s.blogPostsHandler)
+	posts.GET(":slug", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.getBlogPostBySlugHandler)
+	posts.GET("top-posts", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.topPostsHandler)
+	posts.GET("tags", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.blogTagsHandler)
 
 	archives := posts.Group("archives")
-	{
-		archives.GET("", cache.CacheByRequestURI(s.redisStore, 1*time.Hour), s.archivesHandler)
-		archives.GET(":year", cache.CacheByRequestURI(s.redisStore, 1*time.Hour), s.archiveYearHandler)
-	}
+	archives.GET("", cache.CacheByRequestURI(s.redisStore, 1*time.Hour), s.archivesHandler)
+	archives.GET(":year", cache.CacheByRequestURI(s.redisStore, 1*time.Hour), s.archiveYearHandler)
 }
 
-// blogPostsHandler display posts
+// blogPostsHandler display posts.
 func (s *APIV1Service) blogPostsHandler(c *gin.Context) {
 	posts, _, totalPost, err := getPosts(c, s)
 	if err != nil {
@@ -42,7 +38,7 @@ func (s *APIV1Service) blogPostsHandler(c *gin.Context) {
 	// To prevent any potential misuse, we filter out unpublished posts here and ignore them.
 	var filteredPosts []*database.Post
 	for _, post := range posts {
-		//ignore un-published posts
+		// ignore un-published posts
 		if !post.IsPublished {
 			continue
 		}
@@ -180,7 +176,7 @@ func (s *APIV1Service) rssHandler(c *gin.Context) {
 	}
 	c.Writer.Header().Add("Content-Type", "application/xml")
 
-	_, err = c.Writer.Write([]byte(rss))
+	_, err = c.Writer.WriteString(rss)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -330,7 +326,7 @@ func (s *APIV1Service) siteMapHandler(c *gin.Context) {
 	}
 
 	c.Writer.Header().Set("Content-Type", "application/xml")
-	_, err = c.Writer.Write([]byte(xml.Header + string(output)))
+	_, err = c.Writer.WriteString(xml.Header + string(output))
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return

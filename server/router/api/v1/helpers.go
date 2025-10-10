@@ -25,38 +25,57 @@ import (
 	"github.com/joybiswas007/blog/internal/database"
 )
 
+// Token type constants define the types of JWT tokens used in the application.
 const (
-	TokenTypeAccess  = "access"
-	TokenTypeRefresh = "refresh"
+	TokenTypeAccess  = "access"  // Access token for API authentication
+	TokenTypeRefresh = "refresh" // Refresh token for obtaining new access tokens
 )
 
+// Authentication error messages returned by the auth middleware and handlers.
 var (
-	ErrUnauthorized          = "Unauthorized access"
+	// ErrUnauthorized is returned when a user attempts to access a protected resource without proper credentials.
+	ErrUnauthorized = "Unauthorized access"
+
+	// ErrTokenInvalidOrExpired is returned when the provided token is either malformed or has expired.
 	ErrTokenInvalidOrExpired = "Your session has expired"
-	ErrMissingHeader         = "missing Authorization header"
-	ErrInvalidFormat         = "invalid Authorization header"
-	ErrEmptyToken            = "token is empty"
-	ErrUserNotFound          = "user not found"
-	ErrTokenExpired          = "token expired"
-	ErrInvalidAuthFormat     = "Invalid Authorization format. Expected 'Bearer <token>'"
-	ErrNotEnoughPerm         = "You don't have enough permission to access this resource."
+
+	// ErrMissingHeader is returned when the Authorization header is not present in the request.
+	ErrMissingHeader = "missing Authorization header"
+
+	// ErrInvalidFormat is returned when the Authorization header format is incorrect.
+	ErrInvalidFormat = "invalid Authorization header"
+
+	// ErrEmptyToken is returned when the token value is empty or blank.
+	ErrEmptyToken = "token is empty"
+
+	// ErrUserNotFound is returned when the authenticated user cannot be found in the database.
+	ErrUserNotFound = "user not found"
+
+	// ErrTokenExpired is returned when the token has passed its expiration time.
+	ErrTokenExpired = "token expired"
+
+	// ErrInvalidAuthFormat is returned when the Authorization header doesn't follow the 'Bearer <token>' format.
+	ErrInvalidAuthFormat = "Invalid Authorization format. Expected 'Bearer <token>'"
+
+	// ErrNotEnoughPerm is returned when a user lacks the required permissions for a resource.
+	ErrNotEnoughPerm = "You don't have enough permission to access this resource."
 )
 
 // getBearerToken extracts the Bearer token from the Authorization header.
 func getBearerToken(c *gin.Context) (string, error) {
-	// Get the Authorization header
+	// Get the Authorization header.
 	auth := c.GetHeader("Authorization")
 	if auth == "" {
 		return "", errors.New(ErrMissingHeader)
 	}
 
 	const prefix = "Bearer "
-	// Check if it starts with "Bearer "
+	// Check if it starts with "Bearer ".
 	if !strings.HasPrefix(auth, prefix) {
 		return "", errors.New(ErrInvalidAuthFormat)
 	}
 
-	// Trim the "Bearer " prefix to get the token
+	// Trim the "Bearer " prefix to get the token.
 	token := strings.TrimPrefix(auth, prefix)
 	if token == "" {
 		return "", errors.New(ErrEmptyToken)
@@ -140,7 +159,7 @@ func generateTokens(userID int64, s *APIV1Service) (accessToken, refreshToken st
 	return accessToken, refreshToken, nil
 }
 
-// getIDFromParam extracts the "id" parameter from the request,
+// getIDFromParam extracts the "id" parameter from the request.
 // converts it to an integer, and returns an error if it's missing or invalid.
 func getIDFromParam(c *gin.Context) (int, error) {
 	// Get the ID from the URL parameter
@@ -159,7 +178,7 @@ func getIDFromParam(c *gin.Context) (int, error) {
 }
 
 func getPosts(c *gin.Context, s *APIV1Service) ([]*database.Post, database.Filter, int, error) {
-	// Parse limit and offset query parameters with default values
+	// Parse limit and offset query parameters with default values.
 	limitStr := c.DefaultQuery("limit", "10")
 	offsetStr := c.DefaultQuery("offset", "0")
 	tag := c.Query("tag")
@@ -169,11 +188,11 @@ func getPosts(c *gin.Context, s *APIV1Service) ([]*database.Post, database.Filte
 	isPublishedStr := c.DefaultQuery("is_published", "true")
 	isPublished, err := strconv.ParseBool(isPublishedStr)
 	if err != nil {
-		// fallback or handle invalid value
+		// fallback or handle invalid value.
 		isPublished = true
 	}
 
-	// Convert limit and offset to integers and validate them
+	// Convert limit and offset to integers and validate them.
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil || limit < 1 {
 		limit = 5
@@ -183,7 +202,7 @@ func getPosts(c *gin.Context, s *APIV1Service) ([]*database.Post, database.Filte
 		offset = 0
 	}
 
-	// Create a filter and fetch posts from the database
+	// Create a filter and fetch posts from the database.
 	filter := database.Filter{
 		Limit:       limit,
 		Offset:      offset,
@@ -237,7 +256,7 @@ func deleteCacheKey(cacheStore *persist.RedisStore) {
 	}
 
 	for _, pattern := range patterns {
-		// For pattern keys, use SCAN
+		// For pattern keys, use SCAN.
 		var cursor uint64
 		for {
 			keys, nextCursor, err := cacheStore.RedisClient.Scan(ctx, cursor, pattern, 100).Result()
@@ -265,25 +284,25 @@ func (s *APIV1Service) updateIPHistory(userID int64, currentIP string) error {
 	// Get the user's most recent active IP session
 	activeSession, err := s.db.Users.IP.GetActiveSessionByUserID(userID)
 	if err != nil {
-		// If no active session found, create a new one
+		// If no active session found, create a new one.
 		if errors.Is(err, database.ErrRecordNotFound) {
 			return s.db.Users.IP.CreateHistory(userID, currentIP)
 		}
 		return err
 	}
 
-	// If user is logging in from the same IP as their active session, do nothing
+	// If user is logging in from the same IP as their active session, do nothing.
 	if activeSession.IP == currentIP {
 		return nil
 	}
 
-	// User is logging in from a different IP
-	// Close the previous session and create a new one
+	// User is logging in from a different IP.
+	// Close the previous session and create a new one.
 	err = s.db.Users.IP.CloseActiveSession(userID, activeSession.IP)
 	if err != nil {
 		return err
 	}
-	// Create new IP history record for the current IP
+	// Create new IP history record for the current IP.
 	return s.db.Users.IP.CreateHistory(userID, currentIP)
 }
 

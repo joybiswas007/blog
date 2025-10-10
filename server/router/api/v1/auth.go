@@ -13,32 +13,28 @@ import (
 	"github.com/joybiswas007/blog/pkg"
 )
 
-// registerAuthRoutes registers the routes related to authentication
+// registerAuthRoutes registers the routes related to authentication.
 func registerAuthRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	auth := rg.Group("auth")
-	{
-		auth.POST("login", s.loginHandler)
-		auth.POST("refresh", s.refreshTokenHandler)
+	auth.POST("login", s.loginHandler)
+	auth.POST("refresh", s.refreshTokenHandler)
 
-		auth.Use(s.CheckJWT())
-		auth.GET("status", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{"message": "OK"})
-		})
-		auth.GET("sessions", s.sessionsHandler)
-		auth.GET("attempts", s.handleLoginAttemptsViewer)
+	auth.Use(s.CheckJWT())
+	auth.GET("status", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "OK"})
+	})
+	auth.GET("sessions", s.sessionsHandler)
+	auth.GET("attempts", s.handleLoginAttemptsViewer)
 
-		auth.POST("reset-password", s.resetPasswdHandler)
+	auth.POST("reset-password", s.resetPasswdHandler)
 
-		ip := auth.Group("ip")
-		{
-			ip.POST("ban", s.banIPHandler)
-			ip.POST("unban/:id", s.unbanIPHandler)
-			ip.GET("bans-list", s.bannedIPLists)
-		}
+	ip := auth.Group("ip")
+	ip.POST("ban", s.banIPHandler)
+	ip.POST("unban/:id", s.unbanIPHandler)
+	ip.GET("bans-list", s.bannedIPLists)
 
-		//this route is only being used to securely manage the posts
-		registerPostRoutes(auth, s)
-	}
+	// this route is only being used to securely manage the posts.
+	registerPostRoutes(auth, s)
 }
 
 func (s *APIV1Service) loginHandler(c *gin.Context) {
@@ -70,9 +66,9 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		bannedUntil                 time.Time
 	)
 
-	// Handle existing attempt record
+	// Handle existing attempt record.
 	if userAttempts != nil {
-		// Check ban state
+		// Check ban state.
 		if time.Now().Before(userAttempts.BannedUntil.Time) {
 			timeRemaining := time.Until(userAttempts.BannedUntil.Time)
 			c.JSON(http.StatusForbidden, gin.H{
@@ -80,7 +76,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 			})
 			return
 		}
-		// Lift temp ban if ban time passed
+		// Lift temp ban if ban time passed.
 		if time.Now().After(userAttempts.BannedUntil.Time) {
 			err := s.db.Users.ClearLoginAttemptBan(userAttempts.ID, userAttempts.UserID)
 			if err != nil {
@@ -94,10 +90,10 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		attemptID = userAttempts.ID
 		bannedUntil = userAttempts.BannedUntil.Time
 
-		// If attempts exceed limit, apply ban
+		// If attempts exceed limit, apply ban.
 		if currentAttempt > int64(s.config.MaxLoginAttempts) {
 			bannedUntil = time.Now().Add(time.Hour * time.Duration(s.config.BanDuration))
-			currentBans++ // Increment ban count
+			currentBans++ // Increment ban count.
 
 			err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, &bannedUntil, currentBans)
 			if err != nil {
@@ -105,9 +101,9 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 				return
 			}
 
-			// Automated bruteforce prevention
+			// Automated bruteforce prevention.
 			if currentBans > 9 {
-				ipInt := pkg.IpToInt64(c.ClientIP())
+				ipInt := pkg.IPToInt64(c.ClientIP())
 				isBanned, banDetails, err := s.db.Users.IP.IsBanned(ipInt)
 				if err != nil {
 					c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
@@ -120,7 +116,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 					ipBan := &database.IPBan{
 						FromIP: ipInt,
 						ToIP:   ipInt,
-						Reason: database.DEFAULT_BAN_RESON,
+						Reason: database.DefaultBanReason,
 					}
 					err = s.db.Users.IP.Ban(ipBan)
 					if err != nil {
@@ -136,7 +132,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 			return
 		}
 
-		// Always update the attempt count on each request
+		// Always update the attempt count on each request.
 		err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, nil, currentBans)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -144,7 +140,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		}
 
 	} else {
-		// No record exists, so create one
+		// No record exists, so create one.
 		aid, err := s.db.Users.LogAttempt(user.ID, c.ClientIP(), currentAttempt, currentBans)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -176,7 +172,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		return
 	}
 
-	// Successful login, reset all login_attempts restriction
+	// Successful login, reset all login_attempts restriction.
 	err = s.db.Users.ResetAllLoginAttempt(user.ID, attemptID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -203,7 +199,7 @@ func (s *APIV1Service) refreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	// Check if the token has a "type" claim and if it's a "refresh" token
+	// Check if the token has a "type" claim and if it's a "refresh" token.
 	tokenType, ok := claims["type"].(string)
 	if !ok || tokenType != TokenTypeRefresh {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrInvalidFormat})
@@ -235,7 +231,7 @@ func (s *APIV1Service) refreshTokenHandler(c *gin.Context) {
 	})
 }
 
-// sessionsHandler fetches users serssions
+// sessionsHandler fetches users serssions.
 func (s *APIV1Service) sessionsHandler(c *gin.Context) {
 	limitStr := c.DefaultQuery("limit", "10")
 	offsetStr := c.DefaultQuery("offset", "0")
@@ -275,7 +271,7 @@ func (s *APIV1Service) sessionsHandler(c *gin.Context) {
 		}})
 }
 
-// banIPHandler ban IPAddresses
+// banIPHandler ban IPAddresses.
 func (s *APIV1Service) banIPHandler(c *gin.Context) {
 	var input struct {
 		FromIP string `json:"from_ip" binding:"required,ip"`
@@ -289,8 +285,8 @@ func (s *APIV1Service) banIPHandler(c *gin.Context) {
 	}
 
 	ban := &database.IPBan{
-		FromIP: pkg.IpToInt64(input.FromIP),
-		ToIP:   pkg.IpToInt64(input.ToIP),
+		FromIP: pkg.IPToInt64(input.FromIP),
+		ToIP:   pkg.IPToInt64(input.ToIP),
 		Reason: input.Reason,
 	}
 
@@ -303,7 +299,7 @@ func (s *APIV1Service) banIPHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "IP has been banned!"})
 }
 
-// unbanIPHandler removes ip from the bans list
+// unbanIPHandler removes ip from the bans list.
 func (s *APIV1Service) unbanIPHandler(c *gin.Context) {
 	banID, err := getIDFromParam(c)
 	if err != nil {
@@ -350,7 +346,7 @@ func (s *APIV1Service) bannedIPLists(c *gin.Context) {
 
 }
 
-// resetPasswdHandler reset password
+// resetPasswdHandler reset password.
 func (s *APIV1Service) resetPasswdHandler(c *gin.Context) {
 	var input struct {
 		Email    string `json:"email" binding:"required,email"`
@@ -396,7 +392,7 @@ func (s *APIV1Service) resetPasswdHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Password updated successfully!"})
 }
 
-// handleLoginAttemptsViewer handle login attempts data
+// handleLoginAttemptsViewer handle login attempts data.
 func (s *APIV1Service) handleLoginAttemptsViewer(c *gin.Context) {
 	limitStr := c.DefaultQuery("limit", "25")
 	offsetStr := c.DefaultQuery("offset", "0")

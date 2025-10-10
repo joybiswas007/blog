@@ -10,17 +10,15 @@ import (
 	"github.com/joybiswas007/blog/internal/database"
 )
 
-// registerPostRoutes handles CRUD for posts, protected by auth
+// registerPostRoutes handles CRUD for posts, protected by auth.
 func registerPostRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	posts := rg.Group("posts")
-	{
-		posts.GET("", s.postsHandler)
-		posts.GET(":id", s.getPostByIDHandler)
-		posts.POST("", s.createPostHandler)
-		posts.PATCH(":id", s.updatePostHandler)
-		posts.DELETE(":id", s.deletePostHandler)
-		posts.POST("publish/:id", s.publishDraftHandler)
-	}
+	posts.GET("", s.postsHandler)
+	posts.GET(":id", s.getPostByIDHandler)
+	posts.POST("", s.createPostHandler)
+	posts.PATCH(":id", s.updatePostHandler)
+	posts.DELETE(":id", s.deletePostHandler)
+	posts.POST("publish/:id", s.publishDraftHandler)
 }
 
 func (s *APIV1Service) postsHandler(c *gin.Context) {
@@ -111,7 +109,7 @@ func (s *APIV1Service) createPostHandler(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrNotEnoughPerm})
 		return
 	}
-	post := database.Post{
+	post := &database.Post{
 		Title:       input.Title,
 		Slug:        slug.Make(input.Title),
 		UserID:      int64(uid),
@@ -156,7 +154,7 @@ func (s *APIV1Service) updatePostHandler(c *gin.Context) {
 		return
 	}
 
-	var post database.Post
+	var post *database.Post
 
 	// Parse json response from the body
 	err = c.ShouldBindJSON(&post)
@@ -175,7 +173,7 @@ func (s *APIV1Service) updatePostHandler(c *gin.Context) {
 		return
 	}
 
-	//delete all other cache key
+	// delete all other cache key
 	deleteCacheKey(s.redisStore)
 
 	updatedPost, err := s.db.Posts.Get(pid)
@@ -227,7 +225,7 @@ func (s *APIV1Service) publishDraftHandler(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		//delete cache keys
+		// delete cache keys
 		deleteCacheKey(s.redisStore)
 
 		c.JSON(http.StatusOK, gin.H{"message": "Post published successfully"})

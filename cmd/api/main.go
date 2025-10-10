@@ -1,3 +1,4 @@
+// Package main is the entry point for the blog API server.
 package main
 
 import (
@@ -27,7 +28,7 @@ func main() {
 
 	logFile, err := os.OpenFile("blog.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	defer logFile.Close()
 
@@ -35,12 +36,12 @@ func main() {
 
 	cfg, err := config.GetAll()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	db, err := database.New(cfg.DB)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	defer func() {
@@ -48,7 +49,7 @@ func main() {
 		db.Close()
 	}()
 
-	srv := server.NewServer(db, cfg, logger)
+	srv := server.NewServer(db, &cfg, logger)
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
 

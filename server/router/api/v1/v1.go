@@ -21,14 +21,16 @@ import (
 	sloggin "github.com/samber/slog-gin"
 )
 
+// APIV1Service handles all API v1 endpoints and dependencies.
 type APIV1Service struct {
-	config     config.Config
+	config     *config.Config
 	logger     *slog.Logger
 	db         database.Models
 	redisStore *persist.RedisStore
 }
 
-func NewAPIV1Service(cfg config.Config, logger *slog.Logger, db database.Models) *APIV1Service {
+// NewAPIV1Service creates a new API v1 service instance.
+func NewAPIV1Service(cfg *config.Config, logger *slog.Logger, db database.Models) *APIV1Service {
 	return &APIV1Service{
 		config: cfg,
 		logger: logger,
@@ -36,6 +38,7 @@ func NewAPIV1Service(cfg config.Config, logger *slog.Logger, db database.Models)
 	}
 }
 
+// RegisterRoutes configures and returns an HTTP handler with all API v1 routes.
 func (s *APIV1Service) RegisterRoutes() http.Handler {
 	r := gin.Default()
 
@@ -55,13 +58,13 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 
 	s.redisStore = redisStore
 
-	//create a 3 second context for redis
+	// create a 3 second context for redis.
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	redisPing, err := s.redisStore.RedisClient.Ping(ctx).Result()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	fmt.Println("Redis ping:", redisPing)
@@ -94,7 +97,7 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 	r.GET("rss.xml", s.rssHandler)
 	r.GET("sitemap.xml", s.siteMapHandler)
 
-	// Register routes for each module
+	// Register routes for each module.
 	api := r.Group("api")
 
 	v1 := api.Group("v1")
@@ -102,11 +105,11 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 		c.JSON(http.StatusOK, gin.H{"message": "OK"})
 	})
 
-	//api routes
+	// api routes
 	registerBlogRoutes(v1, s)
 	registerAuthRoutes(v1, s)
 
-	//server the frontend
+	// server the frontend
 	frontend.Serve(r)
 
 	return r

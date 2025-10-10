@@ -11,13 +11,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Define the UserModel type.
+// UserModel type.
 type UserModel struct {
 	DB *pgxpool.Pool
 	IP IPModel
 }
 
-// Define a User struct to represent an individual user. Importantly, notice how we are
+// User struct to represent an individual user. Importantly, notice how we are
 // using the json:"-" struct tag to prevent the Password and Version fields appearing in
 // any output when we encode it to JSON. Also notice that the Password field uses the
 // custom password type defined below.
@@ -104,7 +104,7 @@ func (m UserModel) Insert(user *User) (int64, error) {
 	return user.ID, nil
 }
 
-// Retrieve the User details from the database based on the user's email address.
+// GetByEmail Retrieve the User details from the database based on the user's email address.
 // Because we have a UNIQUE constraint on the email column, this SQL query will only
 // return one record (or none at all, in which case we return a ErrRecordNotFound error).
 func (m UserModel) GetByEmail(email string) (*User, error) {
@@ -138,7 +138,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
-// Retrieve the User details from the database based on the user's id.
+// GetByID Retrieve the User details from the database based on the user's id.
 // Because we have a UNIQUE constraint on the id column, this SQL query will only
 // return one record (or none at all, in which case we return a ErrRecordNotFound error).
 func (m UserModel) GetByID(userID int64) (*User, error) {
@@ -349,7 +349,7 @@ func (m UserModel) GetAllLoginAttempts(limit, offset int64) ([]LoginAttempt, int
 }
 
 // UpdateLoginAttempt updates the attempts, banned_until, and bans fields for a specific login attempt record by its ID.
-func (m UserModel) UpdateLoginAttempt(attemptID int64, attempts int64, bannedUntil *time.Time, bans int64) error {
+func (m UserModel) UpdateLoginAttempt(attemptID, attempts int64, bannedUntil *time.Time, bans int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 

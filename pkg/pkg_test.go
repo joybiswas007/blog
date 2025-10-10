@@ -5,26 +5,26 @@ import (
 	"unicode"
 )
 
-func assertIpConversion(t *testing.T, ip string, wantUint32 uint32, wantInt64 int64) {
+func assertIPConversion(t *testing.T, ip string, wantUint32 uint32, wantInt64 int64) {
 	t.Helper()
 
-	gotUint32 := IpToUint32(ip)
+	gotUint32 := IPToUint32(ip)
 	if gotUint32 != wantUint32 {
 		t.Errorf("IpToUint32(%q) = %d, want %d", ip, gotUint32, wantUint32)
 	}
 
-	gotInt64 := IpToInt64(ip)
+	gotInt64 := IPToInt64(ip)
 	if gotInt64 != wantInt64 {
 		t.Errorf("IpToInt64(%q) = %d, want %d", ip, gotInt64, wantInt64)
 	}
 }
 
 func TestIpConversions(t *testing.T) {
-	assertIpConversion(t, "0.0.0.0", 0, 0)
-	assertIpConversion(t, "127.0.0.1", 2130706433, 2130706433)
-	assertIpConversion(t, "255.255.255.255", 4294967295, 4294967295)
-	assertIpConversion(t, "192.168.1.1", 3232235777, 3232235777)
-	assertIpConversion(t, "8.8.8.8", 134744072, 134744072)
+	assertIPConversion(t, "0.0.0.0", 0, 0)
+	assertIPConversion(t, "127.0.0.1", 2130706433, 2130706433)
+	assertIPConversion(t, "255.255.255.255", 4294967295, 4294967295)
+	assertIPConversion(t, "192.168.1.1", 3232235777, 3232235777)
+	assertIPConversion(t, "8.8.8.8", 134744072, 134744072)
 }
 
 func TestGeneratePassword(t *testing.T) {

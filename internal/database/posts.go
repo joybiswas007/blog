@@ -10,12 +10,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// PostModel handles database operations for blog posts
+// PostModel handles database operations for blog posts.
 type PostModel struct {
 	DB *pgxpool.Pool // Database connection pool
 }
 
-// Post represents a blog post in the database
+// Post represents a blog post in the database.
 type Post struct {
 	ID          int       `json:"id"`                    // Unique identifier for the post
 	UserID      int64     `json:"-"`                     // UserID of the user who created the post
@@ -38,12 +38,13 @@ type TopPost struct {
 	Slug  string `json:"slug"`
 }
 
+// YearlyStats represents blog post statistics aggregated by year.
 type YearlyStats struct {
 	Year      int `json:"year"`       // Year of the posts
 	PostCount int `json:"post_count"` // Number of posts in that year
 }
 
-// Get retrieves a single post by its ID including associated tags
+// Get retrieves a single post by its ID including associated tags.
 func (m PostModel) Get(postID int) (*Post, error) {
 	query := `
         SELECT
@@ -115,7 +116,7 @@ func (m PostModel) Exists(slug string) (exists bool, err error) {
 	return exists, nil
 }
 
-// GetBySlug retrieves a single post by its slug including author name and associated tags
+// GetBySlug retrieves a single post by its slug including author name and associated tags.
 func (m PostModel) GetBySlug(slug string) (*Post, error) {
 	query := `
         SELECT
@@ -172,8 +173,8 @@ func (m PostModel) GetBySlug(slug string) (*Post, error) {
 	return &p, nil
 }
 
-// Create inserts a new blog post and returns its ID
-func (m PostModel) Create(p Post) (int, error) {
+// Create inserts a new blog post and returns its ID.
+func (m PostModel) Create(p *Post) (int, error) {
 	var postID int
 	query := `INSERT INTO blog_posts(user_id, title, description, content, slug, is_published) 
 		  VALUES($1, $2, $3, $4, $5, $6) 
@@ -189,7 +190,7 @@ func (m PostModel) Create(p Post) (int, error) {
 	return postID, nil
 }
 
-// AddTag associates a tag with a blog post
+// AddTag associates a tag with a blog post.
 func (m PostModel) AddTag(postID, tagID int) error {
 	query := `INSERT INTO blog_tag(blog_id, tag_id) VALUES($1, $2)`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -205,8 +206,8 @@ func (m PostModel) AddTag(postID, tagID int) error {
 	return nil
 }
 
-// Update updates the specific post
-func (m PostModel) Update(p Post) error {
+// Update updates the specific post.
+func (m PostModel) Update(p *Post) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -216,7 +217,7 @@ func (m PostModel) Update(p Post) error {
 	}
 	defer tx.Rollback(ctx)
 
-	// First verify the post exists
+	// First verify the post exists.
 	var exists bool
 	err = tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM blog_posts WHERE id = $1)`, p.ID).Scan(&exists)
 	if err != nil {
@@ -227,7 +228,7 @@ func (m PostModel) Update(p Post) error {
 		return ErrRecordNotFound
 	}
 
-	// update the blog post
+	// update the blog post.
 	updateQuery := `
             UPDATE blog_posts 
             SET title = $1, description = $2, content = $3, slug = $4
@@ -238,7 +239,7 @@ func (m PostModel) Update(p Post) error {
 		p.Description,
 		p.Content,
 		p.Slug,
-		p.ID, // id we are passing to identify the post
+		p.ID, // id we are passing to identify the post.
 	}
 	_, err = tx.Exec(ctx, updateQuery, updateArgs...)
 	if err != nil {
@@ -246,7 +247,7 @@ func (m PostModel) Update(p Post) error {
 	}
 
 	if p.Tags != nil {
-		// Delete existing tag mappings
+		// Delete existing tag mappings.
 		_, err = tx.Exec(ctx, `DELETE FROM blog_tag WHERE blog_id = $1`, p.ID)
 		if err != nil {
 			switch {
@@ -257,16 +258,16 @@ func (m PostModel) Update(p Post) error {
 			}
 		}
 
-		// Loop through tags
+		// Loop through tags.
 		for _, tag := range p.Tags {
 			var tagID int
 
-			// Check if tag exists
+			// Check if tag exists.
 			err := tx.QueryRow(ctx, `SELECT id FROM tags WHERE name = $1`, tag).Scan(&tagID)
 			if err != nil {
 				switch {
 				case errors.Is(err, sql.ErrNoRows):
-					// Create tag if it doesn't exist
+					// Create tag if it doesn't exist.
 					err = tx.QueryRow(ctx, `INSERT INTO tags(name) VALUES($1) RETURNING id`, tag).Scan(&tagID)
 					if err != nil {
 						return err
@@ -276,7 +277,7 @@ func (m PostModel) Update(p Post) error {
 				}
 			}
 
-			// Insert into blog_tag
+			// Insert into blog_tag.
 			_, err = tx.Exec(ctx, `INSERT INTO blog_tag(blog_id, tag_id) VALUES($1, $2)`, p.ID, tagID)
 			if err != nil {
 				return err
@@ -284,7 +285,7 @@ func (m PostModel) Update(p Post) error {
 
 		}
 	}
-	// Commit transaction
+	// Commit transaction.
 	return tx.Commit(ctx)
 }
 
@@ -311,7 +312,7 @@ func (m PostModel) Publish(postID int) error {
 	return nil
 }
 
-// Delete deletes the specific blog post
+// Delete deletes the specific blog post.
 func (m PostModel) Delete(postID int) error {
 	query := `DELETE FROM blog_posts WHERE id = $1`
 
@@ -330,7 +331,7 @@ func (m PostModel) Delete(postID int) error {
 	return nil
 }
 
-// GetAll retrieves a paginated list of all blog posts with their tags
+// GetAll retrieves a paginated list of all blog posts with their tags.
 func (m PostModel) GetAll(filter Filter) ([]*Post, int, error) {
 	query := fmt.Sprintf(`
 SELECT
@@ -552,7 +553,7 @@ func (m PostModel) UpdateViews(postID int) error {
 	return nil
 }
 
-// GetTop10Posts fetches the top 10 blog posts by views
+// GetTop10Posts fetches the top 10 blog posts by views.
 func (m PostModel) GetTop10Posts() ([]TopPost, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

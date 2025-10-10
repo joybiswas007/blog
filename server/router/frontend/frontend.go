@@ -1,3 +1,4 @@
+// Package frontend handles all frontend routing and static file serving.
 package frontend
 
 import (
@@ -11,12 +12,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Embed the entire "dist" directory, which includes index.html and assets
+// Embed the entire "dist" directory, which includes index.html and assets.
 //
 //go:embed "dist"
 var embeddedFiles embed.FS
 
-// Serve sets up the frontend routes to serve embedded static files
+// Serve sets up the frontend routes to serve embedded static files.
 func Serve(app *gin.Engine) {
 	distFS := getFileSystem("dist")
 	app.Use(static.Serve("/", distFS))

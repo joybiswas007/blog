@@ -1,3 +1,4 @@
+// Package main provides command-line tools for managing the blog.
 package main
 
 import (
@@ -11,8 +12,8 @@ import (
 	"github.com/joybiswas007/blog/pkg"
 )
 
-// application represents the configuration for the blog application
-// containing user credentials and configuration file path
+// application represents the configuration for the blog application.
+// containing user credentials and configuration file path.
 type application struct {
 	configFile      string   // path to configuration file
 	name            string   // full name of the user
@@ -22,8 +23,8 @@ type application struct {
 }
 
 type password struct {
-	password string //password for authentication
-	reset    bool   //reset if user want to reset password
+	password string // password for authentication
+	reset    bool   // reset if user want to reset password
 }
 
 func main() {
@@ -49,12 +50,12 @@ func main() {
 
 	cfg, err := config.GetAll()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	db, err := database.New(cfg.DB)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	defer func() {
@@ -66,7 +67,7 @@ func main() {
 	if app.deleteEmptyTags {
 		tags, err := models.Tags.GetAll()
 		if err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 
 		if len(tags) == 0 {
@@ -100,7 +101,7 @@ func main() {
 			for _, tag := range emptyTags {
 				err := models.Tags.Delete(tag.ID)
 				if err != nil {
-					log.Fatal(err)
+					log.Panic(err)
 				}
 			}
 			fmt.Printf("%d unused tags deleted.\n", totalEmptyTag)
@@ -114,7 +115,7 @@ func main() {
 	}
 
 	if app.email == "" {
-		log.Fatal("email can't be empty")
+		log.Panic("email can't be empty")
 	}
 
 	if app.password.password == "" {
@@ -124,7 +125,7 @@ func main() {
 	if app.password.reset {
 		user, err := models.Users.GetByEmail(app.email)
 		if err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 		u := &database.User{
 			ID: user.ID,
@@ -132,12 +133,12 @@ func main() {
 
 		err = u.Password.Set(app.password.password)
 		if err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 
 		err = models.Users.UpdatePassword(u)
 		if err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 		fmt.Println("Password update successful!")
 		fmt.Printf("New password: %s\n", app.password.password)
@@ -146,7 +147,7 @@ func main() {
 	}
 
 	if app.name == "" {
-		log.Fatal("name can't be empty")
+		log.Panic("name can't be empty")
 	}
 
 	user := &database.User{
@@ -156,12 +157,12 @@ func main() {
 
 	err = user.Password.Set(app.password.password)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	_, err = models.Users.Insert(user)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	fmt.Println("Registration successful!")

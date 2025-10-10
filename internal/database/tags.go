@@ -9,19 +9,19 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// TagModel handles database operations for tags
+// TagModel handles database operations for tags.
 type TagModel struct {
 	DB *pgxpool.Pool // Database connection pool
 }
 
-// Tag represents a tag in the database
+// Tag represents a tag in the database.
 type Tag struct {
 	ID        int    `json:"id"`         // Unique identifier for the tag
 	Name      string `json:"name"`       // Name of the tag
 	PostCount int    `json:"post_count"` // Number of posts associated with this
 }
 
-// Get retrieves a tag by its name
+// Get retrieves a tag by its name.
 func (m TagModel) Get(tagName string) (*Tag, error) {
 	query := `
 		SELECT 
@@ -50,7 +50,7 @@ func (m TagModel) Get(tagName string) (*Tag, error) {
 	return &t, nil
 }
 
-// Create inserts a new tag and returns its ID
+// Create inserts a new tag and returns its ID.
 func (m TagModel) Create(tagName string) (int, error) {
 	var tagID int
 
@@ -71,7 +71,7 @@ func (m TagModel) Create(tagName string) (int, error) {
 	return tagID, nil
 }
 
-// GetAll retrieves all tags from the database
+// GetAll retrieves all tags from the database.
 func (m TagModel) GetAll() ([]*Tag, error) {
 	query := `
 		SELECT 
@@ -114,7 +114,7 @@ func (m TagModel) GetAll() ([]*Tag, error) {
 	return tags, nil
 }
 
-// Delete deletes a tag by its id
+// Delete deletes a tag by its id.
 func (m TagModel) Delete(tagID int) error {
 	query := `DELETE FROM tags WHERE id = $1`
 

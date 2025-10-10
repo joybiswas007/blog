@@ -1,3 +1,4 @@
+// Package server handles HTTP server setup, routing, and middleware configuration.
 package server
 
 import (
@@ -12,14 +13,16 @@ import (
 	v1 "github.com/joybiswas007/blog/server/router/api/v1"
 )
 
+// Server holds the HTTP server configuration and dependencies.
 type Server struct {
 	port   int
 	db     database.Models
-	config config.Config
+	config *config.Config
 	logger *slog.Logger
 }
 
-func NewServer(db *pgxpool.Pool, cfg config.Config, logger *slog.Logger) *http.Server {
+// NewServer creates and configures a new HTTP server instance.
+func NewServer(db *pgxpool.Pool, cfg *config.Config, logger *slog.Logger) *http.Server {
 	NewServer := &Server{
 		port:   cfg.Port,
 		config: cfg,
@@ -29,7 +32,7 @@ func NewServer(db *pgxpool.Pool, cfg config.Config, logger *slog.Logger) *http.S
 
 	v1Server := v1.NewAPIV1Service(NewServer.config, NewServer.logger, NewServer.db)
 
-	// Declare Server config
+	// Declare Server config.
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", NewServer.port),
 		Handler:      v1Server.RegisterRoutes(),

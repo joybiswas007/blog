@@ -10,8 +10,10 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-const DEFAULT_BAN_RESON = "Automated ban per >60 failed login attempts"
+// DefaultBanReason defines the default reason message for IP bans triggered by excessive failed login attempts.
+const DefaultBanReason = "Automated ban per >60 failed login attempts"
 
+// IPModel handles database operations for IP address tracking and ban management.
 type IPModel struct {
 	DB *pgxpool.Pool
 }
@@ -49,7 +51,7 @@ func (m IPModel) CreateHistory(userID int64, ip string) error {
 }
 
 // UpdateHistoryEndTime updates the end_time for a specific IP history record.
-func (m IPModel) UpdateHistoryEndTime(userID int, ip string, startTime time.Time, endTime time.Time) error {
+func (m IPModel) UpdateHistoryEndTime(userID int, ip string, startTime, endTime time.Time) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -62,7 +64,7 @@ func (m IPModel) UpdateHistoryEndTime(userID int, ip string, startTime time.Time
 	return err
 }
 
-// GetActiveSessionByUserID gets the most recent active IP session for a user
+// GetActiveSessionByUserID gets the most recent active IP session for a user.
 func (m IPModel) GetActiveSessionByUserID(userID int64) (*IPHistory, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -91,7 +93,7 @@ func (m IPModel) GetActiveSessionByUserID(userID int64) (*IPHistory, error) {
 	return &history, nil
 }
 
-// GetAllHistory retrieves IP history for a specific user with pagination
+// GetAllHistory retrieves IP history for a specific user with pagination.
 func (m IPModel) GetAllHistory(userID, limit, offset int64) ([]IPHistory, int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -235,7 +237,7 @@ func (m IPModel) GetBansList(limit, offset int64) ([]IPBan, int64, error) {
 	return ipBans, totalCount, nil
 }
 
-// Unban removes an ip from the ban lists
+// Unban removes an ip from the ban lists.
 func (m IPModel) Unban(banID int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

@@ -1,3 +1,4 @@
+// Package config provides application configuration management using Viper.
 package config
 
 import (
@@ -36,11 +37,13 @@ type RateLimiter struct {
 	Burst int     `mapstructure:"burst" validate:"required"` // Maximum burst size allowed
 }
 
+// Blog contains the core blog configuration settings.
 type Blog struct {
 	Name string `mapstructure:"name" validate:"required"` // Name of the blog
 	URL  string `mapstructure:"url" validate:"required"`  // URL of the blog i.e: http(s)://sitename.com
 }
 
+// Redis contains the connection configuration for the Redis cache server.
 type Redis struct {
 	Address  string `mapstructure:"address" validate:"required"`  // Redis server address (IP or hostname)
 	Username string `mapstructure:"username" validate:"required"` // Redis ACL username (if any)
