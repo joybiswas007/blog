@@ -8,7 +8,6 @@ const Post = lazy(() => import("@/pages/Post"));
 const Tags = lazy(() => import("@/pages/Tags"));
 const Archives = lazy(() => import("@/pages/Archives"));
 const ArchiveByYear = lazy(() => import("@/pages/ArchiveByYear"));
-const About = lazy(() => import("@/pages/About"));
 const Login = lazy(() => import("@/pages/Login"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const CreatePost = lazy(() => import("@/pages/CreatePost"));
@@ -39,7 +38,6 @@ const App = () => {
             <Route path="/tags" element={<Tags />} />
             <Route path="/archives" element={<Archives />} />
             <Route path="/archives/:year" element={<ArchiveByYear />} />
-            <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
             <Route element={<PrivateRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />

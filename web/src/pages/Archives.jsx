@@ -73,80 +73,77 @@ const Archives = () => {
         <h1 className="text-4xl font-heading font-bold text-blue-300 mb-4">
           Archives
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-          {/* Left Column: RSS and Archives by Year */}
-          <div className="md:col-span-2 space-y-8">
-            <section>
-              <h2 className="text-2xl font-heading font-semibold text-blue-300 mb-4 flex items-center gap-2">
-                <BsRss className="text-orange-500" /> RSS Feed
-              </h2>
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                to="/rss.xml"
-                className="inline-flex items-center gap-2 font-mono text-blue-400 hover:text-blue-300 transition-colors"
-              >
-                <span>/rss.xml</span>
-              </Link>
-            </section>
+        <div className="space-y-8">
+          <section>
+            <h2 className="text-2xl font-heading font-semibold text-blue-300 mb-4 flex items-center gap-2">
+              <BsRss className="text-orange-500" /> RSS Feed
+            </h2>
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              to="/rss.xml"
+              className="inline-flex items-center gap-2 font-mono text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              <span>/rss.xml</span>
+            </Link>
+          </section>
 
-            <section>
-              <h2 className="text-2xl font-heading font-semibold text-blue-300 mb-4">
-                By Year
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8">
-                {archives && archives.length > 0 ? (
-                  archives.map((list, index) => (
+          <section>
+            <h2 className="text-2xl font-heading font-semibold text-blue-300 mb-4 flex items-center gap-2">
+              <BsFire className="text-orange-500" /> Top Posts
+            </h2>
+            {topError ? (
+              <p className="text-red-500 font-mono text-sm">{topError}</p>
+            ) : topPosts && topPosts.length > 0 ? (
+              <ul className="space-y-2">
+                {topPosts.map((topPost, index) => (
+                  <li key={topPost.id} className="flex items-center gap-2">
+                    <span className="text-orange-500 font-bold">
+                      {index + 1}.
+                    </span>
                     <Link
-                      key={index}
-                      to={`/archives/${list.year}`}
-                      className="group flex items-center gap-2 font-mono text-blue-200 hover:text-blue-300 transition-colors text-lg"
+                      to={`/posts/${topPost.slug}`}
+                      className="text-blue-400 hover:text-blue-300 transition-colors font-mono text-sm"
                     >
-                      <span className="text-blue-400 text-xl">&gt;</span>
-                      <span>
-                        {list.year}
-                        <span className="text-[var(--color-text-secondary)] text-sm ml-1 group-hover:text-blue-300 transition-colors">
-                          ({list.post_count})
-                        </span>
-                      </span>
+                      {topPost.title}
                     </Link>
-                  ))
-                ) : (
-                  <div className="flex items-baseline gap-2 text-[var(--color-text-secondary)]">
-                    <span className="text-blue-500">&gt;</span>
-                    <p>No archives found</p>
-                  </div>
-                )}
-              </div>
-            </section>
-          </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-neutral-400">No top posts available.</p>
+            )}
+          </section>
 
-          {/* Right Column: Top Posts */}
-          <div className="md:col-span-1">
-            <section>
-              <h2 className="text-2xl font-heading font-semibold text-blue-300 mb-4 flex items-center gap-2">
-                <BsFire className="text-orange-500" /> Top Posts
-              </h2>
-              {topError ? (
-                <p className="text-red-500 font-mono text-sm">{topError}</p>
-              ) : topPosts && topPosts.length > 0 ? (
-                <ul className="space-y-2">
-                  {topPosts.map(topPost => (
-                    <li key={topPost.id}>
-                      <Link
-                        to={`/posts/${topPost.slug}`}
-                        className="text-blue-400 hover:text-blue-300 transition-colors truncate font-mono text-sm"
-                      >
-                        {topPost.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+          <section>
+            <h2 className="text-2xl font-heading font-semibold text-blue-300 mb-4">
+              By Year
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8">
+              {archives && archives.length > 0 ? (
+                archives.map((list, index) => (
+                  <Link
+                    key={index}
+                    to={`/archives/${list.year}`}
+                    className="group flex items-center gap-2 font-mono text-blue-200 hover:text-blue-300 transition-colors text-lg"
+                  >
+                    <span className="text-blue-400 text-xl">&gt;</span>
+                    <span>
+                      {list.year}
+                      <span className="text-[var(--color-text-secondary)] text-sm ml-1 group-hover:text-blue-300 transition-colors">
+                        ({list.post_count})
+                      </span>
+                    </span>
+                  </Link>
+                ))
               ) : (
-                <p className="text-neutral-400">No top posts available.</p>
+                <div className="flex items-baseline gap-2 text-[var(--color-text-secondary)]">
+                  <span className="text-blue-500">&gt;</span>
+                  <p>No archives found</p>
+                </div>
               )}
-            </section>
-          </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>

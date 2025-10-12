@@ -51,6 +51,10 @@
     @apply transition-colors;
   }
 
+  a.no-underline:visited {
+    color: inherit;
+  }
+
   ::-webkit-scrollbar {
     @apply w-2 h-2;
   }

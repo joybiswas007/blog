@@ -17,9 +17,6 @@ import {
 
 const SocialShare = ({ url, title }) => (
   <div className="flex items-center gap-4 pt-6">
-    <span className="text-[var(--color-text-secondary)] font-mono text-sm">
-      Share:
-    </span>
     <TwitterShareButton url={url} title={title}>
       <TwitterIcon size={32} round />
     </TwitterShareButton>

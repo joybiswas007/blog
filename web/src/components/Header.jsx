@@ -8,7 +8,7 @@ const Header = ({ blogName }) => {
         <h1 className="text-3xl font-bold font-heading tracking-tight">
           <Link
             to="/"
-            className="text-blue-400 hover:text-blue-300 transition-colors"
+            className="text-blue-400 hover:text-blue-300 transition-colors no-underline"
             aria-label="Go to homepage"
           >
             {blogName}

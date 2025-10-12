@@ -22,7 +22,7 @@ const PostsList = ({
       <div className="text-red-500 font-mono text-center py-8">{error}</div>
     ) : posts && posts.length > 0 ? (
       posts.map(post => (
-        <article
+        <div
           key={post.id}
           className="group transition-all duration-300"
           role="article"
@@ -68,17 +68,7 @@ const PostsList = ({
               ))}
             </div>
           )}
-
-          <div className="mt-3">
-            <Link
-              to={`/posts/${post.slug}`}
-              className="inline-flex items-center text-blue-400 hover:text-blue-300 text-sm font-mono transition-colors"
-              aria-label={`Read post: ${post.title}`}
-            >
-              Read more <BsArrowRight className="ml-1" />
-            </Link>
-          </div>
-        </article>
+        </div>
       ))
     ) : (
       <div className="flex flex-col items-center justify-center py-16 text-center">
