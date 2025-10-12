@@ -20,7 +20,7 @@ const IPBan = () => {
 
   useEffect(() => {
     fetchIPBans(1);
-    // eslint-disable-next-line
+     
   }, []);
 
   const fetchIPBans = async (page = 1) => {

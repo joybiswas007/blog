@@ -98,7 +98,7 @@
   }
 
   .prose p {
-    @apply my-4;
+    @apply my-4 leading-relaxed;
   }
 
   .prose a {
@@ -132,12 +132,12 @@
   }
 
   .prose code {
-    @apply bg-blue-900/30 text-blue-300 px-1 py-0.5 rounded;
+    @apply bg-neutral-800/50 text-neutral-300 px-1 py-0.5 rounded;
     font-family: var(--font-mono);
   }
 
   .prose pre {
-    @apply bg-blue-900/20 p-4 rounded border border-blue-800 overflow-x-auto my-4;
+    @apply bg-neutral-900/50 p-4 rounded border border-neutral-800 overflow-x-auto my-4;
     font-family: var(--font-mono);
   }
 
@@ -147,7 +147,7 @@
   }
 
   .prose blockquote {
-    @apply border-l-4 border-blue-800 pl-4 italic text-blue-500 my-4;
+    @apply border-l-4 border-neutral-700 pl-4 italic text-neutral-400 my-4;
   }
 
   .prose table {
@@ -163,6 +163,6 @@
   }
 
   .prose img {
-    @apply my-4 rounded border border-blue-800;
+    @apply my-4 rounded bg-neutral-800;
   }
 }

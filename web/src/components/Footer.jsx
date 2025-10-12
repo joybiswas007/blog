@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { BsFolder } from "react-icons/bs";
+import { SiGo } from "react-icons/si";
+import { FaReact } from "react-icons/fa";
 
 const Footer = ({ authorName, sourceCode }) => {
   return (
@@ -23,9 +25,12 @@ const Footer = ({ authorName, sourceCode }) => {
             </Link>
           )}
         </div>
-        <span className="text-[var(--color-text-secondary)]">
-          Powered by Go + React
-        </span>
+        <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
+          <span>Powered by</span>
+          <SiGo size={24} className="text-blue-400" />
+          <span>+</span>
+          <FaReact size={20} className="text-blue-400" />
+        </div>
       </div>
     </footer>
   );

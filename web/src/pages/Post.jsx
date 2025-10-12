@@ -1,11 +1,36 @@
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "@/services/api";
-import { CalculateReadTime } from "@/utils/helpers";
-import Markdown from "react-markdown";
+import { CalculateReadTime, formatDate } from "@/utils/helpers";
+const Markdown = lazy(() => import("react-markdown"));
 import remarkGfm from "remark-gfm";
 import SEO from "@/components/SEO";
 import { BsCalendar, BsClock, BsPencil, BsTags } from "react-icons/bs";
+import {
+  TwitterShareButton,
+  LinkedinShareButton,
+  BlueskyShareButton,
+  TwitterIcon,
+  LinkedinIcon,
+  BlueskyIcon
+} from "react-share";
+
+const SocialShare = ({ url, title }) => (
+  <div className="flex items-center gap-4 pt-6">
+    <span className="text-[var(--color-text-secondary)] font-mono text-sm">
+      Share:
+    </span>
+    <TwitterShareButton url={url} title={title}>
+      <TwitterIcon size={32} round />
+    </TwitterShareButton>
+    <LinkedinShareButton url={url} title={title}>
+      <LinkedinIcon size={32} round />
+    </LinkedinShareButton>
+    <BlueskyShareButton url={url} title={title}>
+      <BlueskyIcon size={32} round />
+    </BlueskyShareButton>
+  </div>
+);
 
 const Post = () => {
   const { slug } = useParams();
@@ -31,18 +56,6 @@ const Post = () => {
       setLoading(false);
     }
   }, [slug]);
-
-  const formatDate = dateString => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true
-    });
-  };
 
   useEffect(() => {
     fetchPost();
@@ -75,6 +88,8 @@ const Post = () => {
       </div>
     );
   }
+
+  const postUrl = window.location.href;
 
   return (
     <div className="flex justify-center w-full">
@@ -121,9 +136,21 @@ const Post = () => {
           </div>
         </header>
 
-        <div className="prose prose-invert max-w-none pt-6">
-          <Markdown remarkPlugins={[remarkGfm]}>{post.content}</Markdown>
-        </div>
+        <Suspense
+          fallback={
+            <div className="prose prose-invert max-w-none pt-6">
+              <div className="text-[var(--color-text-secondary)] font-mono animate-pulse">
+                Loading content...
+              </div>
+            </div>
+          }
+        >
+          <div className="prose prose-invert max-w-none pt-6">
+            <Markdown remarkPlugins={[remarkGfm]}>{post.content}</Markdown>
+          </div>
+        </Suspense>
+
+        <SocialShare url={postUrl} title={post.title} />
 
         <div className="pt-6 mt-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-6">

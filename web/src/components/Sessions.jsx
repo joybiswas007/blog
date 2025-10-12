@@ -13,7 +13,7 @@ const Sessions = () => {
 
   useEffect(() => {
     fetchSessions(1);
-    // eslint-disable-next-line
+     
   }, []);
 
   const fetchSessions = async (page = 1) => {

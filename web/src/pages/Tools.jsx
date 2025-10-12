@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FiUsers, FiSlash, FiShield } from "react-icons/fi";
 
 const Tools = () => {
   const { VITE_BLOG_NAME: blogName } = import.meta.env;
@@ -8,25 +9,27 @@ const Tools = () => {
     {
       name: "Sessions",
       path: "/auth/tools/sessions",
-      desc: "View and manage session history."
+      desc: "View and manage session history.",
+      icon: <FiUsers className="w-8 h-8 text-blue-400" />,
     },
     {
       name: "IP Ban",
       path: "/auth/tools/ip-bans",
-      desc: "Ban IPs or view banned IPs."
+      desc: "Ban IPs or view banned IPs.",
+      icon: <FiSlash className="w-8 h-8 text-blue-400" />,
     },
     {
       name: "Login Attempts",
       path: "/auth/tools/login-attempts",
-      desc: "View recent login attempts"
-    }
+      desc: "View recent login attempts",
+      icon: <FiShield className="w-8 h-8 text-blue-400" />,
+    },
   ];
 
   return (
     <div className="flex justify-center w-full">
       <title>{pageTitle}</title>
       <div className="w-full max-w-3xl px-4 py-4 space-y-8">
-        {/* Header with Dashboard Link */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-heading text-blue-300">Toolbox</h1>
           <Link
@@ -38,39 +41,23 @@ const Tools = () => {
           </Link>
         </div>
 
-        {/* Tools Section Label */}
-        <div className="mb-2">
-          <h2 className="text-lg font-heading text-blue-400">
-            Available Tools
-          </h2>
-          <p className="text-sm font-mono text-[var(--color-text-secondary)]">
-            Quick access to admin & maintenance features
-          </p>
-        </div>
-
-        {/* Redesigned Tools List (vertical, with left accent bar) */}
-        <ul className="space-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tools.map((tool, i) => (
-            <li key={i}>
-              <Link
-                to={tool.path}
-                className="flex items-center group px-0 py-0 rounded-lg border-l-4 border-blue-900 hover:border-blue-400 bg-[var(--color-background-primary)] hover:bg-blue-900/10 transition-colors"
-              >
-                <div className="flex-1 px-4 py-3">
-                  <span className="font-heading text-blue-400 group-hover:text-blue-300 text-lg transition-colors block">
-                    {tool.name}
-                  </span>
-                  <span className="text-[var(--color-text-secondary)] font-mono text-xs group-hover:text-blue-400 transition-colors block mt-1">
-                    {tool.desc}
-                  </span>
-                </div>
-                <span className="text-blue-600 group-hover:text-blue-400 text-xl transition-colors px-4 font-mono">
-                  →
-                </span>
-              </Link>
-            </li>
+            <Link
+              key={i}
+              to={tool.path}
+              className="bg-neutral-900/50 border border-neutral-800 rounded-lg p-6 flex flex-col items-center text-center hover:border-blue-700 hover:bg-neutral-800/50 transition-all duration-300 transform hover:-translate-y-1"
+            >
+              <div className="mb-4">{tool.icon}</div>
+              <h3 className="font-heading text-lg text-blue-300 mb-2">
+                {tool.name}
+              </h3>
+              <p className="text-sm font-mono text-neutral-400">
+                {tool.desc}
+              </p>
+            </Link>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );

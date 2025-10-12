@@ -14,7 +14,7 @@ const LoginAttempts = () => {
 
   useEffect(() => {
     fetchAttempts(1);
-    // eslint-disable-next-line
+     
   }, []);
 
   const fetchAttempts = async (page = 1) => {
