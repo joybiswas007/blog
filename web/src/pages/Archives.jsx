@@ -18,7 +18,11 @@ const Archives = () => {
       setArchives(response.data?.archives || []);
     } catch (error) {
       const errorMessage = error.response?.data?.error;
-      setError(typeof errorMessage === 'string' ? errorMessage : "Failed to fetch archives");
+      setError(
+        typeof errorMessage === "string"
+          ? errorMessage
+          : "Failed to fetch archives"
+      );
     } finally {
       setLoading(false);
     }
@@ -31,7 +35,11 @@ const Archives = () => {
       setTopPosts(response.data.top_posts || []);
     } catch (err) {
       const errorMessage = err.response?.data?.error;
-      setTopError(typeof errorMessage === 'string' ? errorMessage : "Failed to fetch top posts");
+      setTopError(
+        typeof errorMessage === "string"
+          ? errorMessage
+          : "Failed to fetch top posts"
+      );
     }
   };
 
@@ -62,7 +70,9 @@ const Archives = () => {
     <div className="flex justify-center w-full">
       <SEO title="Archives" />
       <div className="w-full max-w-3xl px-4">
-        <h1 className="text-4xl font-heading font-bold text-blue-300 mb-4">Archives</h1>
+        <h1 className="text-4xl font-heading font-bold text-blue-300 mb-4">
+          Archives
+        </h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* Left Column: RSS and Archives by Year */}
           <div className="md:col-span-2 space-y-8">
@@ -70,14 +80,14 @@ const Archives = () => {
               <h2 className="text-2xl font-heading font-semibold text-blue-300 mb-4 flex items-center gap-2">
                 <BsRss className="text-orange-500" /> RSS Feed
               </h2>
-              <a
+              <Link
                 target="_blank"
                 rel="noopener noreferrer"
-                href="/rss.xml"
+                to="/rss.xml"
                 className="inline-flex items-center gap-2 font-mono text-blue-400 hover:text-blue-300 transition-colors"
               >
                 <span>/rss.xml</span>
-              </a>
+              </Link>
             </section>
 
             <section>
@@ -121,7 +131,7 @@ const Archives = () => {
                 <p className="text-red-500 font-mono text-sm">{topError}</p>
               ) : topPosts && topPosts.length > 0 ? (
                 <ul className="space-y-2">
-                  {topPosts.map((topPost) => (
+                  {topPosts.map(topPost => (
                     <li key={topPost.id}>
                       <Link
                         to={`/posts/${topPost.slug}`}
