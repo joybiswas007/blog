@@ -9,10 +9,9 @@ const PostsList = ({
   tag,
   buildQueryString,
   limit,
-  offset,
   orderBy,
   sort,
-  formatDate,
+  formatDate
 }) => (
   <div className="space-y-8">
     {loading ? (
@@ -22,7 +21,7 @@ const PostsList = ({
     ) : error ? (
       <div className="text-red-500 font-mono text-center py-8">{error}</div>
     ) : posts && posts.length > 0 ? (
-      posts.map((post) => (
+      posts.map(post => (
         <article
           key={post.id}
           className="group transition-all duration-300"
@@ -59,7 +58,7 @@ const PostsList = ({
                     offset: 0,
                     order_by: orderBy,
                     sort,
-                    tag: tagVal,
+                    tag: tagVal
                   })}
                   className="text-blue-400 hover:text-blue-300 transition-colors text-xs"
                   aria-label={`Filter by tag ${tagVal}`}
@@ -97,7 +96,7 @@ const PostsList = ({
               limit,
               offset: 0,
               order_by: "created_at",
-              sort: "DESC",
+              sort: "DESC"
             })}
             className="text-blue-400 hover:text-blue-300"
           >

@@ -20,7 +20,7 @@ const Home = () => {
     totalPages,
     buildQueryString,
     handleSortChange,
-    formatDate,
+    formatDate
   } = usePosts();
 
   return (
@@ -33,7 +33,6 @@ const Home = () => {
           tag={tag}
           buildQueryString={buildQueryString}
           limit={limit}
-          offset={offset}
           orderBy={orderBy}
           sort={sort}
         />
@@ -45,7 +44,6 @@ const Home = () => {
           tag={tag}
           buildQueryString={buildQueryString}
           limit={limit}
-          offset={offset}
           orderBy={orderBy}
           sort={sort}
           formatDate={formatDate}
