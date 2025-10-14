@@ -18,7 +18,7 @@ import (
 	"github.com/joybiswas007/blog/server"
 )
 
-// These variables are populated by the linker at build time
+// These variables are populated by the linker at build time.
 var (
 	BuildCommit string
 	BuildBranch string
