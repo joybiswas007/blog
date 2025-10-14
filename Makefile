@@ -7,7 +7,7 @@ CLI_ENTRY = cmd/cli/main.go
 # Versioning variables
 GIT_COMMIT = $(shell git rev-parse --short HEAD)
 GIT_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
-BUILD_TIME = $(shell date -u +'%Y-%m-%d %H:%M:%S GMT')
+BUILD_TIME := $(shell date -u +'%Y-%m-%dT%H:%M:%S.%3NZ')
 
 # Go linker flags to inject build-time variables
 LDFLAGS = -ldflags="-s -w -X 'main.BuildCommit=$(GIT_COMMIT)' -X 'main.BuildBranch=$(GIT_BRANCH)' -X 'main.BuildTime=$(BUILD_TIME)'"
