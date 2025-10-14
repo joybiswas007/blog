@@ -20,3 +20,19 @@ export const formatDate = dateString => {
     hour12: true
   });
 };
+
+export const TruncateText = (text, maxLength) => {
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  // Find the last space within the desired length
+  const lastSpace = text.lastIndexOf(" ", maxLength);
+
+  // If no space is found, just slice normally (for very long single words)
+  if (lastSpace === -1) {
+    return text.slice(0, maxLength) + "...";
+  }
+
+  return text.slice(0, lastSpace) + "...";
+};

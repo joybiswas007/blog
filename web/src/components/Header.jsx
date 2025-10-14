@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Navigation from "./Navigation";
+import Navigation from "@/components/Navigation";
 
 const Header = ({ blogName }) => {
   return (
