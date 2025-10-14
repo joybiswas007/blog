@@ -12,13 +12,14 @@ import (
 // Config holds all configuration values for the application.
 // Values are loaded via Viper and validated using go-playground/validator.
 type Config struct {
-	Port             int         `mapstructure:"port" validate:"required"`               // HTTP server port
-	DB               string      `mapstructure:"db" validate:"required"`                 // Database connection string (DSN)
-	JWT              JWT         `mapstructure:"jwt" validate:"required"`                // JWT-related configuration
-	RateLimiter      RateLimiter `mapstructure:"rate_limiter" validate:"required"`       // Rate limiter configuration
-	IsProduction     bool        `mapstructure:"is_production"`                          // Indicates if the application is running in production mode (true) or development mode (false)
-	Blog             Blog        `mapstructure:"blog" validate:"required"`               // Blog configuration
-	Redis            Redis       `mapstructure:"redis" validate:"required"`              // Redis config
+	Port             int         `mapstructure:"port" validate:"required"`         // HTTP server port
+	DB               string      `mapstructure:"db" validate:"required"`           // Database connection string (DSN)
+	JWT              JWT         `mapstructure:"jwt" validate:"required"`          // JWT-related configuration
+	RateLimiter      RateLimiter `mapstructure:"rate_limiter" validate:"required"` // Rate limiter configuration
+	IsProduction     bool        `mapstructure:"is_production"`                    // Indicates if the application is running in production mode (true) or development mode (false)
+	Blog             Blog        `mapstructure:"blog" validate:"required"`         // Blog configuration
+	Redis            Redis       `mapstructure:"redis" validate:"required"`        // Redis config
+	BuildInfo        Build       // BuildInfo holds build metadata injected via ldflags for version tracking.
 	MaxLoginAttempts int         `mapstructure:"max_login_attempts" validate:"required"` // Max Login Attempts per session
 	BanDuration      int         `mapstructure:"ban_duration" validate:"required"`       // Ban Duration
 }
@@ -48,6 +49,15 @@ type Redis struct {
 	Address  string `mapstructure:"address" validate:"required"`  // Redis server address (IP or hostname)
 	Username string `mapstructure:"username" validate:"required"` // Redis ACL username (if any)
 	Password string `mapstructure:"password" validate:"required"` // Redis password
+}
+
+// Build holds metadata about the application's build process, including
+// git commit hash, branch name, and build timestamp. These values are
+// injected at compile time via ldflags for version tracking and debugging.
+type Build struct {
+	Commit string `json:"commit"` // Build commit hash from git rev-parse
+	Branch string `json:"branch"` // Build branch from git rev-parse
+	Time   string `json:"time"`   // Build time from date command
 }
 
 // Init reads in config file and ENV variables if set.

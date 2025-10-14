@@ -106,6 +106,7 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 	v1.GET("healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "OK"})
 	})
+	v1.GET("build-info", s.buildInfoHandler)
 
 	// api routes
 	registerBlogRoutes(v1, s)

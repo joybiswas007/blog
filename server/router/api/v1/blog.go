@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"runtime"
 	"strconv"
 	"time"
 
@@ -332,4 +333,9 @@ func (s *APIV1Service) siteMapHandler(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
+}
+
+func (s *APIV1Service) buildInfoHandler(c *gin.Context) {
+	runtimeVersion := runtime.Version()
+	c.JSON(http.StatusOK, gin.H{"go_version": runtimeVersion, "build_info": s.config.BuildInfo})
 }

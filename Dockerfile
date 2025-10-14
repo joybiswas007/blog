@@ -9,7 +9,7 @@ RUN npm run build
 # Backend build stage
 FROM golang:1.25.0-alpine AS backend
 WORKDIR /backend-build
-RUN apk --no-cache add git
+RUN apk --no-cache add git make
 ENV GOPROXY=direct
 COPY go.mod go.sum ./
 ENV GOCACHE=/go-cache
@@ -18,11 +18,11 @@ COPY . .
 ## remove the existing dummy ui and replace with react build
 COPY --from=frontend /frontend-build/dist /backend-build/server/router/frontend/dist
 RUN --mount=type=cache,target=/gomod-cache --mount=type=cache,target=/go-cache \
-	go build -ldflags="-s -w" -o blog ./cmd/api/main.go
+	make build
 
 FROM alpine:latest AS runtime
 WORKDIR /app
-RUN apk add --no-cache tzdata curl
+RUN apk add --no-cache tzdata
 ENV TZ="UTC"
 COPY --from=backend /backend-build/blog /app/blog
 ENTRYPOINT [ "/app/blog" ]

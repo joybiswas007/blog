@@ -18,6 +18,13 @@ import (
 	"github.com/joybiswas007/blog/server"
 )
 
+// These variables are populated by the linker at build time
+var (
+	BuildCommit string
+	BuildBranch string
+	BuildTime   string
+)
+
 func main() {
 	var cfgFile string
 
@@ -38,6 +45,12 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+	bi := config.Build{
+		Branch: BuildBranch,
+		Commit: BuildCommit,
+		Time:   BuildTime,
+	}
+	cfg.BuildInfo = bi
 
 	db, err := database.New(cfg.DB)
 	if err != nil {
