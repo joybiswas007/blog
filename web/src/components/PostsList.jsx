@@ -26,10 +26,11 @@ const PostItem = ({
         <div className="flex-1 min-w-0">
           <h2 className="post-file-title mb-2">{post.title}</h2>
 
-          <div className="flex items-center gap-4 mb-2">
+          <div className="flex items-center gap-2 mb-2">
             <span className="post-file-meta">
               {formatDate(post.created_at)}
             </span>
+            <span className="post-meta-separator">·</span>
             <span className="post-file-meta">
               {CalculateReadTime(post.content)}
             </span>
@@ -58,7 +59,7 @@ const PostItem = ({
               key={tagVal}
               to={buildQueryString({ ...tagLinkParams, tag: tagVal })}
               className="post-tag-link"
-              aria-label={`Filter by tag: ${tagVal}`}
+              aria-label={`Filter by tag ${tagVal}`}
               onClick={e => e.stopPropagation()}
             >
               #{tagVal}
