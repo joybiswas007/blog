@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { FiArrowLeft, FiLock, FiMail, FiCheck } from "react-icons/fi";
 import api from "@/services/api";
 import { ErrorMessage, LoadingSpinner } from "./PostForm";
 
@@ -67,61 +68,49 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="flex justify-center w-full">
+    <>
       <title>Reset Password</title>
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-heading font-bold text-blue-400">
-            Reset Password
-          </h1>
-          <p className="mt-2 text-[var(--color-text-secondary)] font-mono">
-            Enter your email and new password to change your old password
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-heading font-bold text-blue-400">
-                Password Reset
-              </h2>
+      <div className="reset-password-container">
+        <div className="reset-password-card">
+          {/* Header */}
+          <div className="reset-password-header">
+            <div className="reset-password-icon">
+              <FiLock />
             </div>
-            <Link
-              to="/dashboard"
-              className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium font-mono text-[var(--color-text-secondary)] hover:text-blue-400 bg-[var(--color-background-primary)] hover:bg-[var(--color-shade-900)] transition-colors"
-            >
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-              Back
-            </Link>
+            <h1 className="reset-password-title">Reset Password</h1>
+            <p className="reset-password-subtitle">
+              Enter your email and new password to change your credentials
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <ErrorMessage error={error} />
+          {/* Back Button */}
+          <Link to="/dashboard" className="reset-password-back">
+            <FiArrowLeft />
+            <span>Back to Dashboard</span>
+          </Link>
 
-            {success && (
-              <div className="p-4 rounded-lg bg-blue-500/10 text-blue-400 font-mono border border-blue-500/30">
-                Password has been reset successfully!
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="reset-password-form">
+            {/* Error Message */}
+            {error && (
+              <div className="reset-password-error">
+                <ErrorMessage error={error} />
               </div>
             )}
 
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2 font-mono"
-              >
-                Email
+            {/* Success Message */}
+            {success && (
+              <div className="reset-password-success">
+                <FiCheck />
+                <span>Password has been reset successfully!</span>
+              </div>
+            )}
+
+            {/* Email Field */}
+            <div className="reset-password-field">
+              <label htmlFor="email" className="reset-password-label">
+                <FiMail />
+                <span>Email</span>
               </label>
               <input
                 type="email"
@@ -131,17 +120,16 @@ const ResetPassword = () => {
                 autoComplete="email"
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
-                placeholder="Enter your email"
+                className="reset-password-input"
+                placeholder="your@email.com"
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2 font-mono"
-              >
-                New Password
+            {/* New Password Field */}
+            <div className="reset-password-field">
+              <label htmlFor="password" className="reset-password-label">
+                <FiLock />
+                <span>New Password</span>
               </label>
               <input
                 type="password"
@@ -151,20 +139,19 @@ const ResetPassword = () => {
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
-                className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
+                className="reset-password-input"
                 placeholder="Enter new password"
               />
-              <p className="mt-1 text-xs text-[var(--color-text-secondary)] font-mono">
+              <p className="reset-password-hint">
                 Password must be at least 8 characters long
               </p>
             </div>
 
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2 font-mono"
-              >
-                Confirm Password
+            {/* Confirm Password Field */}
+            <div className="reset-password-field">
+              <label htmlFor="confirmPassword" className="reset-password-label">
+                <FiLock />
+                <span>Confirm Password</span>
               </label>
               <input
                 type="password"
@@ -174,30 +161,35 @@ const ResetPassword = () => {
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
-                className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
+                className="reset-password-input"
                 placeholder="Confirm new password"
               />
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-sm font-medium font-mono text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="reset-password-submit"
             >
               {loading ? (
                 <>
                   <LoadingSpinner />
-                  <span className="ml-2">Resetting Password...</span>
+                  <span>Resetting Password...</span>
                 </>
               ) : (
-                <>Reset Password</>
+                <>
+                  <FiLock />
+                  <span>Reset Password</span>
+                </>
               )}
             </button>
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
 export default ResetPassword;
+

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
+import { FiSend } from "react-icons/fi";
 import {
   PostFormFields,
   ErrorMessage,
@@ -114,18 +115,17 @@ const PostFormWrapper = ({ mode = "create" }) => {
 
   if (fetching) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-[var(--color-text-secondary)]">
-          <LoadingSpinner />
-        </div>
+      <div className="post-form-loading">
+        <LoadingSpinner />
+        <p>Loading post...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center w-full">
+    <>
       <title>{mode === "edit" ? "Edit Post" : "Create Post"}</title>
-      <div className="w-full max-w-3xl space-y-8">
+      <div className="post-form-container">
         <PostEditorHeader
           title={mode === "edit" ? "Edit Post" : "Create New Post"}
           subtitle={
@@ -135,20 +135,17 @@ const PostFormWrapper = ({ mode = "create" }) => {
           }
         />
 
-        <ErrorMessage error={error} />
+        <div className="post-form">
+          <ErrorMessage error={error} />
 
-        <div className="space-y-6">
           <PostFormFields
             formData={formData}
             handleChange={handleChange}
             setFormData={setFormData}
           />
 
-          <div className="flex flex-wrap gap-4 pt-4">
-            <Link
-              to="/dashboard"
-              className="flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium font-mono text-center text-[var(--color-text-secondary)] hover:text-blue-400 transition-colors bg-[var(--color-background-primary)] hover:bg-[var(--color-shade-900)]"
-            >
+          <div className="post-form-actions">
+            <Link to="/dashboard" className="post-form-cancel">
               Cancel
             </Link>
 
@@ -156,21 +153,15 @@ const PostFormWrapper = ({ mode = "create" }) => {
               type="button"
               onClick={() => handleSubmit(false)}
               disabled={loading}
-              className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium font-mono bg-blue-600 hover:bg-blue-700 text-white transition-colors ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className="post-form-draft"
             >
               {loading ? (
                 <>
                   <LoadingSpinner />
-                  <span className="ml-2">
-                    {mode === "edit" ? "Updating..." : "Saving..."}
-                  </span>
+                  <span>{mode === "edit" ? "Updating..." : "Saving..."}</span>
                 </>
-              ) : mode === "edit" ? (
-                "Update Post"
               ) : (
-                "Save Draft"
+                <span>{mode === "edit" ? "Update Post" : "Save Draft"}</span>
               )}
             </button>
 
@@ -179,25 +170,27 @@ const PostFormWrapper = ({ mode = "create" }) => {
                 type="button"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg font-medium font-mono bg-blue-600 hover:bg-blue-700 text-white transition-colors ${
-                  loading ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className="post-form-publish"
               >
                 {loading ? (
                   <>
                     <LoadingSpinner />
-                    <span className="ml-2">Publishing...</span>
+                    <span>Publishing...</span>
                   </>
                 ) : (
-                  "Publish Post"
+                  <>
+                    <FiSend />
+                    <span>Publish Post</span>
+                  </>
                 )}
               </button>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
 export default PostFormWrapper;
+

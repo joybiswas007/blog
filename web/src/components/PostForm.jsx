@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { FiArrowLeft, FiSave, FiX } from "react-icons/fi";
 import api from "@/services/api";
 const MarkdownEditor = lazy(() => import("@/components/MarkdownEditor"));
 import EditorSkeleton from "@/components/EditorSkeleton";
@@ -9,38 +10,17 @@ export const PostEditorHeader = ({
   subtitle,
   showBackButton = true
 }) => (
-  <div className="mb-8">
-    <div className="flex items-center justify-between">
-      <div>
-        <h1 className="text-3xl font-heading font-bold text-blue-400 mb-2">
-          {title}
-        </h1>
-        <p className="text-[var(--color-text-secondary)] font-mono">
-          {subtitle}
-        </p>
-      </div>
-      {showBackButton && (
-        <Link
-          to="/dashboard"
-          className="inline-flex items-center px-4 py-2 text-sm font-medium font-mono text-[var(--color-text-secondary)] hover:text-blue-400 transition-colors duration-200"
-        >
-          <svg
-            className="w-5 h-5 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-          Back to Dashboard
-        </Link>
-      )}
+  <div className="post-editor-header">
+    <div>
+      <h1 className="post-editor-title">{title}</h1>
+      <p className="post-editor-subtitle">{subtitle}</p>
     </div>
+    {showBackButton && (
+      <Link to="/dashboard" className="post-editor-back">
+        <FiArrowLeft />
+        <span>Dashboard</span>
+      </Link>
+    )}
   </div>
 );
 
@@ -67,13 +47,11 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
   const tagsError = validateTags(formData.tags);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <label
-          htmlFor="title"
-          className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2 font-mono"
-        >
-          Title <span className="text-red-400">*</span>
+    <div className="post-form-fields">
+      {/* Title Field */}
+      <div className="post-form-field">
+        <label htmlFor="title" className="post-form-label">
+          Title <span className="post-form-required">*</span>
         </label>
         <input
           type="text"
@@ -81,21 +59,17 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
+          className="post-form-input"
           required
           maxLength={100}
-          placeholder="Enter a title for your post"
+          placeholder="Enter post title..."
         />
-        {titleError && (
-          <p className="mt-1 text-sm text-red-400 font-mono">{titleError}</p>
-        )}
+        {titleError && <p className="post-form-error">{titleError}</p>}
       </div>
 
-      <div>
-        <label
-          htmlFor="description"
-          className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2 font-mono"
-        >
+      {/* Description Field */}
+      <div className="post-form-field">
+        <label htmlFor="description" className="post-form-label">
           Description
         </label>
         <input
@@ -104,79 +78,65 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           name="description"
           value={formData.description}
           onChange={handleChange}
-          className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
+          className="post-form-input"
           maxLength={150}
-          placeholder="Add a short description (optional)"
+          placeholder="Brief description (optional)"
         />
       </div>
 
-      <div>
-        <label
-          htmlFor="tags"
-          className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2 font-mono"
-        >
-          Tags <span className="text-red-400">*</span>
+      {/* Tags Field */}
+      <div className="post-form-field">
+        <label htmlFor="tags" className="post-form-label">
+          Tags <span className="post-form-required">*</span>
         </label>
-        <div className="flex flex-wrap gap-2 mb-2">
-          {formData.tags
-            .split(",")
-            .filter(Boolean)
-            .map((tag, index) => (
-              <span
-                key={index}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-600/20 text-blue-200 font-mono border border-blue-500/30"
-              >
-                #{tag.trim()}
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newTags = formData.tags
-                      .split(",")
-                      .filter(t => t.trim() !== tag.trim())
-                      .join(",");
-                    handleChange({ target: { name: "tags", value: newTags } });
-                  }}
-                  className="ml-2 text-blue-200 hover:text-red-400 transition-colors"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+        {formData.tags && (
+          <div className="post-form-tags">
+            {formData.tags
+              .split(",")
+              .filter(Boolean)
+              .map((tag, index) => (
+                <span key={index} className="post-form-tag">
+                  #{tag.trim()}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newTags = formData.tags
+                        .split(",")
+                        .filter(t => t.trim() !== tag.trim())
+                        .join(",");
+                      handleChange({
+                        target: { name: "tags", value: newTags }
+                      });
+                    }}
+                    className="post-form-tag-remove"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </span>
-            ))}
-        </div>
+                    <FiX />
+                  </button>
+                </span>
+              ))}
+          </div>
+        )}
         <input
           type="text"
           id="tags"
           name="tags"
           value={formData.tags}
           onChange={handleChange}
-          placeholder="Add tags (comma-separated)"
-          className="w-full px-4 py-3 bg-[var(--color-background-primary)] border border-[var(--color-shade-800)] rounded-lg text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-colors duration-200 font-mono"
+          placeholder="tag1, tag2, tag3"
+          className="post-form-input"
         />
-        <p className="mt-1 text-xs text-[var(--color-text-secondary)] font-mono">
+        <p className="post-form-hint">
           Separate tags with commas (max 10 tags, 30 chars each)
         </p>
-        {tagsError && (
-          <p className="mt-1 text-sm text-red-400 font-mono">{tagsError}</p>
-        )}
+        {tagsError && <p className="post-form-error">{tagsError}</p>}
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2 font-mono">
-          Content <span className="text-red-400">*</span>
+      {/* Content Field */}
+      <div className="post-form-field">
+        <label className="post-form-label">
+          Content <span className="post-form-required">*</span>
         </label>
-        <div className="rounded-lg overflow-hidden bg-[var(--color-background-primary)] border border-[var(--color-shade-800)]">
+        <div className="post-form-editor">
           <Suspense fallback={<EditorSkeleton />}>
             <MarkdownEditor
               value={formData.content}
@@ -193,17 +153,13 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
 
 export const ErrorMessage = ({ error }) => {
   if (!error) return null;
-  return (
-    <div className="mb-4 p-4 rounded-lg bg-red-500/10 text-red-400 font-mono">
-      {error}
-    </div>
-  );
+  return <div className="post-form-error-box">{error}</div>;
 };
 
 export const LoadingSpinner = () => {
   return (
-    <div className="flex justify-center items-center">
-      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400"></div>
+    <div className="inline-flex">
+      <div className="post-form-spinner"></div>
     </div>
   );
 };
@@ -252,64 +208,43 @@ const PostForm = ({ post, isEditing = false }) => {
   };
 
   return (
-    <div className="flex justify-center w-full">
-      <div className="w-full max-w-3xl space-y-8">
-        <PostEditorHeader
-          title={isEditing ? "Edit Post" : "Create New Post"}
-          subtitle={
-            isEditing
-              ? "Update your post content and settings"
-              : "Fill in the details to create a new post"
-          }
+    <div className="post-form-container">
+      <PostEditorHeader
+        title={isEditing ? "Edit Post" : "Create New Post"}
+        subtitle={
+          isEditing
+            ? "Update your post content and settings"
+            : "Fill in the details to create a new post"
+        }
+      />
+
+      <form onSubmit={handleSubmit} className="post-form">
+        <ErrorMessage error={error} />
+        <PostFormFields
+          formData={formData}
+          handleChange={handleChange}
+          setFormData={setFormData}
         />
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <ErrorMessage error={error} />
-          <PostFormFields
-            formData={formData}
-            handleChange={handleChange}
-            setFormData={setFormData}
-          />
-
-          <div className="flex items-center justify-end space-x-4 pt-4">
-            <Link
-              to="/dashboard"
-              className="px-4 py-2 text-sm font-medium font-mono text-[var(--color-text-secondary)] hover:text-blue-400 transition-colors duration-200"
-            >
-              Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium font-mono text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <>
-                  <LoadingSpinner />
-                  <span className="ml-2">Saving...</span>
-                </>
-              ) : (
-                <>
-                  <svg
-                    className="w-5 h-5 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  {isEditing ? "Update Post" : "Create Post"}
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="post-form-actions">
+          <Link to="/dashboard" className="post-form-cancel">
+            Cancel
+          </Link>
+          <button type="submit" disabled={loading} className="post-form-submit">
+            {loading ? (
+              <>
+                <LoadingSpinner />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <>
+                <FiSave />
+                <span>{isEditing ? "Update Post" : "Create Post"}</span>
+              </>
+            )}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
