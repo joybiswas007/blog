@@ -15,7 +15,8 @@ const PaginationControls = ({
   const hasNext = offset + limit < totalPost;
 
   return totalPost > limit ? (
-    <div className="pagination">
+    <div className="flex justify-center items-center gap-0 mt-8 py-4 border-t border-[#181a1f]">
+      {/* Previous Button */}
       <Link
         to={buildQueryString({
           limit,
@@ -24,19 +25,28 @@ const PaginationControls = ({
           sort,
           tag
         })}
-        className={`pagination-button ${!hasPrevious ? "disabled" : ""}`}
+        className={`inline-flex items-center gap-2 px-4 py-2 text-[13px] no-underline font-mono bg-[#2c313a] border border-[#181a1f] border-r-0 rounded-l transition-all duration-150 ${
+          !hasPrevious
+            ? "opacity-30 cursor-not-allowed pointer-events-none text-[#5c6370]"
+            : "text-[#abb2bf] hover:bg-[#353b45] hover:text-[#61afef]"
+        }`}
         aria-label="Previous page"
         aria-disabled={!hasPrevious}
         tabIndex={hasPrevious ? 0 : -1}
       >
-        <span className="pagination-arrow">‹</span>
+        <span className="text-[#61afef] font-semibold text-base">‹</span>
         <span>Previous</span>
       </Link>
 
-      <div className="pagination-info">
-        Page {currentPage} of {totalPages}
+      {/* Page Counter */}
+      <div className="inline-flex items-center px-5 py-2 text-[13px] font-mono bg-[#353b45] border-y border-[#181a1f] text-[#abb2bf]">
+        <span className="text-[#5c6370]">Page</span>
+        <span className="mx-2 text-[#61afef] font-semibold">{currentPage}</span>
+        <span className="text-[#5c6370]">of</span>
+        <span className="ml-2 text-[#5c6370]">{totalPages}</span>
       </div>
 
+      {/* Next Button */}
       <Link
         to={buildQueryString({
           limit,
@@ -45,13 +55,17 @@ const PaginationControls = ({
           sort,
           tag
         })}
-        className={`pagination-button ${!hasNext ? "disabled" : ""}`}
+        className={`inline-flex items-center gap-2 px-4 py-2 text-[13px] no-underline font-mono bg-[#2c313a] border border-[#181a1f] border-l-0 rounded-r transition-all duration-150 ${
+          !hasNext
+            ? "opacity-30 cursor-not-allowed pointer-events-none text-[#5c6370]"
+            : "text-[#abb2bf] hover:bg-[#353b45] hover:text-[#61afef]"
+        }`}
         aria-label="Next page"
         aria-disabled={!hasNext}
         tabIndex={hasNext ? 0 : -1}
       >
         <span>Next</span>
-        <span className="pagination-arrow">›</span>
+        <span className="text-[#61afef] font-semibold text-base">›</span>
       </Link>
     </div>
   ) : null;

@@ -11,14 +11,17 @@ export default function Layout({ children }) {
   } = import.meta.env;
 
   return (
-    <div className="ide-container">
+    <div className="flex flex-col h-screen overflow-hidden bg-[var(--color-editor-bg)]">
       <Header blogName={blogName} />
 
-      <div className="ide-body">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar />
 
-        <main className="editor-pane">
-          <div className="editor-content">{children}</div>
+        <main
+          id="editor-pane"
+          className="flex-1 overflow-y-auto bg-[var(--color-editor-bg)]"
+        >
+          <div className="max-w-4xl mx-auto py-8 px-6">{children}</div>
         </main>
       </div>
 

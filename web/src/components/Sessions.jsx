@@ -68,24 +68,31 @@ const Sessions = () => {
   return (
     <>
       <title>{pageTitle}</title>
-      <div className="sessions-container">
+      <div className="w-full max-w-5xl mx-auto space-y-6">
         {/* Header */}
-        <div className="sessions-header">
+        <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
           <div>
-            <h1 className="sessions-title">Sessions</h1>
-            <p className="sessions-subtitle">{totalSessions} total sessions</p>
+            <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
+              Sessions
+            </h1>
+            <p className="text-xs mt-1 font-mono text-[var(--color-text-secondary)]">
+              {totalSessions} total sessions
+            </p>
           </div>
-          <div className="sessions-header-actions">
+          <div className="flex items-center gap-3">
             <button
               onClick={handleRefresh}
-              className="sessions-refresh-btn"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={refreshing}
               type="button"
             >
               <FiRefreshCw className={refreshing ? "animate-spin" : ""} />
               <span>Refresh</span>
             </button>
-            <Link to="/auth/tools" className="sessions-back-btn">
+            <Link
+              to="/auth/tools"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
+            >
               <FiArrowLeft />
               <span>Tools</span>
             </Link>
@@ -93,44 +100,69 @@ const Sessions = () => {
         </div>
 
         {/* Error Message */}
-        {error && <div className="sessions-error">{error}</div>}
+        {error && (
+          <div className="px-4 py-3 rounded border-l-4 text-sm font-mono bg-[rgba(220,38,38,0.1)] border-l-[#dc2626] text-[#fca5a5]">
+            {error}
+          </div>
+        )}
 
         {/* Sessions Table */}
-        <div className="sessions-table-container">
+        <div className="border border-[var(--color-panel-border)] rounded overflow-hidden">
           {loading ? (
-            <div className="sessions-loading">
-              <div className="sessions-loading-spinner"></div>
-              <p>Loading sessions...</p>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-8 h-8 border-[3px] border-t-transparent border-[var(--color-accent-primary)] rounded-full animate-spin mb-3"></div>
+              <p className="text-sm font-mono text-[var(--color-text-secondary)]">
+                Loading sessions...
+              </p>
             </div>
           ) : sessions.length === 0 ? (
-            <div className="sessions-empty">
-              <p>No sessions found</p>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <p className="text-sm font-mono text-[var(--color-text-secondary)]">
+                No sessions found
+              </p>
             </div>
           ) : (
-            <table className="sessions-table">
-              <thead>
+            <table className="w-full border-collapse font-mono text-[13px]">
+              <thead className="bg-[var(--color-hover-bg)]">
                 <tr>
-                  <th>IP Address</th>
-                  <th>Started</th>
-                  <th>Status</th>
-                  <th>Ended</th>
+                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider">
+                    IP Address
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider">
+                    Started
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider">
+                    Ended
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {sessions.map((session, index) => (
-                  <tr key={index}>
-                    <td className="sessions-ip">{session.ip}</td>
-                    <td>{formatDateTime(session.start_time)}</td>
-                    <td>
+                  <tr
+                    key={index}
+                    className="border-b border-b-[var(--color-panel-border)] transition-colors hover:bg-[var(--color-hover-bg)]"
+                  >
+                    <td className="px-4 py-3 font-medium text-[var(--color-accent-primary)]">
+                      {session.ip}
+                    </td>
+                    <td className="px-4 py-3 text-[var(--color-text-primary)]">
+                      {formatDateTime(session.start_time)}
+                    </td>
+                    <td className="px-4 py-3">
                       <span
-                        className={`sessions-status ${
-                          session.end_time ? "ended" : "active"
+                        className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                          session.end_time
+                            ? "bg-[rgba(248,113,113,0.15)] text-[#f87171] border border-[rgba(248,113,113,0.3)]"
+                            : "bg-[rgba(52,211,153,0.15)] text-[#34d399] border border-[rgba(52,211,153,0.3)]"
                         }`}
                       >
                         {session.end_time ? "Ended" : "Active"}
                       </span>
                     </td>
-                    <td>
+                    <td className="px-4 py-3 text-[var(--color-text-primary)]">
                       {session.end_time
                         ? formatDateTime(session.end_time)
                         : "—"}
@@ -144,24 +176,26 @@ const Sessions = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="sessions-pagination">
-            <span className="sessions-page-info">
+          <div className="flex items-center justify-between p-4 border-t border-t-[var(--color-panel-border)]">
+            <span className="text-sm font-mono text-[var(--color-text-secondary)]">
               Page {currentPage} of {totalPages}
             </span>
-            <div className="sessions-page-controls">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="sessions-page-btn"
+                className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-30 disabled:cursor-not-allowed"
                 type="button"
               >
                 ←
               </button>
-              <span className="sessions-page-current">{currentPage}</span>
+              <span className="px-3 py-1 rounded text-sm font-medium font-mono bg-[var(--color-active-bg)] text-[var(--color-text-primary)]">
+                {currentPage}
+              </span>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="sessions-page-btn"
+                className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-30 disabled:cursor-not-allowed"
                 type="button"
               >
                 →

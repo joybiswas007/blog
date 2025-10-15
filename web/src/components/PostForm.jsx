@@ -10,13 +10,20 @@ export const PostEditorHeader = ({
   subtitle,
   showBackButton = true
 }) => (
-  <div className="post-editor-header">
+  <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
     <div>
-      <h1 className="post-editor-title">{title}</h1>
-      <p className="post-editor-subtitle">{subtitle}</p>
+      <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
+        {title}
+      </h1>
+      <p className="text-sm mt-1 font-sans text-[var(--color-text-secondary)]">
+        {subtitle}
+      </p>
     </div>
     {showBackButton && (
-      <Link to="/dashboard" className="post-editor-back">
+      <Link
+        to="/dashboard"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
+      >
         <FiArrowLeft />
         <span>Dashboard</span>
       </Link>
@@ -47,11 +54,14 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
   const tagsError = validateTags(formData.tags);
 
   return (
-    <div className="post-form-fields">
+    <div className="space-y-6">
       {/* Title Field */}
-      <div className="post-form-field">
-        <label htmlFor="title" className="post-form-label">
-          Title <span className="post-form-required">*</span>
+      <div className="space-y-2">
+        <label
+          htmlFor="title"
+          className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+        >
+          Title <span className="ml-1 text-[#f87171]">*</span>
         </label>
         <input
           type="text"
@@ -59,17 +69,22 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className="post-form-input"
+          className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
           required
           maxLength={100}
           placeholder="Enter post title..."
         />
-        {titleError && <p className="post-form-error">{titleError}</p>}
+        {titleError && (
+          <p className="text-xs font-mono text-[#f87171]">{titleError}</p>
+        )}
       </div>
 
       {/* Description Field */}
-      <div className="post-form-field">
-        <label htmlFor="description" className="post-form-label">
+      <div className="space-y-2">
+        <label
+          htmlFor="description"
+          className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+        >
           Description
         </label>
         <input
@@ -78,24 +93,30 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           name="description"
           value={formData.description}
           onChange={handleChange}
-          className="post-form-input"
+          className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
           maxLength={150}
           placeholder="Brief description (optional)"
         />
       </div>
 
       {/* Tags Field */}
-      <div className="post-form-field">
-        <label htmlFor="tags" className="post-form-label">
-          Tags <span className="post-form-required">*</span>
+      <div className="space-y-2">
+        <label
+          htmlFor="tags"
+          className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+        >
+          Tags <span className="ml-1 text-[#f87171]">*</span>
         </label>
         {formData.tags && (
-          <div className="post-form-tags">
+          <div className="flex flex-wrap gap-2 mb-2">
             {formData.tags
               .split(",")
               .filter(Boolean)
               .map((tag, index) => (
-                <span key={index} className="post-form-tag">
+                <span
+                  key={index}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded text-sm font-mono bg-[rgba(0,122,204,0.15)] text-[var(--color-accent-primary)] border border-[rgba(0,122,204,0.3)]"
+                >
                   #{tag.trim()}
                   <button
                     type="button"
@@ -108,7 +129,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
                         target: { name: "tags", value: newTags }
                       });
                     }}
-                    className="post-form-tag-remove"
+                    className="flex items-center justify-center w-4 h-4 rounded transition-colors bg-transparent text-[var(--color-text-secondary)] hover:text-[#f87171]"
                   >
                     <FiX />
                   </button>
@@ -123,20 +144,22 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           value={formData.tags}
           onChange={handleChange}
           placeholder="tag1, tag2, tag3"
-          className="post-form-input"
+          className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
         />
-        <p className="post-form-hint">
+        <p className="text-xs font-mono text-[var(--color-text-muted)]">
           Separate tags with commas (max 10 tags, 30 chars each)
         </p>
-        {tagsError && <p className="post-form-error">{tagsError}</p>}
+        {tagsError && (
+          <p className="text-xs font-mono text-[#f87171]">{tagsError}</p>
+        )}
       </div>
 
       {/* Content Field */}
-      <div className="post-form-field">
-        <label className="post-form-label">
-          Content <span className="post-form-required">*</span>
+      <div className="space-y-2">
+        <label className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]">
+          Content <span className="ml-1 text-[#f87171]">*</span>
         </label>
-        <div className="post-form-editor">
+        <div className="rounded overflow-hidden bg-[var(--color-input-bg)] border border-[var(--color-input-border)]">
           <Suspense fallback={<EditorSkeleton />}>
             <MarkdownEditor
               value={formData.content}
@@ -153,13 +176,17 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
 
 export const ErrorMessage = ({ error }) => {
   if (!error) return null;
-  return <div className="post-form-error-box">{error}</div>;
+  return (
+    <div className="px-4 py-3 rounded border-l-4 text-sm font-mono bg-[rgba(220,38,38,0.1)] border-l-[#dc2626] text-[#fca5a5]">
+      {error}
+    </div>
+  );
 };
 
 export const LoadingSpinner = () => {
   return (
     <div className="inline-flex">
-      <div className="post-form-spinner"></div>
+      <div className="w-5 h-5 border-2 border-t-transparent rounded-full animate-spin border-current"></div>
     </div>
   );
 };
@@ -208,7 +235,7 @@ const PostForm = ({ post, isEditing = false }) => {
   };
 
   return (
-    <div className="post-form-container">
+    <div className="w-full max-w-4xl mx-auto space-y-6">
       <PostEditorHeader
         title={isEditing ? "Edit Post" : "Create New Post"}
         subtitle={
@@ -218,7 +245,10 @@ const PostForm = ({ post, isEditing = false }) => {
         }
       />
 
-      <form onSubmit={handleSubmit} className="post-form">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 p-6 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded"
+      >
         <ErrorMessage error={error} />
         <PostFormFields
           formData={formData}
@@ -226,11 +256,18 @@ const PostForm = ({ post, isEditing = false }) => {
           setFormData={setFormData}
         />
 
-        <div className="post-form-actions">
-          <Link to="/dashboard" className="post-form-cancel">
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-[var(--color-panel-border)]">
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
+          >
             Cancel
           </Link>
-          <button type="submit" disabled={loading} className="post-form-submit">
+          <button
+            type="submit"
+            disabled={loading}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {loading ? (
               <>
                 <LoadingSpinner />

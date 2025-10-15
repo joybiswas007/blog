@@ -68,24 +68,31 @@ const LoginAttempts = () => {
   return (
     <>
       <title>{pageTitle}</title>
-      <div className="attempts-container">
+      <div className="w-full max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="attempts-header">
+        <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
           <div>
-            <h1 className="attempts-title">Login Attempts</h1>
-            <p className="attempts-subtitle">{totalAttempts} total attempts</p>
+            <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
+              Login Attempts
+            </h1>
+            <p className="text-xs mt-1 font-mono text-[var(--color-text-secondary)]">
+              {totalAttempts} total attempts
+            </p>
           </div>
-          <div className="attempts-header-actions">
+          <div className="flex items-center gap-3">
             <button
               onClick={handleRefresh}
-              className="attempts-refresh-btn"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={refreshing}
               type="button"
             >
               <FiRefreshCw className={refreshing ? "animate-spin" : ""} />
               <span>Refresh</span>
             </button>
-            <Link to="/auth/tools" className="attempts-back-btn">
+            <Link
+              to="/auth/tools"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
+            >
               <FiArrowLeft />
               <span>Tools</span>
             </Link>
@@ -93,58 +100,89 @@ const LoginAttempts = () => {
         </div>
 
         {/* Error Message */}
-        {error && <div className="attempts-error">{error}</div>}
+        {error && (
+          <div className="px-4 py-3 rounded border-l-4 text-sm font-mono bg-[rgba(220,38,38,0.1)] border-l-[#dc2626] text-[#fca5a5]">
+            {error}
+          </div>
+        )}
 
         {/* Attempts Table */}
-        <div className="attempts-table-container">
+        <div className="border border-[var(--color-panel-border)] rounded overflow-x-auto">
           {loading ? (
-            <div className="attempts-loading">
-              <div className="attempts-loading-spinner"></div>
-              <p>Loading login attempts...</p>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-8 h-8 border-[3px] border-t-transparent border-[var(--color-accent-primary)] rounded-full animate-spin mb-3"></div>
+              <p className="text-sm font-mono text-[var(--color-text-secondary)]">
+                Loading login attempts...
+              </p>
             </div>
           ) : attempts.length === 0 ? (
-            <div className="attempts-empty">
-              <p>No login attempts found</p>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <p className="text-sm font-mono text-[var(--color-text-secondary)]">
+                No login attempts found
+              </p>
             </div>
           ) : (
-            <table className="attempts-table">
-              <thead>
+            <table className="w-full border-collapse font-mono text-[13px]">
+              <thead className="bg-[var(--color-hover-bg)]">
                 <tr>
-                  <th>#</th>
-                  <th>IP Address</th>
-                  <th>Last Attempt</th>
-                  <th>Attempts</th>
-                  <th>Bans</th>
-                  <th>Banned Until</th>
+                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                    #
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                    IP Address
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                    Last Attempt
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                    Attempts
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                    Bans
+                  </th>
+                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                    Banned Until
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {attempts.map((attempt, index) => (
-                  <tr key={attempt.id}>
-                    <td className="attempts-index">
+                  <tr
+                    key={attempt.id}
+                    className="border-b border-b-[var(--color-panel-border)] transition-colors hover:bg-[var(--color-hover-bg)]"
+                  >
+                    <td className="px-4 py-3 text-[var(--color-text-secondary)]">
                       {(currentPage - 1) * attemptsPerPage + index + 1}
                     </td>
-                    <td className="attempts-ip">{attempt.ip}</td>
-                    <td>{formatDateTime(attempt.last_attempt)}</td>
-                    <td>
-                      <span className="attempts-count">{attempt.attempts}</span>
+                    <td className="px-4 py-3 font-medium text-[var(--color-accent-primary)]">
+                      {attempt.ip}
                     </td>
-                    <td>
+                    <td className="px-4 py-3 text-[var(--color-text-primary)]">
+                      {formatDateTime(attempt.last_attempt)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="inline-block px-2 py-1 rounded text-xs font-bold bg-[var(--color-active-bg)] text-[var(--color-text-primary)]">
+                        {attempt.attempts}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
                       <span
-                        className={`attempts-badge ${
-                          attempt.bans > 0 ? "danger" : "success"
+                        className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                          attempt.bans > 0
+                            ? "bg-[rgba(248,113,113,0.15)] text-[#f87171] border border-[rgba(248,113,113,0.3)]"
+                            : "bg-[rgba(52,211,153,0.15)] text-[#34d399] border border-[rgba(52,211,153,0.3)]"
                         }`}
                       >
                         {attempt.bans}
                       </span>
                     </td>
-                    <td>
+                    <td className="px-4 py-3">
                       {attempt.banned_until ? (
-                        <span className="attempts-banned danger">
+                        <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-[rgba(248,113,113,0.15)] text-[#f87171] border border-[rgba(248,113,113,0.3)]">
                           {formatDateTime(attempt.banned_until)}
                         </span>
                       ) : (
-                        <span className="attempts-banned success">
+                        <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-[rgba(52,211,153,0.15)] text-[#34d399] border border-[rgba(52,211,153,0.3)]">
                           Not banned
                         </span>
                       )}
@@ -158,24 +196,26 @@ const LoginAttempts = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="attempts-pagination">
-            <span className="attempts-page-info">
+          <div className="flex items-center justify-between p-4 border-t border-t-[var(--color-panel-border)]">
+            <span className="text-sm font-mono text-[var(--color-text-secondary)]">
               Page {currentPage} of {totalPages}
             </span>
-            <div className="attempts-page-controls">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="attempts-page-btn"
+                className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-30 disabled:cursor-not-allowed"
                 type="button"
               >
                 ←
               </button>
-              <span className="attempts-page-current">{currentPage}</span>
+              <span className="px-3 py-1 rounded text-sm font-medium font-mono bg-[var(--color-active-bg)] text-[var(--color-text-primary)]">
+                {currentPage}
+              </span>
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="attempts-page-btn"
+                className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-30 disabled:cursor-not-allowed"
                 type="button"
               >
                 →

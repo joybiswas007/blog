@@ -31,23 +31,28 @@ const Login = () => {
   return (
     <>
       <title>Login</title>
-      <div className="login-container">
-        <div className="login-card">
+      <div className="flex items-center justify-center min-h-screen py-12">
+        <div className="w-full max-w-md space-y-0">
           {/* Header */}
-          <div className="login-header">
-            <div className="login-icon">
+          <div className="text-center space-y-3 p-8 rounded-t bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] border-b-0">
+            <div className="w-16 h-16 mx-auto flex items-center justify-center rounded-full mb-4 bg-[var(--color-active-bg)] text-[var(--color-accent-primary)] text-[28px]">
               <FiLogIn />
             </div>
-            <h1 className="login-title">Welcome Back</h1>
+            <h1 className="text-3xl font-bold font-sans text-[var(--color-text-primary)]">
+              Welcome Back
+            </h1>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleLogin} className="login-form">
+          <form
+            onSubmit={handleLogin}
+            className="space-y-5 p-8 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] border-t-0 rounded-b"
+          >
             {/* Error Message */}
             {error && (
-              <div className="login-error">
+              <div className="flex items-center gap-3 px-4 py-3 rounded text-sm font-sans bg-[rgba(220,38,38,0.1)] text-[#fca5a5] border border-[rgba(220,38,38,0.3)]">
                 <svg
-                  className="w-5 h-5"
+                  className="w-5 h-5 shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -64,9 +69,12 @@ const Login = () => {
             )}
 
             {/* Email Field */}
-            <div className="login-field">
-              <label htmlFor="email" className="login-label">
-                <FiMail />
+            <div className="space-y-2">
+              <label
+                htmlFor="email"
+                className="flex items-center gap-2 text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+              >
+                <FiMail className="text-base" />
                 <span>Email Address</span>
               </label>
               <input
@@ -77,15 +85,18 @@ const Login = () => {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 autoComplete="email"
-                className="login-input"
+                className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
                 placeholder="you@example.com"
               />
             </div>
 
             {/* Password Field */}
-            <div className="login-field">
-              <label htmlFor="password" className="login-label">
-                <FiLock />
+            <div className="space-y-2">
+              <label
+                htmlFor="password"
+                className="flex items-center gap-2 text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+              >
+                <FiLock className="text-base" />
                 <span>Password</span>
               </label>
               <input
@@ -96,13 +107,17 @@ const Login = () => {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 autoComplete="current-password"
-                className="login-input"
+                className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
                 placeholder="••••••••"
               />
             </div>
 
             {/* Submit Button */}
-            <button type="submit" disabled={loading} className="login-submit">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(0,122,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               {loading ? (
                 <>
                   <svg

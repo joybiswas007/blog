@@ -70,46 +70,57 @@ const ResetPassword = () => {
   return (
     <>
       <title>Reset Password</title>
-      <div className="reset-password-container">
-        <div className="reset-password-card">
+      <div className="flex items-center justify-center min-h-full py-12">
+        <div className="w-full max-w-md space-y-6">
           {/* Header */}
-          <div className="reset-password-header">
-            <div className="reset-password-icon">
+          <div className="text-center space-y-3 p-6 rounded-t bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] border-b-0">
+            <div className="w-16 h-16 mx-auto flex items-center justify-center rounded-full mb-3 bg-[var(--color-active-bg)] text-[var(--color-accent-primary)] text-[28px]">
               <FiLock />
             </div>
-            <h1 className="reset-password-title">Reset Password</h1>
-            <p className="reset-password-subtitle">
+            <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
+              Reset Password
+            </h1>
+            <p className="text-sm font-sans text-[var(--color-text-secondary)] leading-normal">
               Enter your email and new password to change your credentials
             </p>
           </div>
 
           {/* Back Button */}
-          <Link to="/dashboard" className="reset-password-back">
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
+          >
             <FiArrowLeft />
             <span>Back to Dashboard</span>
           </Link>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="reset-password-form">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5 p-6 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] border-t-0 rounded-b"
+          >
             {/* Error Message */}
             {error && (
-              <div className="reset-password-error">
+              <div className="rounded">
                 <ErrorMessage error={error} />
               </div>
             )}
 
             {/* Success Message */}
             {success && (
-              <div className="reset-password-success">
-                <FiCheck />
+              <div className="flex items-center gap-3 px-4 py-3 rounded text-sm font-sans bg-[rgba(52,211,153,0.15)] text-[#34d399] border border-[rgba(52,211,153,0.3)]">
+                <FiCheck className="text-xl" />
                 <span>Password has been reset successfully!</span>
               </div>
             )}
 
             {/* Email Field */}
-            <div className="reset-password-field">
-              <label htmlFor="email" className="reset-password-label">
-                <FiMail />
+            <div className="space-y-2">
+              <label
+                htmlFor="email"
+                className="flex items-center gap-2 text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+              >
+                <FiMail className="text-base" />
                 <span>Email</span>
               </label>
               <input
@@ -120,15 +131,18 @@ const ResetPassword = () => {
                 autoComplete="email"
                 onChange={handleChange}
                 required
-                className="reset-password-input"
+                className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
                 placeholder="your@email.com"
               />
             </div>
 
             {/* New Password Field */}
-            <div className="reset-password-field">
-              <label htmlFor="password" className="reset-password-label">
-                <FiLock />
+            <div className="space-y-2">
+              <label
+                htmlFor="password"
+                className="flex items-center gap-2 text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+              >
+                <FiLock className="text-base" />
                 <span>New Password</span>
               </label>
               <input
@@ -139,18 +153,21 @@ const ResetPassword = () => {
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
-                className="reset-password-input"
+                className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
                 placeholder="Enter new password"
               />
-              <p className="reset-password-hint">
+              <p className="text-xs font-mono text-[var(--color-text-muted)]">
                 Password must be at least 8 characters long
               </p>
             </div>
 
             {/* Confirm Password Field */}
-            <div className="reset-password-field">
-              <label htmlFor="confirmPassword" className="reset-password-label">
-                <FiLock />
+            <div className="space-y-2">
+              <label
+                htmlFor="confirmPassword"
+                className="flex items-center gap-2 text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+              >
+                <FiLock className="text-base" />
                 <span>Confirm Password</span>
               </label>
               <input
@@ -161,7 +178,7 @@ const ResetPassword = () => {
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
-                className="reset-password-input"
+                className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
                 placeholder="Confirm new password"
               />
             </div>
@@ -170,7 +187,7 @@ const ResetPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="reset-password-submit"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(0,122,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>

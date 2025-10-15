@@ -68,46 +68,59 @@ const StatusBar = ({ authorName, sourceCode }) => {
   };
 
   return (
-    <footer className="status-bar">
-      <div className="status-left">
+    <footer className="flex items-center justify-between px-0 py-0 bg-[#21252b] text-white font-sans text-[11px] min-h-6 border-t border-[#181a1f] shrink-0">
+      {/* Left Section - Git Info */}
+      <div className="flex items-center h-6">
         {buildInfo && buildInfo.branch && (
           <>
-            <span className="status-item">
-              <FiGitBranch className="status-icon" />
-              <span className="status-value">{buildInfo.branch}</span>
-            </span>
-            <span className="status-separator">·</span>
-            <span className="status-item">
-              <FiGitCommit className="status-icon" />
+            {/* Branch */}
+            <div className="flex items-center gap-1.5 px-3 h-full bg-[#98c379] text-[#21252b]">
+              <FiGitBranch className="shrink-0 w-3 h-3" />
+              <span className="font-semibold">{buildInfo.branch}</span>
+            </div>
+
+            {/* Separator */}
+            <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#98c379]"></div>
+
+            {/* Commit */}
+            <div className="flex items-center gap-1.5 px-3 h-full bg-[#2c313a]">
+              <FiGitCommit className="shrink-0 w-3 h-3 text-[#61afef]" />
               {getCommitUrl(buildInfo.commit) ? (
                 <Link
                   to={getCommitUrl(buildInfo.commit)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="status-link"
+                  className="no-underline font-medium font-mono text-[#abb2bf] transition-colors hover:text-[#61afef]"
                   aria-label="View commit on GitHub"
                 >
                   {shortCommit}
                 </Link>
               ) : (
-                <span className="status-value">{shortCommit}</span>
+                <span className="font-medium font-mono text-[#abb2bf]">
+                  {shortCommit}
+                </span>
               )}
-            </span>
-            <span className="status-separator">·</span>
-            <span className="status-item">
-              <FiCode className="status-icon" />
-              <span className="status-value">{goVersion}</span>
-            </span>
+            </div>
+
+            {/* Separator */}
+            <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#2c313a]"></div>
+
+            {/* Language */}
+            <div className="flex items-center gap-1.5 px-3 h-full bg-[#353b45]">
+              <FiCode className="shrink-0 w-3 h-3 text-[#e5c07b]" />
+              <span className="font-medium text-[#abb2bf]">{goVersion}</span>
+            </div>
+
+            {/* End separator */}
+            <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#353b45]"></div>
           </>
         )}
       </div>
 
-      <div className="status-right">
-        <span className="status-copyright">
-          © {new Date().getFullYear()} {authorName}
-        </span>
-        <span className="status-separator">·</span>
-        <div className="social-links">
+      {/* Right Section - Author & Social */}
+      <div className="flex items-center h-6">
+        {/* Social Links */}
+        <div className="flex items-center gap-0 px-3 h-full bg-[#353b45]">
           {socialLinks.map(
             (social, index) =>
               social.url &&
@@ -117,24 +130,34 @@ const StatusBar = ({ authorName, sourceCode }) => {
                   to={getLink(social)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="social-icon"
+                  className="flex items-center justify-center w-6 h-6 rounded transition-colors no-underline text-[#5c6370] hover:text-[#61afef]"
                   aria-label={social.label}
                   title={social.label}
                 >
-                  {social.icon}
+                  <span className="w-3 h-3">{social.icon}</span>
                 </Link>
               ) : (
                 <Link
                   key={index}
                   to={getLink(social)}
-                  className="social-icon"
+                  className="flex items-center justify-center w-6 h-6 rounded transition-colors no-underline text-[#5c6370] hover:text-[#61afef]"
                   aria-label={social.label}
                   title={social.label}
                 >
-                  {social.icon}
+                  <span className="w-3 h-3">{social.icon}</span>
                 </Link>
               ))
           )}
+        </div>
+
+        {/* Separator */}
+        <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#353b45]"></div>
+
+        {/* Copyright */}
+        <div className="flex items-center px-3 h-full bg-[#61afef] text-[#21252b]">
+          <span className="font-semibold">
+            © {new Date().getFullYear()} {authorName}
+          </span>
         </div>
       </div>
     </footer>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BsTag } from "react-icons/bs";
+import { BsTag, BsChevronRight } from "react-icons/bs";
 import api from "@/services/api";
 import SEO from "@/components/SEO";
 
@@ -27,17 +27,19 @@ const Tags = () => {
 
   if (loading) {
     return (
-      <div className="posts-loading">
-        <div className="posts-loading-spinner"></div>
-        <div className="posts-loading-text">Loading tags...</div>
+      <div className="flex flex-col items-center justify-center py-16">
+        <div className="w-8 h-8 border-[3px] border-t-transparent border-[#61afef] rounded-full animate-spin mb-3"></div>
+        <div className="text-[13px] font-mono text-[#5c6370]">
+          Loading tags...
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="posts-error">
-        <div className="post-error-text">{error}</div>
+      <div className="mx-4 px-4 py-3 rounded border-l-4 bg-[rgba(224,108,117,0.1)] border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+        {error}
       </div>
     );
   }
@@ -45,37 +47,58 @@ const Tags = () => {
   return (
     <>
       <SEO title="Tags" />
-      <div className="tags-container">
-        <div className="tags-header">
-          <h1 className="tags-header-title">All Tags</h1>
+      <div className="w-full max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-2 px-3 py-2 mb-4 bg-[#282c34] border-b border-[#181a1f]">
+          <BsChevronRight className="w-3 h-3 text-[#5c6370]" />
+          <h1 className="text-[10px] font-bold tracking-widest uppercase font-sans text-[#5c6370]">
+            All Tags
+          </h1>
         </div>
 
         {tags && tags.length > 0 ? (
-          <div className="tags-list">
+          <div className="space-y-0 border border-[#181a1f] rounded overflow-hidden bg-[#21252b]">
             {tags.map((tag, index) => (
               <Link
                 key={index}
                 to={`/?tag=${tag.name}`}
-                className="tag-item"
+                className="group flex items-center justify-between px-4 py-3 no-underline transition-all bg-transparent border-l-2 border-l-transparent border-b border-b-[#181a1f] last:border-b-0 hover:bg-[#2c313a] hover:border-l-[#61afef]"
                 aria-label={`View ${tag.post_count} posts tagged with ${tag.name}`}
               >
-                <div className="tag-item-left">
-                  <span className="tag-icon">
-                    <BsTag />
+                <div className="flex items-center gap-3">
+                  {/* Tree indent indicator */}
+                  <span className="w-3 flex items-center justify-center">
+                    <span className="w-1 h-1 rounded-full bg-[#5c6370] opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   </span>
-                  <span className="tag-name">{tag.name}</span>
+
+                  {/* Tag icon */}
+                  <BsTag className="w-3.5 h-3.5 text-[#5c6370] group-hover:text-[#61afef] transition-colors" />
+
+                  {/* Tag name */}
+                  <span className="font-medium text-[14px] font-sans text-[#abb2bf] group-hover:text-[#61afef] transition-colors">
+                    {tag.name}
+                  </span>
                 </div>
-                <span className="tag-count">{tag.post_count}</span>
+
+                {/* Post count badge */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] px-2 py-0.5 rounded font-mono bg-[#2c313a] text-[#5c6370] border border-[#181a1f]">
+                    {tag.post_count} {tag.post_count === 1 ? "post" : "posts"}
+                  </span>
+                  <BsChevronRight className="w-3 h-3 text-[#5c6370] opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
+                </div>
               </Link>
             ))}
           </div>
         ) : (
-          <div className="tags-empty">
-            <div className="tags-empty-icon" aria-hidden="true">
-              🏷️
+          <div className="flex flex-col items-center justify-center py-16 text-center px-4">
+            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[#2c313a] mb-4">
+              <BsTag className="w-7 h-7 text-[#5c6370]" />
             </div>
-            <h2 className="tags-empty-title">No tags found</h2>
-            <p className="tags-empty-description">
+            <h2 className="text-base font-medium mb-2 font-sans text-[#abb2bf]">
+              No tags found
+            </h2>
+            <p className="text-[13px] text-[#5c6370] leading-relaxed">
               Tags will appear here once you create posts with tags.
             </p>
           </div>

@@ -115,9 +115,11 @@ const PostFormWrapper = ({ mode = "create" }) => {
 
   if (fetching) {
     return (
-      <div className="post-form-loading">
+      <div className="flex flex-col items-center justify-center py-16">
         <LoadingSpinner />
-        <p>Loading post...</p>
+        <p className="mt-3 text-sm font-mono text-[var(--color-text-secondary)]">
+          Loading post...
+        </p>
       </div>
     );
   }
@@ -125,7 +127,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
   return (
     <>
       <title>{mode === "edit" ? "Edit Post" : "Create Post"}</title>
-      <div className="post-form-container">
+      <div className="w-full max-w-4xl mx-auto space-y-6">
         <PostEditorHeader
           title={mode === "edit" ? "Edit Post" : "Create New Post"}
           subtitle={
@@ -135,7 +137,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
           }
         />
 
-        <div className="post-form">
+        <div className="space-y-6 p-6 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
           <ErrorMessage error={error} />
 
           <PostFormFields
@@ -144,8 +146,11 @@ const PostFormWrapper = ({ mode = "create" }) => {
             setFormData={setFormData}
           />
 
-          <div className="post-form-actions">
-            <Link to="/dashboard" className="post-form-cancel">
+          <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-[var(--color-panel-border)]">
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
+            >
               Cancel
             </Link>
 
@@ -153,7 +158,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
               type="button"
               onClick={() => handleSubmit(false)}
               disabled={loading}
-              className="post-form-draft"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -170,7 +175,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
                 type="button"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className="post-form-publish"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(0,122,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>

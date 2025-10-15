@@ -102,24 +102,33 @@ const Dashboard = () => {
   return (
     <>
       <title>{pageTitle}</title>
-      <div className="dashboard-container">
+      <div className="w-full max-w-5xl mx-auto space-y-6">
         {/* Action Toolbar */}
-        <div className="dashboard-toolbar">
-          <Link to="/auth/posts/create" className="dashboard-btn primary">
+        <div className="flex flex-wrap items-center gap-3 p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
+          <Link
+            to="/auth/posts/create"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px"
+          >
             <FiPlus />
             <span>New Post</span>
           </Link>
-          <Link to="/auth/tools" className="dashboard-btn">
+          <Link
+            to="/auth/tools"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:-translate-y-px"
+          >
             <FiTool />
             <span>Tools</span>
           </Link>
-          <Link to="/auth/reset-password" className="dashboard-btn">
+          <Link
+            to="/auth/reset-password"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:-translate-y-px"
+          >
             <FiKey />
             <span>Password</span>
           </Link>
           <button
             onClick={handleLogout}
-            className="dashboard-btn danger"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans text-[#f87171] bg-[var(--color-hover-bg)] border border-[var(--color-panel-border)] hover:bg-[rgba(220,38,38,0.1)] hover:border-[#dc2626] hover:text-[#fca5a5] hover:-translate-y-px"
             type="button"
           >
             <FiLogOut />
@@ -128,24 +137,32 @@ const Dashboard = () => {
         </div>
 
         {/* Tabs & Stats */}
-        <div className="dashboard-tabs-section">
-          <div className="dashboard-tabs">
+        <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
+          <div className="flex items-center gap-2">
             <button
-              className={`dashboard-tab ${activeTab === "published" ? "active" : ""}`}
+              className={`px-4 py-2 rounded text-sm font-medium transition-all font-sans border ${
+                activeTab === "published"
+                  ? "text-[var(--color-text-primary)] bg-[var(--color-active-bg)] border-[var(--color-accent-primary)]"
+                  : "text-[var(--color-text-secondary)] bg-transparent border-transparent hover:text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)]"
+              }`}
               onClick={() => setActiveTab("published")}
               type="button"
             >
               Published
             </button>
             <button
-              className={`dashboard-tab ${activeTab === "drafts" ? "active" : ""}`}
+              className={`px-4 py-2 rounded text-sm font-medium transition-all font-sans border ${
+                activeTab === "drafts"
+                  ? "text-[var(--color-text-primary)] bg-[var(--color-active-bg)] border-[var(--color-accent-primary)]"
+                  : "text-[var(--color-text-secondary)] bg-transparent border-transparent hover:text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)]"
+              }`}
               onClick={() => setActiveTab("drafts")}
               type="button"
             >
               Drafts
             </button>
           </div>
-          <div className="dashboard-stats">
+          <div className="text-xs font-mono text-[var(--color-text-secondary)]">
             {totalPosts} {activeTab === "published" ? "published" : "draft"}{" "}
             post{totalPosts !== 1 ? "s" : ""}
           </div>
@@ -153,56 +170,66 @@ const Dashboard = () => {
 
         {/* Error Display */}
         {error && (
-          <div className="dashboard-error">
+          <div className="px-4 py-3 rounded border-l-4 bg-[rgba(220,38,38,0.1)] border-l-[#dc2626]">
             <ErrorMessage error={error} />
           </div>
         )}
 
         {/* Posts List */}
-        <div className="dashboard-content">
+        <div className="min-h-[400px]">
           {loading ? (
-            <div className="dashboard-loading">
+            <div className="flex items-center justify-center py-16">
               <LoadingSpinner />
             </div>
           ) : !posts || posts.length === 0 ? (
-            <div className="dashboard-empty">
-              <div className="dashboard-empty-icon">
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-16 h-16 flex items-center justify-center rounded-full mb-4 bg-[var(--color-hover-bg)] text-[var(--color-text-secondary)] text-[32px]">
                 <FiFileText />
               </div>
-              <h3 className="dashboard-empty-title">
+              <h3 className="text-lg font-semibold mb-2 font-sans text-[var(--color-text-primary)]">
                 No {activeTab === "published" ? "published posts" : "drafts"}{" "}
                 yet
               </h3>
-              <p className="dashboard-empty-description">
+              <p className="text-sm mb-6 text-[var(--color-text-secondary)]">
                 {activeTab === "published"
                   ? "Start writing and publish your first post"
                   : "Create a draft to get started"}
               </p>
-              <Link to="/auth/posts/create" className="dashboard-btn primary">
+              <Link
+                to="/auth/posts/create"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:-translate-y-px"
+              >
                 <FiPlus />
                 <span>Create Post</span>
               </Link>
             </div>
           ) : (
-            <div className="dashboard-posts-list">
+            <div className="space-y-0 border border-[var(--color-panel-border)] rounded overflow-hidden">
               {posts.map(post => (
-                <div key={post.id} className="dashboard-post-item">
+                <div
+                  key={post.id}
+                  className="flex items-center justify-between px-4 py-3 transition-all border-b border-b-[var(--color-panel-border)] border-l-3 border-l-transparent last:border-b-0 hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-accent-primary)]"
+                >
                   <Link
                     to={`/posts/${post.slug}`}
-                    className="dashboard-post-content"
+                    className="flex-1 flex items-baseline gap-4 no-underline min-w-0 group"
                   >
-                    <div className="dashboard-post-title">
-                      {post.title || <span className="untitled">Untitled</span>}
+                    <div className="flex-1 text-sm font-medium truncate font-sans text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-primary)] transition-colors">
+                      {post.title || (
+                        <span className="italic text-[var(--color-text-muted)]">
+                          Untitled
+                        </span>
+                      )}
                     </div>
-                    <div className="dashboard-post-date">
+                    <div className="text-xs whitespace-nowrap font-mono text-[var(--color-text-secondary)] min-w-[100px]">
                       {formatDate(post.created_at)}
                     </div>
                   </Link>
-                  <div className="dashboard-post-actions">
+                  <div className="flex items-center gap-1">
                     {activeTab === "drafts" && (
                       <button
                         onClick={() => handlePublish(post.id)}
-                        className="dashboard-action-btn publish"
+                        className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-panel-border)] hover:text-[#34d399] hover:border-[#34d399]"
                         title="Publish"
                         type="button"
                       >
@@ -211,14 +238,14 @@ const Dashboard = () => {
                     )}
                     <Link
                       to={`/auth/posts/${post.id}/edit`}
-                      className="dashboard-action-btn edit"
+                      className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-panel-border)] hover:text-[var(--color-accent-primary)] hover:border-[var(--color-accent-primary)]"
                       title="Edit"
                     >
                       <FiEdit2 />
                     </Link>
                     <button
                       onClick={() => handleDelete(post.id)}
-                      className="dashboard-action-btn delete"
+                      className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-panel-border)] hover:text-[#f87171] hover:border-[#dc2626]"
                       title="Delete"
                       type="button"
                     >
@@ -233,22 +260,30 @@ const Dashboard = () => {
 
         {/* Pagination */}
         {posts && posts.length > 0 && pagination.totalPages > 1 && (
-          <div className="dashboard-pagination">
+          <div className="flex items-center justify-center gap-6 py-4 border-t border-[var(--color-panel-border)]">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
-              className={`dashboard-page-btn ${pagination.page === 1 ? "disabled" : ""}`}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans text-[var(--color-text-primary)] bg-[var(--color-hover-bg)] border border-[var(--color-panel-border)] ${
+                pagination.page === 1
+                  ? "opacity-30 cursor-not-allowed"
+                  : "hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
+              }`}
               disabled={pagination.page === 1}
               type="button"
             >
               <span>←</span>
               <span>Previous</span>
             </button>
-            <span className="dashboard-page-info">
+            <span className="text-sm font-mono text-[var(--color-text-secondary)]">
               Page {pagination.page} of {pagination.totalPages}
             </span>
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
-              className={`dashboard-page-btn ${pagination.page === pagination.totalPages ? "disabled" : ""}`}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans text-[var(--color-text-primary)] bg-[var(--color-hover-bg)] border border-[var(--color-panel-border)] ${
+                pagination.page === pagination.totalPages
+                  ? "opacity-30 cursor-not-allowed"
+                  : "hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
+              }`}
               disabled={pagination.page === pagination.totalPages}
               type="button"
             >

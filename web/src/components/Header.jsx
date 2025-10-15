@@ -1,27 +1,25 @@
 import { Link } from "react-router-dom";
-import { BsSun, BsMoon } from "react-icons/bs";
-import { useTheme } from "@/contexts/ThemeContext";
 
 const Header = ({ blogName }) => {
-  const { theme, toggleTheme } = useTheme();
-
   return (
-    <header className="title-bar">
-      <div className="title-bar-center">
-        <Link to="/" className="title-link" aria-label="Go to homepage">
+    <header className="flex items-center justify-between px-0 py-0 h-8 select-none border-b border-[#181a1f] bg-[#21252b]">
+      {/* Left Section - Brand */}
+      <div className="flex items-center h-8">
+        <Link
+          to="/"
+          className="flex items-center px-4 h-full no-underline transition-colors bg-[#61afef] text-[#21252b] font-sans text-sm font-bold hover:bg-[#84c0f4]"
+          aria-label="Go to homepage"
+        >
           {blogName}
         </Link>
+
+        {/* Separator */}
+        <div className="w-0 h-0 border-t-[16px] border-t-transparent border-b-[16px] border-b-transparent border-l-[10px] border-l-[#61afef]"></div>
       </div>
 
-      <div className="title-bar-right">
-        <button
-          onClick={toggleTheme}
-          className="theme-toggle"
-          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          type="button"
-        >
-          {theme === "dark" ? <BsSun /> : <BsMoon />}
-        </button>
+      {/* Right Section - Optional Nav Items */}
+      <div className="flex items-center h-8">
+        {/* You can add navigation items here if needed */}
       </div>
     </header>
   );
