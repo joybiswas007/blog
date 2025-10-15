@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { BsTag } from "react-icons/bs";
 import api from "@/services/api";
 import SEO from "@/components/SEO";
 
@@ -26,56 +27,61 @@ const Tags = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-[var(--color-text-secondary)]">
-          Loading tags...
-        </div>
+      <div className="posts-loading">
+        <div className="posts-loading-spinner"></div>
+        <div className="posts-loading-text">Loading tags...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500">{error}</div>
+      <div className="posts-error">
+        <div className="post-error-text">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center w-full">
+    <>
       <SEO title="Tags" />
-      <div className="space-y-6 w-full max-w-3xl">
-        <div className="pl-4 ml-2 space-y-1">
-          {tags && tags.length > 0 ? (
-            tags.map((tag, index) => (
+      <div className="tags-container">
+        <div className="tags-header">
+          <h1 className="tags-header-title">All Tags</h1>
+        </div>
+
+        {tags && tags.length > 0 ? (
+          <div className="tags-list">
+            {tags.map((tag, index) => (
               <Link
                 key={index}
                 to={`/?tag=${tag.name}`}
-                className="flex items-baseline gap-2 p-2 rounded group w-full text-left bg-transparent border-none cursor-pointer hover:bg-transparent"
-                tabIndex={0}
-                aria-label={`Filter by tag ${tag.name} with ${tag.post_count} posts`}
+                className="tag-item"
+                aria-label={`View ${tag.post_count} posts tagged with ${tag.name}`}
               >
-                <span className="text-blue-400 group-hover:text-blue-300">
-                  &gt;
-                </span>
-                <span className="text-blue-200 group-hover:text-blue-300 text-base">
-                  {tag.name}
-                </span>
-                <span className="text-blue-500 group-hover:text-blue-300 text-sm">
-                  ({tag.post_count})
-                </span>
+                <div className="tag-item-left">
+                  <span className="tag-icon">
+                    <BsTag />
+                  </span>
+                  <span className="tag-name">{tag.name}</span>
+                </div>
+                <span className="tag-count">{tag.post_count}</span>
               </Link>
-            ))
-          ) : (
-            <div className="flex items-baseline gap-2 text-[var(--color-text-secondary)]">
-              <span className="text-blue-500">&gt;</span>
-              <p>No tags found</p>
+            ))}
+          </div>
+        ) : (
+          <div className="tags-empty">
+            <div className="tags-empty-icon" aria-hidden="true">
+              🏷️
             </div>
-          )}
-        </div>
+            <h2 className="tags-empty-title">No tags found</h2>
+            <p className="tags-empty-description">
+              Tags will appear here once you create posts with tags.
+            </p>
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 };
 

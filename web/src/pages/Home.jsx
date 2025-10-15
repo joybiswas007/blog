@@ -24,9 +24,9 @@ const Home = () => {
   } = usePosts();
 
   return (
-    <div className="flex justify-center w-full relative">
+    <>
       <SEO />
-      <div className="space-y-4 w-full max-w-3xl font-sans">
+      <div className="space-y-6">
         <SortingControls
           selectedSort={selectedSort}
           handleSortChange={handleSortChange}
@@ -61,7 +61,7 @@ const Home = () => {
           tag={tag}
         />
       </div>
-    </div>
+    </>
   );
 };
 

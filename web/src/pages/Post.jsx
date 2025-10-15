@@ -1,11 +1,10 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import api from "@/services/api";
 import { CalculateReadTime, formatDate } from "@/utils/helpers";
 const Markdown = lazy(() => import("react-markdown"));
 import remarkGfm from "remark-gfm";
 import SEO from "@/components/SEO";
-import { BsCalendar, BsClock, BsPencil, BsTags } from "react-icons/bs";
 import {
   TwitterShareButton,
   LinkedinShareButton,
@@ -15,17 +14,67 @@ import {
   BlueskyIcon
 } from "react-share";
 
+// Utility function to generate heading IDs from text
+const generateHeadingId = text => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-");
+};
+
+// Custom heading component for react-markdown with anchor support
+const HeadingRenderer = ({ level, children, ...props }) => {
+  const text = children?.toString() || "";
+  const id = generateHeadingId(text);
+  const Tag = `h${level}`;
+
+  return (
+    <Tag id={id} {...props}>
+      <Link
+        to={`#${id}`}
+        className="heading-anchor"
+        aria-label={`Link to ${text}`}
+      >
+        {children}
+      </Link>
+    </Tag>
+  );
+};
+
+// Scroll to hash on mount and hash change
+const useScrollToHash = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      setTimeout(() => {
+        const id = location.hash.replace("#", "");
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 100);
+    }
+  }, [location.hash]);
+};
+
 const SocialShare = ({ url, title }) => (
-  <div className="flex items-center gap-4 pt-6">
-    <TwitterShareButton url={url} title={title}>
-      <TwitterIcon size={32} round />
-    </TwitterShareButton>
-    <LinkedinShareButton url={url} title={title}>
-      <LinkedinIcon size={32} round />
-    </LinkedinShareButton>
-    <BlueskyShareButton url={url} title={title}>
-      <BlueskyIcon size={32} round />
-    </BlueskyShareButton>
+  <div className="post-social-share">
+    <span className="post-share-label">Share</span>
+    <div className="post-share-buttons">
+      <TwitterShareButton url={url} title={title}>
+        <TwitterIcon size={32} round />
+      </TwitterShareButton>
+      <LinkedinShareButton url={url} title={title}>
+        <LinkedinIcon size={32} round />
+      </LinkedinShareButton>
+      <BlueskyShareButton url={url} title={title}>
+        <BlueskyIcon size={32} round />
+      </BlueskyShareButton>
+    </div>
   </div>
 );
 
@@ -36,6 +85,8 @@ const Post = () => {
   const [nextPost, setNextPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  useScrollToHash();
 
   const fetchPost = useCallback(async () => {
     if (!slug) return;
@@ -60,28 +111,25 @@ const Post = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-[var(--color-text-secondary)] font-mono">
-          Loading...
-        </div>
+      <div className="post-loading">
+        <div className="post-loading-spinner"></div>
+        <div className="post-loading-text">Loading post...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500 font-mono">{error}</div>
+      <div className="post-error">
+        <div className="post-error-text">{error}</div>
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-[var(--color-text-secondary)] font-mono">
-          Post not found
-        </div>
+      <div className="post-not-found">
+        <div className="post-not-found-text">Post not found</div>
       </div>
     );
   }
@@ -89,110 +137,112 @@ const Post = () => {
   const postUrl = window.location.href;
 
   return (
-    <div className="flex justify-center w-full">
+    <>
       <SEO
         title={post.title}
         description={post.description}
         keywords={post.tags.join(", ")}
         ogType="article"
       />
-      <article className="w-full max-w-3xl space-y-8 p-6">
-        <header className="space-y-4">
-          <h1 className="text-3xl text-[var(--color-text-primary)] font-heading">
-            {post.title}
-          </h1>
-          <div className="text-[var(--color-text-secondary)] text-sm flex flex-wrap gap-4 items-center font-mono">
-            <span className="flex items-center">
-              <BsCalendar className="text-blue-500 mr-1" />
+      <article className="post-container">
+        <header className="post-header">
+          <h1 className="post-title">{post.title}</h1>
+
+          <div className="post-meta">
+            <span className="post-meta-item">
               {formatDate(post.created_at)}
             </span>
-            <span className="flex items-center">
-              <BsClock className="text-blue-500 mr-1" />
+            <span className="post-meta-separator">·</span>
+            <span className="post-meta-item">
               {CalculateReadTime(post.content)}
             </span>
-            <span className="flex items-center">
-              <BsPencil className="text-blue-500 mr-1" />
-              {post.author}
-            </span>
-            {post.tags && post.tags.length > 0 && (
-              <div className="flex items-center gap-2">
-                <BsTags className="text-blue-500" />
-                {post.tags.map((tag, index) => (
-                  <Link
-                    key={index}
-                    to={`/?tag=${tag}`}
-                    className="text-blue-400 hover:text-blue-300 transition-colors"
-                    tabIndex={0}
-                    aria-label={`Filter by tag ${tag}`}
-                  >
-                    #{tag}
-                  </Link>
-                ))}
-              </div>
-            )}
+            <span className="post-meta-separator">·</span>
+            <span className="post-meta-item">{post.author}</span>
           </div>
+
+          {post.tags && post.tags.length > 0 && (
+            <div className="post-tags-container">
+              {post.tags.map((tag, index) => (
+                <Link
+                  key={index}
+                  to={`/?tag=${tag}`}
+                  className="post-tag-link"
+                  aria-label={`Filter by tag ${tag}`}
+                >
+                  #{tag}
+                </Link>
+              ))}
+            </div>
+          )}
         </header>
 
         <Suspense
           fallback={
-            <div className="prose prose-invert max-w-none pt-6">
-              <div className="text-[var(--color-text-secondary)] font-mono animate-pulse">
+            <div className="prose">
+              <div className="post-loading-text animate-pulse">
                 Loading content...
               </div>
             </div>
           }
         >
-          <div className="prose prose-invert max-w-none pt-6">
-            <Markdown remarkPlugins={[remarkGfm]}>{post.content}</Markdown>
+          <div className="prose">
+            <Markdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                h1: props => <HeadingRenderer level={1} {...props} />,
+                h2: props => <HeadingRenderer level={2} {...props} />,
+                h3: props => <HeadingRenderer level={3} {...props} />,
+                h4: props => <HeadingRenderer level={4} {...props} />,
+                h5: props => <HeadingRenderer level={5} {...props} />,
+                h6: props => <HeadingRenderer level={6} {...props} />
+              }}
+            >
+              {post.content}
+            </Markdown>
           </div>
         </Suspense>
 
         <SocialShare url={postUrl} title={post.title} />
 
-        <div className="pt-6 mt-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
+        <nav className="post-navigation">
+          <div className="post-nav-grid">
             {previousPost ? (
               <Link
                 to={`/posts/${previousPost.slug}`}
-                className="flex items-center text-[var(--color-text-primary)] hover:text-blue-300 group w-full sm:w-auto p-3 transition-colors rounded"
-                tabIndex={0}
+                className="post-nav-link prev"
                 aria-label={`Previous post: ${previousPost.title}`}
               >
-                <span className="text-blue-500 mr-2 group-hover:-translate-x-1 transition-transform">
-                  ←
-                </span>
-                <div className="truncate max-w-xs">
-                  <span className="text-xs text-blue-500 block">Previous</span>
-                  <span className="font-medium">{previousPost.title}</span>
+                <span className="post-nav-arrow">←</span>
+                <div className="post-nav-content">
+                  <div className="post-nav-label">Previous</div>
+                  <div className="post-nav-title">{previousPost.title}</div>
                 </div>
               </Link>
             ) : (
-              <div className="w-full sm:w-auto"></div>
+              <div></div>
             )}
 
             {nextPost ? (
               <Link
                 to={`/posts/${nextPost.slug}`}
-                className="flex items-center text-[var(--color-text-primary)] hover:text-blue-300 group w-full sm:w-auto p-3 transition-colors rounded justify-end"
-                tabIndex={0}
+                className="post-nav-link next"
                 aria-label={`Next post: ${nextPost.title}`}
               >
-                <div className="truncate max-w-xs text-right">
-                  <span className="text-xs text-blue-500 block">Next</span>
-                  <span className="font-medium">{nextPost.title}</span>
+                <div className="post-nav-content">
+                  <div className="post-nav-label">Next</div>
+                  <div className="post-nav-title">{nextPost.title}</div>
                 </div>
-                <span className="text-blue-500 ml-2 group-hover:translate-x-1 transition-transform">
-                  →
-                </span>
+                <span className="post-nav-arrow">→</span>
               </Link>
             ) : (
-              <div className="w-full sm:w-auto"></div>
+              <div></div>
             )}
           </div>
-        </div>
+        </nav>
       </article>
-    </div>
+    </>
   );
 };
 
 export default Post;
+

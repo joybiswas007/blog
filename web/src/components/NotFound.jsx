@@ -1,57 +1,70 @@
 import { Link } from "react-router-dom";
+import {
+  BsHouseDoor,
+  BsArrowLeft,
+  BsExclamationTriangle
+} from "react-icons/bs";
 import SEO from "./SEO";
 
 const NotFound = () => {
   return (
-    <div className="flex justify-center w-full">
-      <SEO title="404" />
-      <div className="w-full max-w-2xl text-center space-y-8 py-12">
-        {/* 404 Header */}
-        <div className="space-y-4">
-          <h1 className="text-9xl font-heading font-bold text-blue-400 mb-4">
-            404
-          </h1>
-          <h2 className="text-4xl font-heading font-bold text-[var(--color-text-primary)]">
-            Page Not Found
-          </h2>
-          <p className="text-xl text-[var(--color-text-secondary)] font-mono max-w-md mx-auto">
-            Sorry, couldn't find the page you're looking for. It might have been
-            moved or deleted.
-          </p>
-        </div>
+    <>
+      <SEO title="404 - Page Not Found" />
+      <div className="notfound-container">
+        <div className="notfound-content">
+          {/* Error Icon */}
+          <div className="notfound-icon">
+            <BsExclamationTriangle />
+          </div>
 
-        {/* Small Navigation Links */}
-        <div className="space-y-6">
-          <p className="text-[var(--color-text-secondary)] font-mono text-base">
-            Here are some things you can try:
+          {/* 404 Code */}
+          <div className="notfound-code">404</div>
+
+          {/* Error Message */}
+          <h1 className="notfound-title">Page Not Found</h1>
+          <p className="notfound-description">
+            The file you're looking for doesn't exist in this directory. It may
+            have been moved, deleted, or the path is incorrect.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-8">
-            <Link
-              to="/"
-              className="text-blue-400 hover:text-blue-300 font-mono transition-colors underline-offset-4 hover:underline text-lg"
-            >
-              Go Home
+          {/* Action Buttons */}
+          <div className="notfound-actions">
+            <Link to="/" className="notfound-button primary">
+              <BsHouseDoor className="notfound-button-icon" />
+              <span>Go Home</span>
             </Link>
-
             <button
               onClick={() => window.history.back()}
-              className="text-blue-400 hover:text-blue-300 font-mono transition-colors underline-offset-4 hover:underline bg-transparent border-none cursor-pointer p-0 text-lg"
+              className="notfound-button secondary"
               aria-label="Go back to previous page"
               type="button"
             >
-              Go Back
+              <BsArrowLeft className="notfound-button-icon" />
+              <span>Go Back</span>
             </button>
           </div>
-        </div>
 
-        <div className="pt-6">
-          <p className="text-sm text-[var(--color-text-secondary)] font-mono opacity-80">
-            Have you tried turning your device or browser off and on again?
-          </p>
+          {/* Error Details (IDE-style) */}
+          <div className="notfound-details">
+            <div className="notfound-detail-item">
+              <span className="notfound-detail-label">Error Code:</span>
+              <span className="notfound-detail-value">HTTP 404</span>
+            </div>
+            <div className="notfound-detail-item">
+              <span className="notfound-detail-label">Location:</span>
+              <span className="notfound-detail-value">
+                {window.location.pathname}
+              </span>
+            </div>
+          </div>
+
+          {/* Footer Message */}
+          <div className="notfound-footer">
+            <p>💡 Tip: Check the URL for typos or use the navigation menu</p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,5 +1,6 @@
 import Header from "./Header";
-import Footer from "./Footer";
+import StatusBar from "./StatusBar";
+import Sidebar from "./Sidebar";
 import BackToTopButton from "./BackToTop";
 
 export default function Layout({ children }) {
@@ -8,13 +9,20 @@ export default function Layout({ children }) {
     VITE_BLOG_NAME: blogName,
     VITE_BLOG_SOURCE: sourceCode
   } = import.meta.env;
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="ide-container">
       <Header blogName={blogName} />
-      <main className="flex-1 mx-auto w-full max-w-3xl py-4 px-4 prose">
-        {children}
-      </main>
-      <Footer authorName={author} sourceCode={sourceCode} />
+
+      <div className="ide-body">
+        <Sidebar />
+
+        <main className="editor-pane">
+          <div className="editor-content">{children}</div>
+        </main>
+      </div>
+
+      <StatusBar authorName={author} sourceCode={sourceCode} />
       <BackToTopButton />
     </div>
   );

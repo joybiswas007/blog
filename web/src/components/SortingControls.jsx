@@ -15,13 +15,13 @@ const SortingControls = ({
   orderBy,
   sort
 }) => (
-  <div className="flex justify-between items-center px-4 py-3">
-    <div className="flex items-center space-x-4">
-      <p className="text-[var(--color-text-primary)] text-sm">Sort by:</p>
+  <div className="toolbar">
+    <div className="toolbar-section">
+      <span className="toolbar-label">Sort By</span>
       <select
         value={selectedSort.label}
         onChange={handleSortChange}
-        className="bg-[var(--color-background-primary)] text-[var(--color-text-primary)] rounded px-2 py-1 font-mono transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="toolbar-select"
         aria-label="Sort options"
       >
         {SORT_OPTIONS.map(opt => (
@@ -33,23 +33,23 @@ const SortingControls = ({
     </div>
 
     {tag && (
-      <div className="flex items-center">
-        <span className="text-[var(--color-text-secondary)] text-sm mr-2">
-          Filter:
-        </span>
-        <span className="text-blue-400 font-mono text-sm">#{tag}</span>
-        <Link
-          to={buildQueryString({
-            limit,
-            offset: 0,
-            order_by: orderBy,
-            sort
-          })}
-          className="ml-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] text-sm"
-          aria-label="Clear filter"
-        >
-          &times;
-        </Link>
+      <div className="toolbar-section">
+        <div className="filter-chip">
+          <span className="filter-chip-label">Filtering:</span>
+          <span className="filter-chip-value">#{tag}</span>
+          <Link
+            to={buildQueryString({
+              limit,
+              offset: 0,
+              order_by: orderBy,
+              sort
+            })}
+            className="filter-chip-close"
+            aria-label="Clear tag filter"
+          >
+            ×
+          </Link>
+        </div>
       </div>
     )}
   </div>

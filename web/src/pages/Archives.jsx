@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { BsFire, BsRss, BsFolder2Open, BsFileText } from "react-icons/bs";
 import api from "@/services/api";
 import SEO from "@/components/SEO";
-import { BsFire, BsRss } from "react-icons/bs";
 
 const Archives = () => {
   const [archives, setArchives] = useState([]);
@@ -50,103 +50,107 @@ const Archives = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-[var(--color-text-secondary)]">
-          Loading archives...
-        </div>
+      <div className="posts-loading">
+        <div className="posts-loading-spinner"></div>
+        <div className="posts-loading-text">Loading archives...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500">{error}</div>
+      <div className="posts-error">
+        <div className="post-error-text">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center w-full">
+    <>
       <SEO title="Archives" />
-      <div className="w-full max-w-3xl px-4">
-        <h1 className="text-4xl font-heading font-bold text-blue-300 mb-4">
-          Archives
-        </h1>
-        <div className="space-y-8">
-          <section>
-            <h2 className="text-2xl font-heading font-semibold text-blue-300 mb-4 flex items-center gap-2">
-              <BsRss className="text-orange-500" /> RSS Feed
-            </h2>
+      <div className="archives-container">
+        {/* RSS Feed Section */}
+        <section className="archive-section">
+          <div className="archive-section-header">
+            <BsRss className="archive-section-icon" />
+            <h2 className="archive-section-title">RSS Feed</h2>
+          </div>
+          <div className="archive-section-content">
             <Link
               target="_blank"
               rel="noopener noreferrer"
               to="/rss.xml"
-              className="inline-flex items-center gap-2 font-mono text-blue-400 hover:text-blue-300 transition-colors"
+              className="archive-link-item"
             >
-              <span>/rss.xml</span>
+              <BsRss className="archive-link-icon" />
+              <span className="archive-link-text">/rss.xml</span>
             </Link>
-          </section>
+          </div>
+        </section>
 
-          <section>
-            <h2 className="text-2xl font-heading font-semibold text-blue-300 mb-4 flex items-center gap-2">
-              <BsFire className="text-orange-500" /> Top Posts
-            </h2>
+        {/* Top Posts Section */}
+        <section className="archive-section">
+          <div className="archive-section-header">
+            <BsFire className="archive-section-icon" />
+            <h2 className="archive-section-title">Top Posts</h2>
+          </div>
+          <div className="archive-section-content">
             {topError ? (
-              <p className="text-red-500 font-mono text-sm">{topError}</p>
+              <div className="archive-error">{topError}</div>
             ) : topPosts && topPosts.length > 0 ? (
-              <ul className="space-y-2">
+              <div className="archive-top-posts-list">
                 {topPosts.map((topPost, index) => (
-                  <li key={topPost.id} className="flex items-center gap-2">
-                    <span className="text-orange-500 font-bold">
-                      {index + 1}.
-                    </span>
-                    <Link
-                      to={`/posts/${topPost.slug}`}
-                      className="text-blue-400 hover:text-blue-300 transition-colors font-mono text-sm"
-                    >
+                  <Link
+                    key={topPost.id}
+                    to={`/posts/${topPost.slug}`}
+                    className="archive-top-post-item"
+                  >
+                    <span className="archive-top-post-rank">{index + 1}</span>
+                    <BsFileText className="archive-top-post-icon" />
+                    <span className="archive-top-post-title">
                       {topPost.title}
-                    </Link>
-                  </li>
+                    </span>
+                  </Link>
                 ))}
-              </ul>
+              </div>
             ) : (
-              <p className="text-neutral-400">No top posts available.</p>
+              <div className="archive-empty-message">
+                No top posts available
+              </div>
             )}
-          </section>
+          </div>
+        </section>
 
-          <section>
-            <h2 className="text-2xl font-heading font-semibold text-blue-300 mb-4">
-              By Year
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8">
-              {archives && archives.length > 0 ? (
-                archives.map((list, index) => (
+        {/* Archives by Year Section */}
+        <section className="archive-section">
+          <div className="archive-section-header">
+            <BsFolder2Open className="archive-section-icon" />
+            <h2 className="archive-section-title">By Year</h2>
+          </div>
+          <div className="archive-section-content">
+            {archives && archives.length > 0 ? (
+              <div className="archive-years-grid">
+                {archives.map((list, index) => (
                   <Link
                     key={index}
                     to={`/archives/${list.year}`}
-                    className="group flex items-center gap-2 font-mono text-blue-200 hover:text-blue-300 transition-colors text-lg"
+                    className="archive-year-item"
                   >
-                    <span className="text-blue-400 text-xl">&gt;</span>
-                    <span>
-                      {list.year}
-                      <span className="text-[var(--color-text-secondary)] text-sm ml-1 group-hover:text-blue-300 transition-colors">
-                        ({list.post_count})
-                      </span>
+                    <BsFolder2Open className="archive-year-icon" />
+                    <span className="archive-year-text">{list.year}</span>
+                    <span className="archive-year-count">
+                      {list.post_count}
                     </span>
                   </Link>
-                ))
-              ) : (
-                <div className="flex items-baseline gap-2 text-[var(--color-text-secondary)]">
-                  <span className="text-blue-500">&gt;</span>
-                  <p>No archives found</p>
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
+                ))}
+              </div>
+            ) : (
+              <div className="archive-empty-message">No archives found</div>
+            )}
+          </div>
+        </section>
       </div>
-    </div>
+    </>
   );
 };
 

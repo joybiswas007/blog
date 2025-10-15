@@ -9,33 +9,33 @@ const PaginationControls = ({
   buildQueryString,
   orderBy,
   sort,
-  tag,
-}) =>
-  totalPost > limit && (
-    <div className="flex justify-center items-center space-x-6 mt-12 pt-8">
+  tag
+}) => {
+  const hasPrevious = offset > 0;
+  const hasNext = offset + limit < totalPost;
+
+  return totalPost > limit ? (
+    <div className="pagination">
       <Link
         to={buildQueryString({
           limit,
           offset: Math.max(0, offset - limit),
           order_by: orderBy,
           sort,
-          tag,
+          tag
         })}
-        className={`font-mono transition-colors flex items-center ${
-          offset > 0
-            ? "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
-            : "text-gray-500 cursor-not-allowed"
-        }`}
+        className={`pagination-button ${!hasPrevious ? "disabled" : ""}`}
         aria-label="Previous page"
-        tabIndex={offset > 0 ? 0 : -1}
+        aria-disabled={!hasPrevious}
+        tabIndex={hasPrevious ? 0 : -1}
       >
-        <span className="text-blue-500 mr-1">&lt;</span>
-        Previous
+        <span className="pagination-arrow">‹</span>
+        <span>Previous</span>
       </Link>
 
-      <p className="text-[var(--color-text-secondary)] text-sm font-mono">
+      <div className="pagination-info">
         Page {currentPage} of {totalPages}
-      </p>
+      </div>
 
       <Link
         to={buildQueryString({
@@ -43,20 +43,18 @@ const PaginationControls = ({
           offset: offset + limit,
           order_by: orderBy,
           sort,
-          tag,
+          tag
         })}
-        className={`font-mono transition-colors flex items-center ${
-          offset + limit < totalPost
-            ? "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
-            : "text-gray-500 cursor-not-allowed"
-        }`}
+        className={`pagination-button ${!hasNext ? "disabled" : ""}`}
         aria-label="Next page"
-        tabIndex={offset + limit < totalPost ? 0 : -1}
+        aria-disabled={!hasNext}
+        tabIndex={hasNext ? 0 : -1}
       >
-        Next
-        <span className="text-blue-500 ml-1">&gt;</span>
+        <span>Next</span>
+        <span className="pagination-arrow">›</span>
       </Link>
     </div>
-  );
+  ) : null;
+};
 
 export default PaginationControls;

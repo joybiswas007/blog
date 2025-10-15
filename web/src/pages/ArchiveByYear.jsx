@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
+import { BsFileText, BsArrowLeft } from "react-icons/bs";
 import api from "@/services/api";
 import SEO from "@/components/SEO";
 
@@ -21,11 +22,30 @@ const ArchiveByYear = () => {
     }
   }, [year]);
 
-  const formatDate = (dateString) => {
+  const formatDate = dateString => {
     return new Date(dateString).toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
+      month: "short",
+      day: "numeric"
     });
+  };
+
+  const getMonthName = dateString => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "long"
+    });
+  };
+
+  // Group posts by month
+  const groupPostsByMonth = posts => {
+    const grouped = {};
+    posts.forEach(post => {
+      const month = getMonthName(post.created_at);
+      if (!grouped[month]) {
+        grouped[month] = [];
+      }
+      grouped[month].push(post);
+    });
+    return grouped;
   };
 
   useEffect(() => {
@@ -34,60 +54,83 @@ const ArchiveByYear = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-[var(--color-text-secondary)]">Loading posts...</div>
+      <div className="posts-loading">
+        <div className="posts-loading-spinner"></div>
+        <div className="posts-loading-text">Loading {year} posts...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-red-500">{error}</div>
+      <div className="posts-error">
+        <div className="post-error-text">{error}</div>
       </div>
     );
   }
 
+  const groupedPosts = posts.length > 0 ? groupPostsByMonth(posts) : {};
+  const months = Object.keys(groupedPosts);
+
   return (
-    <div className="flex justify-center w-full">
+    <>
       <SEO title={`Archives - ${year}`} />
-      <div className="w-full max-w-3xl px-4 py-8 md:py-12">
-        <h1 className="text-4xl font-heading font-bold text-blue-300 mb-8 text-center">
-          Archive: {year}
-        </h1>
+      <div className="archive-year-container">
+        <div className="archive-year-header">
+          <h1 className="archive-year-title">{year}</h1>
+          <span className="archive-year-count">
+            {posts.length} {posts.length === 1 ? "post" : "posts"}
+          </span>
+        </div>
+
         {posts && posts.length > 0 ? (
-          <div className="relative border-l-2 border-neutral-700 ml-4 md:ml-0">
-            {posts.map((post, index) => (
-              <div key={index} className="mb-8 flex items-center w-full">
-                <div className="absolute -left-2.5 w-5 h-5 bg-blue-500 rounded-full"></div>
-                <div className="ml-8 w-full">
-                  <div className="bg-neutral-900/50 border border-neutral-800 rounded-lg p-4 hover:border-blue-700 transition-colors">
-                    <Link to={`/posts/${post.slug}`} className="block">
-                      <h2 className="text-xl font-heading text-blue-300 mb-1">
-                        {post.title}
-                      </h2>
-                      <p className="text-sm text-neutral-400 font-mono">
+          <div className="archive-year-content">
+            {months.map((month, monthIndex) => (
+              <div key={monthIndex} className="archive-month-section">
+                <div className="archive-month-header">
+                  <h2 className="archive-month-title">{month}</h2>
+                  <span className="archive-month-count">
+                    {groupedPosts[month].length}
+                  </span>
+                </div>
+                <div className="archive-month-posts">
+                  {groupedPosts[month].map((post, postIndex) => (
+                    <Link
+                      key={postIndex}
+                      to={`/posts/${post.slug}`}
+                      className="archive-year-post-item"
+                    >
+                      <span className="archive-year-post-date">
                         {formatDate(post.created_at)}
-                      </p>
+                      </span>
+                      <BsFileText className="archive-year-post-icon" />
+                      <span className="archive-year-post-title">
+                        {post.title}
+                      </span>
                     </Link>
-                  </div>
+                  ))}
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-center text-neutral-400">No posts found for this year.</p>
+          <div className="archive-year-empty">
+            <div className="archive-year-empty-icon">📅</div>
+            <h3 className="archive-year-empty-title">No posts found</h3>
+            <p className="archive-year-empty-description">
+              No posts were published in {year}.
+            </p>
+          </div>
         )}
-        <div className="mt-12 text-center">
-          <Link
-            to="/archives"
-            className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
-          >
-            ← Back to Archives
+
+        <div className="archive-year-back">
+          <Link to="/archives" className="archive-back-button">
+            <BsArrowLeft className="archive-back-icon" />
+            <span>Back to Archives</span>
           </Link>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
