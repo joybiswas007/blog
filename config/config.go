@@ -57,7 +57,7 @@ type Redis struct {
 type Build struct {
 	Commit string `json:"commit"` // Build commit hash from git rev-parse
 	Branch string `json:"branch"` // Build branch from git rev-parse
-	Time   string `json:"time"`   // Build time from date command
+	Time   int64  `json:"time"`   // Build time from date command
 }
 
 // Init reads in config file and ENV variables if set.

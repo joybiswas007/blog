@@ -16,8 +16,8 @@ migrations/
 tmp
 
 # Git and editor files
-.git
-.gitignore
+# .git # we need build info for higher purpose
+# .gitignore
 *.swp
 *.swo
 *.bak

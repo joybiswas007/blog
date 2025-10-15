@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -45,10 +46,16 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+
+	buildTime, err := strconv.ParseInt(BuildTime, 10, 64)
+	if err != nil {
+		log.Panicf("Parse failed: could not convert string to int64: %v", err)
+	}
+
 	bi := config.Build{
 		Branch: BuildBranch,
 		Commit: BuildCommit,
-		Time:   BuildTime,
+		Time:   buildTime,
 	}
 	cfg.BuildInfo = bi
 

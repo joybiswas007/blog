@@ -336,6 +336,8 @@ func (s *APIV1Service) siteMapHandler(c *gin.Context) {
 }
 
 func (s *APIV1Service) buildInfoHandler(c *gin.Context) {
+	c.Header("Cache-Control", "public, max-age=604800")
+
 	runtimeVersion := runtime.Version()
 	c.JSON(http.StatusOK, gin.H{"go_version": runtimeVersion, "build_info": s.config.BuildInfo})
 }

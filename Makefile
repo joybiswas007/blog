@@ -1,127 +1,161 @@
-# Project variables
+# ==============================================================================
+# Project Configuration
+# ==============================================================================
 BINARY_NAME = blog
 CLI_BINARY_NAME = blog_cli
 API_ENTRY = cmd/api/main.go
 CLI_ENTRY = cmd/cli/main.go
 
-# Versioning variables
-GIT_COMMIT = $(shell git rev-parse --short HEAD)
-GIT_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
-BUILD_TIME := $(shell date -u +'%Y-%m-%dT%H:%M:%S.%3NZ')
+# ==============================================================================
+# Build Versioning
+#
+# These variables are evaluated once and used to inject build-time information
+# into the Go binaries. This is useful for tracking versions and builds.
+# ==============================================================================
+GIT_COMMIT := $(shell git rev-parse --short HEAD)
+GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+# BUILD_TIME := $(shell date -u +'%Y-%m-%dT%H:%M:%S.%3NZ')
+#Current UTC time in milliseconds.
+BUILD_TIME := $(shell date -u +%s%3N)
 
-# Go linker flags to inject build-time variables
-LDFLAGS = -ldflags="-s -w -X 'main.BuildCommit=$(GIT_COMMIT)' -X 'main.BuildBranch=$(GIT_BRANCH)' -X 'main.BuildTime=$(BUILD_TIME)'"
 
 
-# Detect docker-compose command, preferring V2 `docker compose`
-COMPOSE_V1 := $(shell command -v docker-compose)
-COMPOSE_CMD := docker compose
-ifeq ($(COMPOSE_V1),)
+# Go linker flags to inject the build-time variables.
+# The `-s -w` flags strip debugging information, reducing the binary size.
+LDFLAGS := -ldflags="-s -w \
+	-X 'main.BuildCommit=$(GIT_COMMIT)' \
+	-X 'main.BuildBranch=$(GIT_BRANCH)' \
+	-X 'main.BuildTime=$(BUILD_TIME)'"
+
+# ==============================================================================
+# Tooling Configuration
+#
+# Simplified detection for the docker-compose command. Prefers the modern
+# `docker compose` (V2) and falls back to `docker-compose` (V1) if not found.
+# ==============================================================================
+ifneq (, $(shell docker compose version 2>/dev/null))
+	COMPOSE_CMD = docker compose
 else
-    # Fallback to V1 if V2 command is not available
-    ifneq ($(shell docker compose version 2>/dev/null),)
-    else
-        COMPOSE_CMD := docker-compose
-    endif
+	COMPOSE_CMD = docker-compose
 endif
 
-.PHONY: all build build-cli run run-cli lint test clean help build-docker re-build-docker docker-down watch
 
-# Default: build and test
+# ==============================================================================
+# Targets
+# ==============================================================================
+.PHONY: all build build-cli run run-cli lint test clean help build-docker re-build-docker docker-down watch docker-setup
+
+# Default target: build the main binary and run tests.
 all: build test
 
-# Build the main blog binary
+# ------------------------------------------------------------------------------
+# Build Targets
+# ------------------------------------------------------------------------------
+# Build the main API binary.
 build:
-	@echo "==> Building blog binary: $(BINARY_NAME)"
+	@echo "==> Building API binary: $(BINARY_NAME)"
 	@go build $(LDFLAGS) -o $(BINARY_NAME) $(API_ENTRY)
 
-# Build CLI binary
+# Build the command-line interface (CLI) binary.
 build-cli:
-	@echo "==> Building cli binary: $(CLI_BINARY_NAME)"
+	@echo "==> Building CLI binary: $(CLI_BINARY_NAME)"
 	@go build $(LDFLAGS) -o $(CLI_BINARY_NAME) $(CLI_ENTRY)
 
-# Build and run the docker image
-build-docker:
+# ------------------------------------------------------------------------------
+# Run Targets
+# ------------------------------------------------------------------------------
+# Run the API application directly.
+run:
+	@echo "==> Running API from $(API_ENTRY)..."
+	@go run $(API_ENTRY)
+
+# Run the CLI application directly.
+run-cli:
+	@echo "==> Running CLI from $(CLI_ENTRY)..."
+	@go run $(CLI_ENTRY)
+
+# ------------------------------------------------------------------------------
+# Docker Targets
+#
+# The common setup logic has been moved to a `docker-setup` prerequisite to
+# avoid repetition between `build-docker` and `re-build-docker`.
+# ------------------------------------------------------------------------------
+# Build and run the docker containers.
+build-docker: docker-setup
 	@echo "==> Starting Docker containers..."
-	@command -v docker >/dev/null 2>&1 || { echo >&2 "Docker is not installed. Aborting."; exit 1; }
-	@mkdir -p logs
-	@touch logs/blog.log
-	@chmod 666 logs/blog.log
 	@$(COMPOSE_CMD) up -d
 
-# Rebuild and run docker image
-re-build-docker:
+# Rebuild and run the docker containers.
+re-build-docker: docker-setup
 	@echo "==> Rebuilding and starting Docker containers..."
-	@command -v docker >/dev/null 2>&1 || { echo >&2 "Docker is not installed. Aborting."; exit 1; }
-	@mkdir -p logs
-	@touch logs/blog.log
-	@chmod 666 logs/blog.log
 	@$(COMPOSE_CMD) up --build -d
 
-# Shutdown the container
+# Shut down and remove the docker containers.
 docker-down:
 	@echo "==> Shutting down Docker containers..."
 	@$(COMPOSE_CMD) down
 
-# Run the API application
-run:
-	@echo "==> Running blog from $(API_ENTRY)..."
-	@go run $(API_ENTRY)
+# Prerequisite target for Docker commands to ensure the environment is ready.
+docker-setup:
+	@echo "==> Preparing Docker environment..."
+	@command -v docker >/dev/null 2>&1 || { echo >&2 "Docker is not installed. Aborting."; exit 1; }
+	@command -v $(COMPOSE_CMD) >/dev/null 2>&1 || { echo >&2 "Docker Compose ($(COMPOSE_CMD)) could not be found. Aborting."; exit 1; }
+	@mkdir -p logs
+	@touch logs/blog.log
+	@chmod 666 logs/blog.log
 
-# Run the CLI application
-run-cli:
-	@echo "==> Running cli from $(CLI_ENTRY)..."
-	@go run $(CLI_ENTRY)
-
-# Run tests
+# ------------------------------------------------------------------------------
+# Development & QA
+# ------------------------------------------------------------------------------
+# Run all tests in the project.
 test:
 	@echo "==> Running tests..."
 	@go test ./...
 
-# Lint the codebase
+# Lint the codebase using golangci-lint.
 lint:
-	@command -v golangci-lint >/dev/null 2>&1 || { echo >&2 "golangci-lint is not installed. Aborting."; exit 1; }
+	@command -v golangci-lint >/dev/null 2>&1 || { echo >&2 "golangci-lint is not installed. Please run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"; exit 1; }
 	@echo "==> Linting code..."
 	@golangci-lint run ./...
 
-# Clean binaries and generated files
+# Live reload using Air.
+# Removed interactive install. It's better practice to fail with a clear
+# message instructing the user how to install the missing dependency.
+watch:
+	@if ! command -v air >/dev/null 2>&1; then \
+		echo "ERROR: Air is not installed. It is required for live reloading."; \
+		echo "Please run: go install github.com/air-verse/air@latest"; \
+		exit 1; \
+	fi
+	@echo "==> Starting Air for live reload...";
+	@air
+
+# ------------------------------------------------------------------------------
+# Housekeeping
+# ------------------------------------------------------------------------------
+# Clean up built binaries.
 clean:
 	@echo "==> Cleaning up binaries..."
 	@rm -f $(BINARY_NAME) $(CLI_BINARY_NAME)
 
-# Live Reload
-watch:
-	@if command -v air >/dev/null 2>&1; then \
-		echo "==> Starting Air for live reload..."; \
-		air; \
-	else \
-		echo "Go's 'air' is not installed."; \
-		read -p "Do you want to install it? [Y/n] " choice; \
-		if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
-			go install github.com/air-verse/air@latest; \
-			echo "==> Starting Air..."; \
-			air; \
-		else \
-			echo "You chose not to install Air. Exiting..."; \
-			exit 1; \
-		fi; \
-	fi
-
-# Show help
+# Show a helpful message with all available targets.
 help:
 	@echo "Usage: make <target>"
 	@echo ""
-	@echo "Common targets:"
-	@echo "  all             - Build and test"
-	@echo "  build           - Build Blog binary"
-	@echo "  build-cli       - Build CLI binary"
-	@echo "  build-docker    - Start Docker containers"
-	@echo "  re-build-docker - Rebuild and start Docker containers"
-	@echo "  docker-down     - Shutdown the docker container"
-	@echo "  run             - Run Blog application"
-	@echo "  run-cli         - Run CLI application"
-	@echo "  lint            - Run linter"
-	@echo "  test            - Run tests"
-	@echo "  clean           - Remove binaries"
-	@echo "  watch           - Live reload (with Air)"
-	@echo "  help            - Show this help message"
+	@echo "Targets:"
+	@echo "  all             Build and test the application"
+	@echo "  build           Build the main API binary"
+	@echo "  build-cli       Build the CLI binary"
+	@echo "  run             Run the main API application"
+	@echo "  run-cli         Run the CLI application"
+	@echo "  watch           Live reload the application using Air"
+	@echo ""
+	@echo "  build-docker    Start Docker containers"
+	@echo "  re-build-docker Rebuild and start Docker containers"
+	@echo "  docker-down     Shutdown the Docker containers"
+	@echo ""
+	@echo "  test            Run all tests"
+	@echo "  lint            Run the linter"
+	@echo "  clean           Remove built binaries"
+	@echo "  help            Show this help message"
+
