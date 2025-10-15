@@ -107,7 +107,7 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 	v1.GET("healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "OK"})
 	})
-	v1.GET("build-info", cache.CacheByRequestURI(s.redisStore, 365*24*time.Hour), s.buildInfoHandler)
+	v1.GET("build-info", cache.CacheByRequestURI(s.redisStore, 7*24*time.Hour), s.buildInfoHandler)
 
 	// api routes
 	registerBlogRoutes(v1, s)
