@@ -38,7 +38,7 @@ const Tags = () => {
 
   if (error) {
     return (
-      <div className="mx-4 px-4 py-3 rounded border-l-4 bg-[rgba(224,108,117,0.1)] border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+      <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
         {error}
       </div>
     );
@@ -49,7 +49,7 @@ const Tags = () => {
       <SEO title="Tags" />
       <div className="w-full max-w-3xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-2 px-3 py-2 mb-4 bg-[#282c34] border-b border-[#181a1f]">
+        <div className="flex items-center gap-2 px-3 py-2 mb-4 bg-[#282c34] border-b border-b-[#2c313a]">
           <BsChevronRight className="w-3 h-3 text-[#5c6370]" />
           <h1 className="text-[10px] font-bold tracking-widest uppercase font-sans text-[#5c6370]">
             All Tags
@@ -57,12 +57,12 @@ const Tags = () => {
         </div>
 
         {tags && tags.length > 0 ? (
-          <div className="space-y-0 border border-[#181a1f] rounded overflow-hidden bg-[#21252b]">
+          <div className="space-y-0 border border-[#2c313a] rounded overflow-hidden bg-[#21252b]">
             {tags.map((tag, index) => (
               <Link
                 key={index}
                 to={`/?tag=${tag.name}`}
-                className="group flex items-center justify-between px-4 py-3 no-underline transition-all bg-transparent border-l-2 border-l-transparent border-b border-b-[#181a1f] last:border-b-0 hover:bg-[#2c313a] hover:border-l-[#61afef]"
+                className="group flex items-center justify-between px-4 py-3 no-underline transition-all bg-transparent border-l-2 border-l-transparent border-b border-b-[#282c34] last:border-b-0 hover:bg-[#2c313a] hover:border-l-[#61afef]"
                 aria-label={`View ${tag.post_count} posts tagged with ${tag.name}`}
               >
                 <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ const Tags = () => {
 
                 {/* Post count badge */}
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] px-2 py-0.5 rounded font-mono bg-[#2c313a] text-[#5c6370] border border-[#181a1f]">
+                  <span className="text-[11px] px-2 py-0.5 rounded font-mono bg-[#2c313a] text-[#5c6370] border border-[#353b45]">
                     {tag.post_count} {tag.post_count === 1 ? "post" : "posts"}
                   </span>
                   <BsChevronRight className="w-3 h-3 text-[#5c6370] opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Header = ({ blogName }) => {
   return (
-    <header className="flex items-center justify-between px-0 py-0 h-8 select-none border-b border-[#181a1f] bg-[#21252b]">
+    <header className="flex items-center justify-between px-0 py-0 h-8 select-none bg-[#21252b]">
       {/* Left Section - Brand */}
       <div className="flex items-center h-8">
         <Link

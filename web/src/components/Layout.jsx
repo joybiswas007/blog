@@ -1,7 +1,7 @@
-import Header from "./Header";
-import StatusBar from "./StatusBar";
-import Sidebar from "./Sidebar";
-import BackToTopButton from "./BackToTop";
+import Header from "@/components/Header";
+import StatusBar from "@/components/StatusBar";
+import Sidebar from "@/components/Sidebar";
+import BackToTopButton from "@/components/BackToTop";
 
 export default function Layout({ children }) {
   const {

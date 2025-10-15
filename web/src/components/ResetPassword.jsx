@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft, FiLock, FiMail, FiCheck } from "react-icons/fi";
 import api from "@/services/api";
-import { ErrorMessage, LoadingSpinner } from "./PostForm";
+import { ErrorMessage, LoadingSpinner } from "@/components/PostForm";
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
@@ -70,58 +70,56 @@ const ResetPassword = () => {
   return (
     <>
       <title>Reset Password</title>
-      <div className="flex items-center justify-center min-h-full py-12">
-        <div className="w-full max-w-md space-y-6">
-          {/* Header */}
-          <div className="text-center space-y-3 p-6 rounded-t bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] border-b-0">
-            <div className="w-16 h-16 mx-auto flex items-center justify-center rounded-full mb-3 bg-[var(--color-active-bg)] text-[var(--color-accent-primary)] text-[28px]">
-              <FiLock />
+      <div className="flex items-center justify-center min-h-full py-12 px-4">
+        <div className="w-full max-w-md">
+          {/* Header Section */}
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 flex items-center justify-center rounded bg-[#353b45]">
+                <FiLock className="w-5 h-5 text-[#61afef]" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold font-sans text-[#abb2bf]">
+                  Reset Password
+                </h1>
+                <p className="text-[11px] font-mono text-[#5c6370]">
+                  auth/reset-password
+                </p>
+              </div>
             </div>
-            <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
-              Reset Password
-            </h1>
-            <p className="text-sm font-sans text-[var(--color-text-secondary)] leading-normal">
-              Enter your email and new password to change your credentials
+            <p className="text-[13px] font-sans text-[#5c6370] leading-relaxed">
+              Enter your credentials to reset your password
             </p>
           </div>
 
-          {/* Back Button */}
-          <Link
-            to="/dashboard"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
-          >
-            <FiArrowLeft />
-            <span>Back to Dashboard</span>
-          </Link>
+          {/* Status Messages */}
+          {error && (
+            <div className="mb-6">
+              <ErrorMessage error={error} />
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-6 flex items-start gap-3 px-4 py-3 rounded-l-none bg-[rgba(152,195,121,0.1)] border-l-4 border-l-[#98c379]">
+              <FiCheck className="w-4 h-4 text-[#98c379] shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-[13px] font-mono text-[#98c379]">
+                  Password reset successful!
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Form */}
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-5 p-6 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] border-t-0 rounded-b"
-          >
-            {/* Error Message */}
-            {error && (
-              <div className="rounded">
-                <ErrorMessage error={error} />
-              </div>
-            )}
-
-            {/* Success Message */}
-            {success && (
-              <div className="flex items-center gap-3 px-4 py-3 rounded text-sm font-sans bg-[rgba(52,211,153,0.15)] text-[#34d399] border border-[rgba(52,211,153,0.3)]">
-                <FiCheck className="text-xl" />
-                <span>Password has been reset successfully!</span>
-              </div>
-            )}
-
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email Field */}
-            <div className="space-y-2">
+            <div>
               <label
                 htmlFor="email"
-                className="flex items-center gap-2 text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+                className="flex items-center gap-2 mb-2 text-[12px] font-semibold font-sans text-[#5c6370] uppercase tracking-wider"
               >
-                <FiMail className="text-base" />
-                <span>Email</span>
+                <FiMail className="w-3 h-3" />
+                Email
               </label>
               <input
                 type="email"
@@ -131,19 +129,19 @@ const ResetPassword = () => {
                 autoComplete="email"
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
-                placeholder="your@email.com"
+                className="w-full px-3 py-2 rounded text-[13px] font-mono bg-[#2c313a] text-[#abb2bf] border border-[#353b45] transition-all focus:outline-none focus:border-[#61afef] focus:ring-1 focus:ring-[#61afef] placeholder:text-[#5c6370]"
+                placeholder="user@example.com"
               />
             </div>
 
             {/* New Password Field */}
-            <div className="space-y-2">
+            <div>
               <label
                 htmlFor="password"
-                className="flex items-center gap-2 text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+                className="flex items-center gap-2 mb-2 text-[12px] font-semibold font-sans text-[#5c6370] uppercase tracking-wider"
               >
-                <FiLock className="text-base" />
-                <span>New Password</span>
+                <FiLock className="w-3 h-3" />
+                New Password
               </label>
               <input
                 type="password"
@@ -153,22 +151,22 @@ const ResetPassword = () => {
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
-                className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
-                placeholder="Enter new password"
+                className="w-full px-3 py-2 rounded text-[13px] font-mono bg-[#2c313a] text-[#abb2bf] border border-[#353b45] transition-all focus:outline-none focus:border-[#61afef] focus:ring-1 focus:ring-[#61afef] placeholder:text-[#5c6370]"
+                placeholder="••••••••"
               />
-              <p className="text-xs font-mono text-[var(--color-text-muted)]">
-                Password must be at least 8 characters long
+              <p className="mt-1.5 text-[11px] font-mono text-[#5c6370]">
+                → min 8 characters
               </p>
             </div>
 
             {/* Confirm Password Field */}
-            <div className="space-y-2">
+            <div>
               <label
                 htmlFor="confirmPassword"
-                className="flex items-center gap-2 text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+                className="flex items-center gap-2 mb-2 text-[12px] font-semibold font-sans text-[#5c6370] uppercase tracking-wider"
               >
-                <FiLock className="text-base" />
-                <span>Confirm Password</span>
+                <FiLock className="w-3 h-3" />
+                Confirm Password
               </label>
               <input
                 type="password"
@@ -178,30 +176,47 @@ const ResetPassword = () => {
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
-                className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
-                placeholder="Confirm new password"
+                className="w-full px-3 py-2 rounded text-[13px] font-mono bg-[#2c313a] text-[#abb2bf] border border-[#353b45] transition-all focus:outline-none focus:border-[#61afef] focus:ring-1 focus:ring-[#61afef] placeholder:text-[#5c6370]"
+                placeholder="••••••••"
               />
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(0,122,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <>
-                  <LoadingSpinner />
-                  <span>Resetting Password...</span>
-                </>
-              ) : (
-                <>
-                  <FiLock />
-                  <span>Reset Password</span>
-                </>
-              )}
-            </button>
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-2">
+              <Link
+                to="/dashboard"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded no-underline transition-all text-[13px] font-medium font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef]"
+              >
+                <FiArrowLeft className="w-3.5 h-3.5" />
+                <span>Cancel</span>
+              </Link>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-[13px] font-medium font-sans bg-[#61afef] text-[#21252b] border border-[#61afef] hover:bg-[#84c0f4] hover:border-[#84c0f4] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <LoadingSpinner />
+                    <span>Resetting...</span>
+                  </>
+                ) : (
+                  <>
+                    <FiCheck className="w-3.5 h-3.5" />
+                    <span>Reset</span>
+                  </>
+                )}
+              </button>
+            </div>
           </form>
+
+          {/* Footer Hint */}
+          <div className="mt-6 pt-4 border-t border-t-[#2c313a]">
+            <p className="text-[11px] font-mono text-[#5c6370] text-center">
+              💡 Passwords are encrypted using bcrypt
+            </p>
+          </div>
         </div>
       </div>
     </>

@@ -70,7 +70,7 @@ const ArchiveByYear = () => {
 
   if (error) {
     return (
-      <div className="mx-4 px-4 py-3 rounded border-l-4 bg-[rgba(224,108,117,0.1)] border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+      <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
         {error}
       </div>
     );
@@ -84,14 +84,14 @@ const ArchiveByYear = () => {
       <SEO title={`Archives - ${year}`} />
       <div className="w-full max-w-3xl mx-auto">
         {/* Year Header */}
-        <div className="flex items-center justify-between px-4 py-3 mb-6 bg-[#21252b] border border-[#181a1f] rounded">
+        <div className="flex items-center justify-between px-4 py-3 mb-6 bg-[#21252b] border border-[#2c313a] rounded">
           <div className="flex items-center gap-3">
             <BsCalendar3 className="w-5 h-5 text-[#61afef]" />
             <h1 className="text-xl font-bold font-sans text-[#abb2bf]">
               {year}
             </h1>
           </div>
-          <span className="px-3 py-1 rounded text-[11px] font-mono bg-[#2c313a] text-[#5c6370] border border-[#181a1f]">
+          <span className="px-3 py-1 rounded text-[11px] font-mono bg-[#2c313a] text-[#5c6370] border border-[#353b45]">
             {posts.length} {posts.length === 1 ? "post" : "posts"}
           </span>
         </div>
@@ -101,14 +101,14 @@ const ArchiveByYear = () => {
             {months.map((month, monthIndex) => (
               <div
                 key={monthIndex}
-                className="border border-[#181a1f] rounded overflow-hidden bg-[#21252b]"
+                className="border border-[#2c313a] rounded overflow-hidden bg-[#21252b]"
               >
                 {/* Month Header */}
-                <div className="flex items-center justify-between px-3 py-2 bg-[#282c34] border-b border-[#181a1f]">
+                <div className="flex items-center justify-between px-3 py-2 bg-[#282c34] border-b border-b-[#2c313a]">
                   <h2 className="text-[13px] font-semibold font-sans text-[#abb2bf]">
                     {month}
                   </h2>
-                  <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-[#2c313a] text-[#5c6370] border border-[#181a1f]">
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-[#2c313a] text-[#5c6370] border border-[#353b45]">
                     {groupedPosts[month].length}
                   </span>
                 </div>
@@ -119,7 +119,7 @@ const ArchiveByYear = () => {
                     <Link
                       key={postIndex}
                       to={`/posts/${post.slug}`}
-                      className="group flex items-center gap-3 px-4 py-3 no-underline transition-all bg-transparent border-l-2 border-l-transparent border-b border-b-[#181a1f] last:border-b-0 hover:bg-[#2c313a] hover:border-l-[#61afef]"
+                      className="group flex items-center gap-3 px-4 py-3 no-underline transition-all bg-transparent border-l-2 border-l-transparent border-b border-b-[#282c34] last:border-b-0 hover:bg-[#2c313a] hover:border-l-[#61afef]"
                     >
                       {/* Date */}
                       <span className="text-[11px] font-mono text-[#5c6370] min-w-[50px] shrink-0">
@@ -162,10 +162,10 @@ const ArchiveByYear = () => {
         )}
 
         {/* Back Button */}
-        <div className="mt-8 pt-6 border-t border-[#181a1f]">
+        <div className="mt-8 pt-6 border-t border-t-[#2c313a]">
           <Link
             to="/archives"
-            className="group inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all font-sans text-[13px] bg-[#2c313a] text-[#abb2bf] border border-[#181a1f] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef]"
+            className="group inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all font-sans text-[13px] bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef]"
           >
             <BsArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
             <span>Back to Archives</span>

@@ -70,7 +70,7 @@ const PostItem = ({
             <Link
               key={tagVal}
               to={buildQueryString({ ...tagLinkParams, tag: tagVal })}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] no-underline font-mono bg-[rgba(97,175,239,0.1)] text-[#61afef] border border-[rgba(97,175,239,0.2)] transition-all duration-150 hover:bg-[rgba(97,175,239,0.2)] hover:border-[#61afef]"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] no-underline font-mono bg-[rgba(97,175,239,0.1)] text-[#61afef] transition-all duration-150 hover:bg-[rgba(97,175,239,0.2)]"
               aria-label={`Filter by tag ${tagVal}`}
               onClick={e => e.stopPropagation()}
             >
@@ -93,7 +93,7 @@ const LoadingState = () => (
 );
 
 const ErrorState = ({ error }) => (
-  <div className="mx-4 px-4 py-3 rounded border-l-4 bg-[rgba(224,108,117,0.1)] border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+  <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
     <strong className="font-semibold">Error:</strong> {error}
   </div>
 );
@@ -157,7 +157,7 @@ const PostsList = ({ posts, loading, error, ...props }) => {
         <div key={post.id}>
           <PostItem post={post} {...props} />
           {index < posts.length - 1 && (
-            <hr className="my-0 h-px bg-[#181a1f] border-none" />
+            <div className="h-px bg-[#282c34] mx-4" />
           )}
         </div>
       ))}

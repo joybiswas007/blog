@@ -16,10 +16,10 @@ const SortingControls = ({
   orderBy,
   sort
 }) => (
-  <div className="flex justify-between items-center px-4 py-2 bg-[#21252b] border-b border-[#181a1f]">
+  <div className="flex justify-between items-center px-4 py-2 bg-[#21252b]">
     {/* Sort Section */}
     <div className="flex items-center gap-3">
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-[#2c313a] border border-[#181a1f] rounded">
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-[#2c313a] rounded">
         <BsFilter className="w-3.5 h-3.5 text-[#61afef]" />
         <span className="text-[11px] font-semibold font-sans text-[#5c6370] uppercase tracking-wider">
           Sort
@@ -30,7 +30,7 @@ const SortingControls = ({
         <select
           value={selectedSort.label}
           onChange={handleSortChange}
-          className="appearance-none pl-3 pr-8 py-1.5 rounded text-[13px] font-mono bg-[#2c313a] text-[#abb2bf] border border-[#181a1f] transition-all duration-150 cursor-pointer hover:border-[#61afef] hover:bg-[#353b45] focus:outline-none focus:border-[#61afef] focus:ring-1 focus:ring-[#61afef]"
+          className="appearance-none pl-3 pr-8 py-1.5 rounded text-[13px] font-mono bg-[#2c313a] text-[#abb2bf] transition-all duration-150 cursor-pointer hover:bg-[#353b45] focus:outline-none focus:ring-1 focus:ring-[#61afef]"
           aria-label="Sort options"
         >
           {SORT_OPTIONS.map(opt => (
@@ -61,9 +61,9 @@ const SortingControls = ({
     {/* Tag Filter */}
     {tag && (
       <div className="flex items-center">
-        <div className="inline-flex items-center gap-0 rounded overflow-hidden border border-[#181a1f]">
+        <div className="inline-flex items-center gap-0 rounded overflow-hidden">
           {/* Tag label section */}
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#353b45] border-r border-[#181a1f]">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#353b45]">
             <span className="text-[11px] font-mono text-[#5c6370]">
               Filter:
             </span>

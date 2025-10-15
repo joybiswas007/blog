@@ -68,7 +68,7 @@ const StatusBar = ({ authorName, sourceCode }) => {
   };
 
   return (
-    <footer className="flex items-center justify-between px-0 py-0 bg-[#21252b] text-white font-sans text-[11px] min-h-6 border-t border-[#181a1f] shrink-0">
+    <footer className="flex items-center justify-between px-0 py-0 bg-[#21252b] text-white font-sans text-[11px] min-h-6 shrink-0">
       {/* Left Section - Git Info */}
       <div className="flex items-center h-6">
         {buildInfo && buildInfo.branch && (

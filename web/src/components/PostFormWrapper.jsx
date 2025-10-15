@@ -117,9 +117,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
     return (
       <div className="flex flex-col items-center justify-center py-16">
         <LoadingSpinner />
-        <p className="mt-3 text-sm font-mono text-[var(--color-text-secondary)]">
-          Loading post...
-        </p>
+        <p className="mt-3 text-sm font-mono text-[#5c6370]">Loading post...</p>
       </div>
     );
   }
@@ -137,7 +135,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
           }
         />
 
-        <div className="space-y-6 p-6 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
+        <div className="space-y-6 p-6 bg-[#21252b] border border-[#2c313a] rounded">
           <ErrorMessage error={error} />
 
           <PostFormFields
@@ -146,10 +144,10 @@ const PostFormWrapper = ({ mode = "create" }) => {
             setFormData={setFormData}
           />
 
-          <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-[var(--color-panel-border)]">
+          <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-t-[#2c313a]">
             <Link
               to="/dashboard"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef]"
             >
               Cancel
             </Link>
@@ -158,7 +156,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
               type="button"
               onClick={() => handleSubmit(false)}
               disabled={loading}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -175,7 +173,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
                 type="button"
                 onClick={() => handleSubmit(true)}
                 disabled={loading}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(0,122,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[#61afef] text-[#21252b] border border-[#61afef] hover:bg-[#84c0f4] hover:border-[#84c0f4] hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(97,175,239,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>

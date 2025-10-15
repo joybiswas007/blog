@@ -11,7 +11,7 @@
   --color-sidebar-bg: #21252b;
   --color-titlebar-bg: #1e2127;
   --color-statusbar-bg: #61afef;
-  --color-panel-border: #181a1f;
+  --color-panel-border: #2c313a;
 
   --color-text-primary: #abb2bf;
   --color-text-secondary: #5c6370;
@@ -32,8 +32,8 @@
   --color-selection-bg: #3e4451;
   --color-hover-bg: #2c313a;
   --color-active-bg: #353b45;
-  --color-input-bg: #21252b;
-  --color-input-border: #181a1f;
+  --color-input-bg: #1e2127;
+  --color-input-border: #3e4451;
 }
 
 @layer base {
@@ -101,8 +101,9 @@
   input:focus,
   textarea:focus,
   select:focus {
-    outline: 1px solid var(--color-accent-primary);
+    outline: none;
     border-color: var(--color-accent-primary);
+    ring: 1px solid var(--color-accent-primary);
   }
 
   input:disabled,
@@ -166,13 +167,11 @@
 
   .prose h1 {
     @apply text-3xl;
-    border-bottom: 1px solid var(--color-panel-border);
     padding-bottom: 0.5rem;
   }
 
   .prose h2 {
     @apply text-2xl;
-    border-bottom: 1px solid var(--color-panel-border);
     padding-bottom: 0.5rem;
   }
 
@@ -256,14 +255,12 @@
     color: var(--color-accent-primary);
     @apply px-2 py-1 rounded text-sm;
     text-decoration: none !important;
-    border: 1px solid rgba(97, 175, 239, 0.3);
-    border-bottom: 1px solid rgba(97, 175, 239, 0.3);
+    border-bottom: none !important;
   }
 
   .prose a.tag:hover {
     background-color: rgba(97, 175, 239, 0.25);
     text-decoration: none;
-    border-bottom: 1px solid rgba(97, 175, 239, 0.3);
   }
 
   /* Lists */
@@ -313,7 +310,6 @@
     font-size: 14px;
     background-color: var(--color-sidebar-bg);
     @apply p-5 rounded-lg my-6 overflow-x-auto;
-    border: 1px solid var(--color-panel-border);
     line-height: 1.6;
     width: 100%;
     max-width: 100%;
@@ -343,8 +339,8 @@
     border-radius: 4px;
   }
 
-  body[data-theme="light"] .prose pre::-webkit-scrollbar-thumb {
-    background-color: #c0c0c0;
+  .prose pre::-webkit-scrollbar-thumb:hover {
+    background-color: #4b5263;
   }
 
   /* Blockquotes */
@@ -371,7 +367,6 @@
   /* Tables */
   .prose table {
     @apply w-full my-6 border-collapse;
-    border: 1px solid var(--color-panel-border);
     border-radius: 4px;
     overflow: hidden;
   }
@@ -382,18 +377,16 @@
 
   .prose th {
     @apply text-left px-4 py-3 font-semibold;
-    border-bottom: 2px solid var(--color-panel-border);
     color: var(--color-text-primary);
   }
 
   .prose td {
     @apply px-4 py-3;
-    border-bottom: 1px solid var(--color-panel-border);
     color: var(--color-text-primary);
   }
 
-  .prose tbody tr:last-child td {
-    border-bottom: none;
+  .prose tbody tr {
+    background-color: rgba(0, 0, 0, 0.1);
   }
 
   .prose tbody tr:hover {
@@ -405,13 +398,13 @@
     @apply my-6 rounded-lg;
     max-width: 100%;
     height: auto;
-    border: 1px solid var(--color-panel-border);
   }
 
   /* Horizontal Rule */
   .prose hr {
     border: none;
-    border-top: 2px solid var(--color-panel-border);
+    height: 1px;
+    background-color: var(--color-hover-bg);
     @apply my-10;
   }
 
@@ -429,7 +422,6 @@
   .prose details {
     @apply my-4 p-4 rounded;
     background-color: var(--color-hover-bg);
-    border: 1px solid var(--color-panel-border);
   }
 
   .prose summary {
@@ -448,7 +440,6 @@
     font-size: 0.85em;
     @apply px-2 py-1 rounded;
     background-color: var(--color-hover-bg);
-    border: 1px solid var(--color-panel-border);
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
     display: inline-block;
   }
@@ -479,7 +470,6 @@
   /* Footnotes */
   .prose .footnotes {
     @apply mt-12 pt-6;
-    border-top: 2px solid var(--color-panel-border);
     font-size: 0.9em;
   }
 

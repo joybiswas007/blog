@@ -16,9 +16,9 @@ const Sidebar = () => {
   const location = useLocation();
 
   return (
-    <aside className="flex flex-col w-60 bg-[#21252b] border-r border-[#181a1f] overflow-y-auto shrink-0">
+    <aside className="flex flex-col w-60 bg-[#21252b] overflow-y-auto shrink-0">
       {/* Explorer Header */}
-      <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34] border-b border-[#181a1f]">
+      <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34]">
         <BsChevronRight className="w-3 h-3 text-[#5c6370]" />
         <span className="text-[10px] font-bold tracking-widest uppercase font-sans text-[#5c6370]">
           Netrw
@@ -73,7 +73,7 @@ const Sidebar = () => {
       </nav>
 
       {/* Optional: File count or status */}
-      <div className="mt-auto px-3 py-2 border-t border-[#181a1f]">
+      <div className="mt-auto px-3 py-2 bg-[#1e2127]">
         <span className="text-[10px] font-mono text-[#5c6370]">
           {NAV_ITEMS.length} items
         </span>

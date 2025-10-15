@@ -15,7 +15,7 @@ const PaginationControls = ({
   const hasNext = offset + limit < totalPost;
 
   return totalPost > limit ? (
-    <div className="flex justify-center items-center gap-0 mt-8 py-4 border-t border-[#181a1f]">
+    <div className="flex justify-center items-center gap-0 mt-8 py-4">
       {/* Previous Button */}
       <Link
         to={buildQueryString({
@@ -25,7 +25,7 @@ const PaginationControls = ({
           sort,
           tag
         })}
-        className={`inline-flex items-center gap-2 px-4 py-2 text-[13px] no-underline font-mono bg-[#2c313a] border border-[#181a1f] border-r-0 rounded-l transition-all duration-150 ${
+        className={`inline-flex items-center gap-2 px-4 py-2 text-[13px] no-underline font-mono bg-[#2c313a] rounded-l transition-all duration-150 ${
           !hasPrevious
             ? "opacity-30 cursor-not-allowed pointer-events-none text-[#5c6370]"
             : "text-[#abb2bf] hover:bg-[#353b45] hover:text-[#61afef]"
@@ -39,7 +39,7 @@ const PaginationControls = ({
       </Link>
 
       {/* Page Counter */}
-      <div className="inline-flex items-center px-5 py-2 text-[13px] font-mono bg-[#353b45] border-y border-[#181a1f] text-[#abb2bf]">
+      <div className="inline-flex items-center px-5 py-2 text-[13px] font-mono bg-[#353b45] text-[#abb2bf]">
         <span className="text-[#5c6370]">Page</span>
         <span className="mx-2 text-[#61afef] font-semibold">{currentPage}</span>
         <span className="text-[#5c6370]">of</span>
@@ -55,7 +55,7 @@ const PaginationControls = ({
           sort,
           tag
         })}
-        className={`inline-flex items-center gap-2 px-4 py-2 text-[13px] no-underline font-mono bg-[#2c313a] border border-[#181a1f] border-l-0 rounded-r transition-all duration-150 ${
+        className={`inline-flex items-center gap-2 px-4 py-2 text-[13px] no-underline font-mono bg-[#2c313a] rounded-r transition-all duration-150 ${
           !hasNext
             ? "opacity-30 cursor-not-allowed pointer-events-none text-[#5c6370]"
             : "text-[#abb2bf] hover:bg-[#353b45] hover:text-[#61afef]"

@@ -67,7 +67,7 @@ const Archives = () => {
 
   if (error) {
     return (
-      <div className="mx-4 px-4 py-3 rounded border-l-4 bg-[rgba(224,108,117,0.1)] border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+      <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
         {error}
       </div>
     );
@@ -78,8 +78,8 @@ const Archives = () => {
       <SEO title="Archives" />
       <div className="w-full max-w-3xl mx-auto space-y-6">
         {/* RSS Feed Section */}
-        <section className="border border-[#181a1f] rounded overflow-hidden bg-[#21252b]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34] border-b border-[#181a1f]">
+        <section className="border border-[#2c313a] rounded overflow-hidden bg-[#21252b]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34] border-b border-b-[#2c313a]">
             <BsRss className="w-3.5 h-3.5 text-[#e5c07b]" />
             <h2 className="text-[13px] font-semibold font-sans text-[#abb2bf]">
               RSS Feed
@@ -90,7 +90,7 @@ const Archives = () => {
               target="_blank"
               rel="noopener noreferrer"
               to="/rss.xml"
-              className="inline-flex items-center gap-2 px-3 py-2 rounded no-underline transition-all bg-[#2c313a] border border-[#181a1f] text-[#abb2bf] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef]"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded no-underline transition-all bg-[#2c313a] border border-[#353b45] text-[#abb2bf] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef]"
             >
               <BsRss className="w-3.5 h-3.5" />
               <span className="font-mono text-[13px]">/rss.xml</span>
@@ -99,8 +99,8 @@ const Archives = () => {
         </section>
 
         {/* Top Posts Section */}
-        <section className="border border-[#181a1f] rounded overflow-hidden bg-[#21252b]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34] border-b border-[#181a1f]">
+        <section className="border border-[#2c313a] rounded overflow-hidden bg-[#21252b]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34] border-b border-b-[#2c313a]">
             <BsFire className="w-3.5 h-3.5 text-[#e06c75]" />
             <h2 className="text-[13px] font-semibold font-sans text-[#abb2bf]">
               Top Posts
@@ -108,7 +108,7 @@ const Archives = () => {
           </div>
           <div className="p-0">
             {topError ? (
-              <div className="m-4 px-4 py-3 rounded border-l-4 bg-[rgba(224,108,117,0.1)] border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+              <div className="m-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
                 {topError}
               </div>
             ) : topPosts && topPosts.length > 0 ? (
@@ -117,7 +117,7 @@ const Archives = () => {
                   <Link
                     key={topPost.id}
                     to={`/posts/${topPost.slug}`}
-                    className="group flex items-center gap-3 px-4 py-3 no-underline transition-all bg-transparent border-l-2 border-l-transparent border-b border-b-[#181a1f] last:border-b-0 hover:bg-[#2c313a] hover:border-l-[#61afef]"
+                    className="group flex items-center gap-3 px-4 py-3 no-underline transition-all bg-transparent border-l-2 border-l-transparent border-b border-b-[#282c34] last:border-b-0 hover:bg-[#2c313a] hover:border-l-[#61afef]"
                   >
                     {/* Rank badge */}
                     <span className="flex items-center justify-center w-6 h-6 rounded text-[11px] font-bold font-mono bg-[#61afef] text-[#21252b] shrink-0">
@@ -151,8 +151,8 @@ const Archives = () => {
         </section>
 
         {/* Archives by Year Section */}
-        <section className="border border-[#181a1f] rounded overflow-hidden bg-[#21252b]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34] border-b border-[#181a1f]">
+        <section className="border border-[#2c313a] rounded overflow-hidden bg-[#21252b]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34] border-b border-b-[#2c313a]">
             <BsFolder2Open className="w-3.5 h-3.5 text-[#e5c07b]" />
             <h2 className="text-[13px] font-semibold font-sans text-[#abb2bf]">
               By Year
@@ -165,13 +165,13 @@ const Archives = () => {
                   <Link
                     key={index}
                     to={`/archives/${list.year}`}
-                    className="group flex items-center gap-3 px-3 py-2.5 rounded no-underline transition-all bg-[#2c313a] border border-[#181a1f] border-l-2 border-l-transparent hover:bg-[#353b45] hover:border-l-[#61afef]"
+                    className="group flex items-center gap-3 px-3 py-2.5 rounded no-underline transition-all bg-[#2c313a] border border-[#353b45] border-l-2 border-l-transparent hover:bg-[#353b45] hover:border-[#61afef] hover:border-l-[#61afef]"
                   >
                     <BsFolder2Open className="w-4 h-4 text-[#e5c07b] shrink-0" />
                     <span className="flex-1 font-sans text-[14px] font-medium text-[#abb2bf] group-hover:text-[#61afef] transition-colors">
                       {list.year}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-[#353b45] text-[#5c6370] border border-[#181a1f] shrink-0">
+                    <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-[#353b45] text-[#5c6370] border border-[#3e4451] shrink-0">
                       {list.post_count}
                     </span>
                   </Link>

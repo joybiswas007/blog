@@ -104,31 +104,31 @@ const Dashboard = () => {
       <title>{pageTitle}</title>
       <div className="w-full max-w-5xl mx-auto space-y-6">
         {/* Action Toolbar */}
-        <div className="flex flex-wrap items-center gap-3 p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
+        <div className="flex flex-wrap items-center gap-3 p-4 bg-[#21252b] border border-[#2c313a] rounded">
           <Link
             to="/auth/posts/create"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[#61afef] text-[#21252b] border border-[#61afef] hover:bg-[#84c0f4] hover:border-[#84c0f4] hover:-translate-y-px"
           >
             <FiPlus />
             <span>New Post</span>
           </Link>
           <Link
             to="/auth/tools"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:-translate-y-px"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef] hover:-translate-y-px"
           >
             <FiTool />
             <span>Tools</span>
           </Link>
           <Link
             to="/auth/reset-password"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:-translate-y-px"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef] hover:-translate-y-px"
           >
             <FiKey />
             <span>Password</span>
           </Link>
           <button
             onClick={handleLogout}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans text-[#f87171] bg-[var(--color-hover-bg)] border border-[var(--color-panel-border)] hover:bg-[rgba(220,38,38,0.1)] hover:border-[#dc2626] hover:text-[#fca5a5] hover:-translate-y-px"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans text-[#e06c75] bg-[#2c313a] border border-[#353b45] hover:bg-[rgba(224,108,117,0.1)] hover:border-[#e06c75] hover:-translate-y-px"
             type="button"
           >
             <FiLogOut />
@@ -137,13 +137,13 @@ const Dashboard = () => {
         </div>
 
         {/* Tabs & Stats */}
-        <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
+        <div className="flex items-center justify-between p-4 bg-[#21252b] border border-[#2c313a] rounded">
           <div className="flex items-center gap-2">
             <button
               className={`px-4 py-2 rounded text-sm font-medium transition-all font-sans border ${
                 activeTab === "published"
-                  ? "text-[var(--color-text-primary)] bg-[var(--color-active-bg)] border-[var(--color-accent-primary)]"
-                  : "text-[var(--color-text-secondary)] bg-transparent border-transparent hover:text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)]"
+                  ? "text-[#abb2bf] bg-[#353b45] border-[#61afef]"
+                  : "text-[#5c6370] bg-transparent border-transparent hover:text-[#abb2bf] hover:bg-[#2c313a]"
               }`}
               onClick={() => setActiveTab("published")}
               type="button"
@@ -153,8 +153,8 @@ const Dashboard = () => {
             <button
               className={`px-4 py-2 rounded text-sm font-medium transition-all font-sans border ${
                 activeTab === "drafts"
-                  ? "text-[var(--color-text-primary)] bg-[var(--color-active-bg)] border-[var(--color-accent-primary)]"
-                  : "text-[var(--color-text-secondary)] bg-transparent border-transparent hover:text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)]"
+                  ? "text-[#abb2bf] bg-[#353b45] border-[#61afef]"
+                  : "text-[#5c6370] bg-transparent border-transparent hover:text-[#abb2bf] hover:bg-[#2c313a]"
               }`}
               onClick={() => setActiveTab("drafts")}
               type="button"
@@ -162,7 +162,7 @@ const Dashboard = () => {
               Drafts
             </button>
           </div>
-          <div className="text-xs font-mono text-[var(--color-text-secondary)]">
+          <div className="text-xs font-mono text-[#5c6370]">
             {totalPosts} {activeTab === "published" ? "published" : "draft"}{" "}
             post{totalPosts !== 1 ? "s" : ""}
           </div>
@@ -170,7 +170,7 @@ const Dashboard = () => {
 
         {/* Error Display */}
         {error && (
-          <div className="px-4 py-3 rounded border-l-4 bg-[rgba(220,38,38,0.1)] border-l-[#dc2626]">
+          <div className="rounded-l-none">
             <ErrorMessage error={error} />
           </div>
         )}
@@ -183,45 +183,43 @@ const Dashboard = () => {
             </div>
           ) : !posts || posts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-16 h-16 flex items-center justify-center rounded-full mb-4 bg-[var(--color-hover-bg)] text-[var(--color-text-secondary)] text-[32px]">
+              <div className="w-16 h-16 flex items-center justify-center rounded-full mb-4 bg-[#2c313a] text-[#5c6370] text-[32px]">
                 <FiFileText />
               </div>
-              <h3 className="text-lg font-semibold mb-2 font-sans text-[var(--color-text-primary)]">
+              <h3 className="text-lg font-semibold mb-2 font-sans text-[#abb2bf]">
                 No {activeTab === "published" ? "published posts" : "drafts"}{" "}
                 yet
               </h3>
-              <p className="text-sm mb-6 text-[var(--color-text-secondary)]">
+              <p className="text-sm mb-6 text-[#5c6370]">
                 {activeTab === "published"
                   ? "Start writing and publish your first post"
                   : "Create a draft to get started"}
               </p>
               <Link
                 to="/auth/posts/create"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:-translate-y-px"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[#61afef] text-[#21252b] border border-[#61afef] hover:bg-[#84c0f4] hover:-translate-y-px"
               >
                 <FiPlus />
                 <span>Create Post</span>
               </Link>
             </div>
           ) : (
-            <div className="space-y-0 border border-[var(--color-panel-border)] rounded overflow-hidden">
+            <div className="space-y-0 border border-[#2c313a] rounded overflow-hidden bg-[#21252b]">
               {posts.map(post => (
                 <div
                   key={post.id}
-                  className="flex items-center justify-between px-4 py-3 transition-all border-b border-b-[var(--color-panel-border)] border-l-3 border-l-transparent last:border-b-0 hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-accent-primary)]"
+                  className="flex items-center justify-between px-4 py-3 transition-all border-b border-b-[#282c34] border-l-2 border-l-transparent last:border-b-0 hover:bg-[#2c313a] hover:border-l-[#61afef]"
                 >
                   <Link
                     to={`/posts/${post.slug}`}
                     className="flex-1 flex items-baseline gap-4 no-underline min-w-0 group"
                   >
-                    <div className="flex-1 text-sm font-medium truncate font-sans text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-primary)] transition-colors">
+                    <div className="flex-1 text-sm font-medium truncate font-sans text-[#abb2bf] group-hover:text-[#61afef] transition-colors">
                       {post.title || (
-                        <span className="italic text-[var(--color-text-muted)]">
-                          Untitled
-                        </span>
+                        <span className="italic text-[#4b5263]">Untitled</span>
                       )}
                     </div>
-                    <div className="text-xs whitespace-nowrap font-mono text-[var(--color-text-secondary)] min-w-[100px]">
+                    <div className="text-xs whitespace-nowrap font-mono text-[#5c6370] min-w-[100px]">
                       {formatDate(post.created_at)}
                     </div>
                   </Link>
@@ -229,7 +227,7 @@ const Dashboard = () => {
                     {activeTab === "drafts" && (
                       <button
                         onClick={() => handlePublish(post.id)}
-                        className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-panel-border)] hover:text-[#34d399] hover:border-[#34d399]"
+                        className="flex items-center justify-center w-8 h-8 rounded transition-all text-[#5c6370] bg-transparent border border-transparent hover:bg-[#2c313a] hover:border-[#353b45] hover:text-[#98c379] hover:border-[#98c379]"
                         title="Publish"
                         type="button"
                       >
@@ -238,14 +236,14 @@ const Dashboard = () => {
                     )}
                     <Link
                       to={`/auth/posts/${post.id}/edit`}
-                      className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-panel-border)] hover:text-[var(--color-accent-primary)] hover:border-[var(--color-accent-primary)]"
+                      className="flex items-center justify-center w-8 h-8 rounded transition-all text-[#5c6370] bg-transparent border border-transparent hover:bg-[#2c313a] hover:border-[#353b45] hover:text-[#61afef] hover:border-[#61afef]"
                       title="Edit"
                     >
                       <FiEdit2 />
                     </Link>
                     <button
                       onClick={() => handleDelete(post.id)}
-                      className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-panel-border)] hover:text-[#f87171] hover:border-[#dc2626]"
+                      className="flex items-center justify-center w-8 h-8 rounded transition-all text-[#5c6370] bg-transparent border border-transparent hover:bg-[#2c313a] hover:border-[#353b45] hover:text-[#e06c75] hover:border-[#e06c75]"
                       title="Delete"
                       type="button"
                     >
@@ -260,13 +258,13 @@ const Dashboard = () => {
 
         {/* Pagination */}
         {posts && posts.length > 0 && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-center gap-6 py-4 border-t border-[var(--color-panel-border)]">
+          <div className="flex items-center justify-center gap-6 py-4 border-t border-t-[#2c313a]">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans text-[var(--color-text-primary)] bg-[var(--color-hover-bg)] border border-[var(--color-panel-border)] ${
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans text-[#abb2bf] bg-[#2c313a] border border-[#353b45] ${
                 pagination.page === 1
                   ? "opacity-30 cursor-not-allowed"
-                  : "hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
+                  : "hover:bg-[#353b45] hover:border-[#61afef]"
               }`}
               disabled={pagination.page === 1}
               type="button"
@@ -274,15 +272,15 @@ const Dashboard = () => {
               <span>←</span>
               <span>Previous</span>
             </button>
-            <span className="text-sm font-mono text-[var(--color-text-secondary)]">
+            <span className="text-sm font-mono text-[#5c6370]">
               Page {pagination.page} of {pagination.totalPages}
             </span>
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans text-[var(--color-text-primary)] bg-[var(--color-hover-bg)] border border-[var(--color-panel-border)] ${
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans text-[#abb2bf] bg-[#2c313a] border border-[#353b45] ${
                 pagination.page === pagination.totalPages
                   ? "opacity-30 cursor-not-allowed"
-                  : "hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
+                  : "hover:bg-[#353b45] hover:border-[#61afef]"
               }`}
               disabled={pagination.page === pagination.totalPages}
               type="button"

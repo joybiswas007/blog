@@ -78,8 +78,8 @@ const useScrollToHash = () => {
 };
 
 const SocialShare = ({ url, title }) => (
-  <div className="flex items-center gap-4 py-4 my-8 border-y border-[#181a1f]">
-    <div className="flex items-center gap-2 px-3 py-1.5 bg-[#2c313a] border border-[#181a1f] rounded">
+  <div className="flex items-center gap-4 py-4 my-8 border-y border-y-[#2c313a]">
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-[#2c313a] border border-[#353b45] rounded">
       <BsShare className="w-3.5 h-3.5 text-[#61afef]" />
       <span className="text-[11px] font-semibold font-sans text-[#5c6370] uppercase tracking-wider">
         Share
@@ -87,17 +87,17 @@ const SocialShare = ({ url, title }) => (
     </div>
     <div className="flex items-center gap-2">
       <TwitterShareButton url={url} title={title}>
-        <div className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[#2c313a] border border-[#181a1f] hover:bg-[#353b45] hover:border-[#61afef]">
+        <div className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[#2c313a] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef]">
           <TwitterIcon size={20} round />
         </div>
       </TwitterShareButton>
       <LinkedinShareButton url={url} title={title}>
-        <div className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[#2c313a] border border-[#181a1f] hover:bg-[#353b45] hover:border-[#61afef]">
+        <div className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[#2c313a] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef]">
           <LinkedinIcon size={20} round />
         </div>
       </LinkedinShareButton>
       <BlueskyShareButton url={url} title={title}>
-        <div className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[#2c313a] border border-[#181a1f] hover:bg-[#353b45] hover:border-[#61afef]">
+        <div className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[#2c313a] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef]">
           <BlueskyIcon size={20} round />
         </div>
       </BlueskyShareButton>
@@ -177,7 +177,7 @@ const Post = () => {
       />
       <article className="w-full max-w-4xl mx-auto">
         {/* Header */}
-        <header className="space-y-5 pb-6 mb-8 border-b border-[#181a1f]">
+        <header className="space-y-5 pb-6 mb-8 border-b border-b-[#2c313a]">
           <h1 className="text-3xl font-bold leading-tight font-sans text-[#abb2bf] tracking-tight">
             {post.title}
           </h1>
@@ -254,7 +254,7 @@ const Post = () => {
             {previousPost ? (
               <Link
                 to={`/posts/${previousPost.slug}`}
-                className="group flex items-center gap-3 p-4 rounded no-underline transition-all min-h-[80px] bg-[#2c313a] border border-[#181a1f] justify-start hover:bg-[#353b45] hover:border-[#61afef]"
+                className="group flex items-center gap-3 p-4 rounded no-underline transition-all min-h-[80px] bg-[#2c313a] border border-[#353b45] justify-start hover:bg-[#353b45] hover:border-[#61afef]"
                 aria-label={`Previous post: ${previousPost.title}`}
               >
                 <BsChevronLeft className="shrink-0 w-5 h-5 text-[#61afef] transition-transform duration-200 group-hover:-translate-x-1" />
@@ -274,7 +274,7 @@ const Post = () => {
             {nextPost ? (
               <Link
                 to={`/posts/${nextPost.slug}`}
-                className="group flex items-center gap-3 p-4 rounded no-underline transition-all min-h-[80px] bg-[#2c313a] border border-[#181a1f] justify-end text-right hover:bg-[#353b45] hover:border-[#61afef]"
+                className="group flex items-center gap-3 p-4 rounded no-underline transition-all min-h-[80px] bg-[#2c313a] border border-[#353b45] justify-end text-right hover:bg-[#353b45] hover:border-[#61afef]"
                 aria-label={`Next post: ${nextPost.title}`}
               >
                 <div className="flex-1 min-w-0">

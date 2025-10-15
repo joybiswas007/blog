@@ -10,19 +10,15 @@ export const PostEditorHeader = ({
   subtitle,
   showBackButton = true
 }) => (
-  <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
+  <div className="flex items-center justify-between p-4 bg-[#21252b] border border-[#2c313a] rounded">
     <div>
-      <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
-        {title}
-      </h1>
-      <p className="text-sm mt-1 font-sans text-[var(--color-text-secondary)]">
-        {subtitle}
-      </p>
+      <h1 className="text-2xl font-bold font-sans text-[#abb2bf]">{title}</h1>
+      <p className="text-sm mt-1 font-sans text-[#5c6370]">{subtitle}</p>
     </div>
     {showBackButton && (
       <Link
         to="/dashboard"
-        className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef]"
       >
         <FiArrowLeft />
         <span>Dashboard</span>
@@ -59,9 +55,9 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
       <div className="space-y-2">
         <label
           htmlFor="title"
-          className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+          className="flex items-center text-sm font-medium font-sans text-[#5c6370]"
         >
-          Title <span className="ml-1 text-[#f87171]">*</span>
+          Title <span className="ml-1 text-[#e06c75]">*</span>
         </label>
         <input
           type="text"
@@ -69,13 +65,13 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
+          className="w-full px-4 py-3 rounded text-sm font-mono bg-[#1e2127] text-[#abb2bf] border border-[#3e4451] transition-all focus:outline-none focus:border-[#61afef] focus:ring-1 focus:ring-[#61afef] placeholder:text-[#4b5263]"
           required
           maxLength={100}
           placeholder="Enter post title..."
         />
         {titleError && (
-          <p className="text-xs font-mono text-[#f87171]">{titleError}</p>
+          <p className="text-xs font-mono text-[#e06c75]">{titleError}</p>
         )}
       </div>
 
@@ -83,7 +79,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
       <div className="space-y-2">
         <label
           htmlFor="description"
-          className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+          className="flex items-center text-sm font-medium font-sans text-[#5c6370]"
         >
           Description
         </label>
@@ -93,7 +89,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           name="description"
           value={formData.description}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
+          className="w-full px-4 py-3 rounded text-sm font-mono bg-[#1e2127] text-[#abb2bf] border border-[#3e4451] transition-all focus:outline-none focus:border-[#61afef] focus:ring-1 focus:ring-[#61afef] placeholder:text-[#4b5263]"
           maxLength={150}
           placeholder="Brief description (optional)"
         />
@@ -103,9 +99,9 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
       <div className="space-y-2">
         <label
           htmlFor="tags"
-          className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+          className="flex items-center text-sm font-medium font-sans text-[#5c6370]"
         >
-          Tags <span className="ml-1 text-[#f87171]">*</span>
+          Tags <span className="ml-1 text-[#e06c75]">*</span>
         </label>
         {formData.tags && (
           <div className="flex flex-wrap gap-2 mb-2">
@@ -115,7 +111,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
               .map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded text-sm font-mono bg-[rgba(0,122,204,0.15)] text-[var(--color-accent-primary)] border border-[rgba(0,122,204,0.3)]"
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded text-sm font-mono bg-[rgba(97,175,239,0.15)] text-[#61afef] border border-[rgba(97,175,239,0.3)]"
                 >
                   #{tag.trim()}
                   <button
@@ -129,7 +125,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
                         target: { name: "tags", value: newTags }
                       });
                     }}
-                    className="flex items-center justify-center w-4 h-4 rounded transition-colors bg-transparent text-[var(--color-text-secondary)] hover:text-[#f87171]"
+                    className="flex items-center justify-center w-4 h-4 rounded transition-colors bg-transparent text-[#5c6370] hover:text-[#e06c75]"
                   >
                     <FiX />
                   </button>
@@ -144,22 +140,22 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           value={formData.tags}
           onChange={handleChange}
           placeholder="tag1, tag2, tag3"
-          className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
+          className="w-full px-4 py-3 rounded text-sm font-mono bg-[#1e2127] text-[#abb2bf] border border-[#3e4451] transition-all focus:outline-none focus:border-[#61afef] focus:ring-1 focus:ring-[#61afef] placeholder:text-[#4b5263]"
         />
-        <p className="text-xs font-mono text-[var(--color-text-muted)]">
+        <p className="text-xs font-mono text-[#4b5263]">
           Separate tags with commas (max 10 tags, 30 chars each)
         </p>
         {tagsError && (
-          <p className="text-xs font-mono text-[#f87171]">{tagsError}</p>
+          <p className="text-xs font-mono text-[#e06c75]">{tagsError}</p>
         )}
       </div>
 
       {/* Content Field */}
       <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]">
-          Content <span className="ml-1 text-[#f87171]">*</span>
+        <label className="flex items-center text-sm font-medium font-sans text-[#5c6370]">
+          Content <span className="ml-1 text-[#e06c75]">*</span>
         </label>
-        <div className="rounded overflow-hidden bg-[var(--color-input-bg)] border border-[var(--color-input-border)]">
+        <div className="rounded overflow-hidden bg-[#1e2127] border border-[#3e4451]">
           <Suspense fallback={<EditorSkeleton />}>
             <MarkdownEditor
               value={formData.content}
@@ -177,7 +173,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
 export const ErrorMessage = ({ error }) => {
   if (!error) return null;
   return (
-    <div className="px-4 py-3 rounded border-l-4 text-sm font-mono bg-[rgba(220,38,38,0.1)] border-l-[#dc2626] text-[#fca5a5]">
+    <div className="px-4 py-3 rounded-l-none text-sm font-mono bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75]">
       {error}
     </div>
   );
@@ -247,7 +243,7 @@ const PostForm = ({ post, isEditing = false }) => {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 p-6 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded"
+        className="space-y-6 p-6 bg-[#21252b] border border-[#2c313a] rounded"
       >
         <ErrorMessage error={error} />
         <PostFormFields
@@ -256,17 +252,17 @@ const PostForm = ({ post, isEditing = false }) => {
           setFormData={setFormData}
         />
 
-        <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-[var(--color-panel-border)]">
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-t-[#2c313a]">
           <Link
             to="/dashboard"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef]"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
