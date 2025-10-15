@@ -189,4 +189,3 @@ const LoginAttempts = () => {
 };
 
 export default LoginAttempts;
-

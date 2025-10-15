@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
-import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
+import {
+  FiGithub,
+  FiLinkedin,
+  FiMail,
+  FiGitBranch,
+  FiGitCommit,
+  FiCode
+} from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import api from "@/services/api";
@@ -13,8 +20,9 @@ const StatusBar = ({ authorName, sourceCode }) => {
       const response = await api.get("/build-info");
       setBuildInfo(response.data.build_info);
       setGoVersion(response.data.go_version);
-    } catch (err) {
-      console.error("Failed to fetch build info:", err);
+    } catch {
+      setBuildInfo({ branch: "main", commit: "unknown" });
+      setGoVersion("Go");
     }
   };
 
@@ -43,23 +51,34 @@ const StatusBar = ({ authorName, sourceCode }) => {
     return social.url;
   };
 
-  const shortCommit = buildInfo?.commit?.substring(0, 7) || "";
+  const shortCommit = buildInfo?.commit?.substring(0, 7) || "unknown";
 
   const getCommitUrl = commitHash => {
-    if (!commitHash || !sourceCode) return null;
+    if (!commitHash || commitHash === "unknown" || !sourceCode) return null;
     return `${sourceCode}/commit/${commitHash}`;
+  };
+
+  const isExternalLink = url => {
+    return (
+      url &&
+      (url.startsWith("http://") ||
+        url.startsWith("https://") ||
+        url.startsWith("mailto:"))
+    );
   };
 
   return (
     <footer className="status-bar">
       <div className="status-left">
-        {buildInfo && (
+        {buildInfo && buildInfo.branch && (
           <>
             <span className="status-item">
-              Branch: <span className="status-value">{buildInfo.branch}</span>
+              <FiGitBranch className="status-icon" />
+              <span className="status-value">{buildInfo.branch}</span>
             </span>
-            <span className="status-separator">|</span>
+            <span className="status-separator">·</span>
             <span className="status-item">
+              <FiGitCommit className="status-icon" />
               {getCommitUrl(buildInfo.commit) ? (
                 <Link
                   to={getCommitUrl(buildInfo.commit)}
@@ -68,23 +87,31 @@ const StatusBar = ({ authorName, sourceCode }) => {
                   className="status-link"
                   aria-label="View commit on GitHub"
                 >
-                  #{shortCommit}
+                  {shortCommit}
                 </Link>
               ) : (
-                <>#{shortCommit}</>
+                <span className="status-value">{shortCommit}</span>
               )}
             </span>
-            <span className="status-separator">|</span>
-            <span className="status-item">{goVersion}</span>
+            <span className="status-separator">·</span>
+            <span className="status-item">
+              <FiCode className="status-icon" />
+              <span className="status-value">{goVersion}</span>
+            </span>
           </>
         )}
       </div>
 
       <div className="status-right">
+        <span className="status-copyright">
+          © {new Date().getFullYear()} {authorName}
+        </span>
+        <span className="status-separator">·</span>
         <div className="social-links">
           {socialLinks.map(
             (social, index) =>
-              social.url && (
+              social.url &&
+              (isExternalLink(getLink(social)) ? (
                 <Link
                   key={index}
                   to={getLink(social)}
@@ -92,16 +119,23 @@ const StatusBar = ({ authorName, sourceCode }) => {
                   rel="noopener noreferrer"
                   className="social-icon"
                   aria-label={social.label}
+                  title={social.label}
                 >
                   {social.icon}
                 </Link>
-              )
+              ) : (
+                <Link
+                  key={index}
+                  to={getLink(social)}
+                  className="social-icon"
+                  aria-label={social.label}
+                  title={social.label}
+                >
+                  {social.icon}
+                </Link>
+              ))
           )}
         </div>
-        <span className="status-separator">|</span>
-        <span className="status-item">
-          © {new Date().getFullYear()} {authorName}
-        </span>
       </div>
     </footer>
   );

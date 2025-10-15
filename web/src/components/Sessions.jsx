@@ -93,11 +93,7 @@ const Sessions = () => {
         </div>
 
         {/* Error Message */}
-        {error && (
-          <div className="sessions-error">
-            {error}
-          </div>
-        )}
+        {error && <div className="sessions-error">{error}</div>}
 
         {/* Sessions Table */}
         <div className="sessions-table-container">
@@ -135,7 +131,9 @@ const Sessions = () => {
                       </span>
                     </td>
                     <td>
-                      {session.end_time ? formatDateTime(session.end_time) : "—"}
+                      {session.end_time
+                        ? formatDateTime(session.end_time)
+                        : "—"}
                     </td>
                   </tr>
                 ))}
@@ -177,4 +175,3 @@ const Sessions = () => {
 };
 
 export default Sessions;
-

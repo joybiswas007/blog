@@ -6,7 +6,7 @@ const DEFAULT_LIMIT = 10;
 const SORT_OPTIONS = [
   { orderBy: "created_at", sort: "DESC", label: "Newest" },
   { orderBy: "created_at", sort: "ASC", label: "Oldest" },
-  { orderBy: "title", sort: "ASC", label: "A-Z" },
+  { orderBy: "title", sort: "ASC", label: "A-Z" }
 ];
 
 const useQuery = () => {
@@ -30,7 +30,7 @@ export const usePosts = () => {
   const [error, setError] = useState("");
 
   const [selectedSort, setSelectedSort] = useState(
-    SORT_OPTIONS.find((opt) => opt.orderBy === orderBy && opt.sort === sort) ||
+    SORT_OPTIONS.find(opt => opt.orderBy === orderBy && opt.sort === sort) ||
       SORT_OPTIONS[0]
   );
 
@@ -42,7 +42,7 @@ export const usePosts = () => {
         limit,
         offset,
         order_by: orderBy,
-        sort,
+        sort
       };
       if (tag) params.tag = tag;
       const response = await api.get("/posts", { params });
@@ -59,7 +59,7 @@ export const usePosts = () => {
     fetchPosts();
   }, [fetchPosts]);
 
-  const buildQueryString = (params) => {
+  const buildQueryString = params => {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "")
@@ -68,8 +68,8 @@ export const usePosts = () => {
     return `/?${searchParams.toString()}`;
   };
 
-  const handleSortChange = (e) => {
-    const selected = SORT_OPTIONS.find((opt) => opt.label === e.target.value);
+  const handleSortChange = e => {
+    const selected = SORT_OPTIONS.find(opt => opt.label === e.target.value);
     setSelectedSort(selected);
     navigate(
       buildQueryString({
@@ -77,19 +77,19 @@ export const usePosts = () => {
         offset: 0,
         order_by: selected.orderBy,
         sort: selected.sort,
-        tag,
+        tag
       })
     );
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = dateString => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
       hour: "numeric",
       minute: "2-digit",
-      hour12: true,
+      hour12: true
     });
   };
 
@@ -112,6 +112,6 @@ export const usePosts = () => {
     buildQueryString,
     handleSortChange,
     formatDate,
-    SORT_OPTIONS,
+    SORT_OPTIONS
   };
 };

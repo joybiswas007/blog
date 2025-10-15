@@ -200,7 +200,7 @@
 }
 
 @layer components {
-	/* Theme Toggle Button */
+  /* Theme Toggle Button */
   .theme-toggle {
     @apply flex items-center justify-center w-8 h-8 rounded transition-all;
     background-color: transparent;
@@ -418,16 +418,16 @@
   }
 
   /* ========================================
-     STATUS BAR
+     STATUS BAR (FOOTER)
      ======================================== */
 
   .status-bar {
-    @apply flex items-center justify-between px-4 py-1;
+    @apply flex items-center justify-between px-4 py-1.5;
     background-color: var(--color-statusbar-bg);
     color: #ffffff;
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: 12px;
-    height: 24px;
+    min-height: 28px;
     border-top: 1px solid var(--color-panel-border);
     flex-shrink: 0;
   }
@@ -439,46 +439,113 @@
 
   .status-left,
   .status-right {
-    @apply flex items-center gap-2;
+    @apply flex items-center gap-3;
   }
 
   .status-item {
-    @apply flex items-center gap-1;
+    @apply flex items-center gap-1.5;
     color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+  }
+
+  .status-icon {
+    @apply flex-shrink-0;
+    width: 12px;
+    height: 12px;
+    color: rgba(255, 255, 255, 0.6);
   }
 
   .status-value {
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
   }
 
   .status-separator {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.3);
     user-select: none;
+    font-weight: 300;
+    font-size: 12px;
   }
 
   .status-link {
-    @apply no-underline;
+    @apply no-underline font-medium;
     color: rgba(255, 255, 255, 0.9);
-    transition: color 0.15s;
+    transition: all 0.15s;
+    font-size: 11px;
+    font-family: var(--font-mono);
   }
 
   .status-link:hover {
     color: #ffffff;
-    text-decoration: underline;
+    transform: translateY(-1px);
+  }
+
+  .status-copyright {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+    font-weight: 400;
   }
 
   .social-links {
-    @apply flex items-center gap-2;
+    @apply flex items-center gap-1.5;
   }
 
   .social-icon {
-    @apply flex items-center justify-center;
-    color: rgba(255, 255, 255, 0.8);
-    transition: color 0.15s;
+    @apply flex items-center justify-center rounded transition-all no-underline;
+    width: 24px;
+    height: 24px;
+    color: rgba(255, 255, 255, 0.75);
+    background-color: transparent;
+    border: 1px solid transparent;
   }
 
   .social-icon:hover {
     color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  .social-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .status-bar {
+      @apply flex-col items-start gap-2 py-2;
+      font-size: 11px;
+    }
+
+    .status-left,
+    .status-right {
+      @apply w-full justify-between gap-2;
+    }
+
+    .status-item {
+      font-size: 11px;
+    }
+
+    .status-icon {
+      width: 11px;
+      height: 11px;
+    }
+
+    .status-copyright,
+    .status-link {
+      font-size: 11px;
+    }
+
+    .social-icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    .social-icon svg {
+      width: 13px;
+      height: 13px;
+    }
   }
 
   /* ========================================
@@ -544,17 +611,19 @@
     font-size: 12px;
   }
 
-.post-file-preview {
-  @apply text-sm mt-2;
-  color: var(--color-text-muted); /* Changed from text-secondary to text-muted */
-  font-family: var(--font-sans);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.5;
-  max-height: 3em; /* Ensures exactly 2 lines */
-}
+  .post-file-preview {
+    @apply text-sm mt-2;
+    color: var(
+      --color-text-muted
+    ); /* Changed from text-secondary to text-muted */
+    font-family: var(--font-sans);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+    max-height: 3em; /* Ensures exactly 2 lines */
+  }
 
   .post-file-item:hover .post-file-preview {
     color: var(--color-text-primary);
@@ -876,7 +945,7 @@
     color: var(--color-light-text-secondary);
   }
 
-	  /* ========================================
+  /* ========================================
      POST DETAIL PAGE - REDESIGNED
      ======================================== */
 
@@ -1111,7 +1180,6 @@
     color: #dc2626;
   }
 
-
   /* ========================================
      TAGS PAGE
      ======================================== */
@@ -1254,7 +1322,7 @@
   body[data-theme="light"] .tags-empty-description {
     color: var(--color-light-text-secondary);
   }
-	/* ========================================
+  /* ========================================
      ARCHIVES PAGE
      ======================================== */
 
@@ -1424,7 +1492,9 @@
     color: var(--color-accent-primary);
   }
 
-  body[data-theme="light"] .archive-top-post-item:hover .archive-top-post-title {
+  body[data-theme="light"]
+    .archive-top-post-item:hover
+    .archive-top-post-title {
     color: var(--color-light-accent-primary);
   }
 
@@ -1522,7 +1592,7 @@
     color: var(--color-light-text-secondary);
   }
 
-	/* ========================================
+  /* ========================================
      ARCHIVE BY YEAR PAGE
      ======================================== */
 
@@ -1681,7 +1751,9 @@
     color: var(--color-accent-primary);
   }
 
-  body[data-theme="light"] .archive-year-post-item:hover .archive-year-post-title {
+  body[data-theme="light"]
+    .archive-year-post-item:hover
+    .archive-year-post-title {
     color: var(--color-light-accent-primary);
   }
 
@@ -1758,7 +1830,7 @@
   .archive-back-button:hover .archive-back-icon {
     transform: translateX(-4px);
   }
-	/* ========================================
+  /* ========================================
      404 NOT FOUND PAGE
      ======================================== */
 
@@ -1947,7 +2019,7 @@
   body[data-theme="light"] .notfound-footer p {
     color: var(--color-light-text-secondary);
   }
-	/* ========================================
+  /* ========================================
      DASHBOARD
      ======================================== */
 
@@ -2315,7 +2387,7 @@
     color: var(--color-light-text-secondary);
   }
 
-	/* ========================================
+  /* ========================================
      TOOLS PAGE
      ======================================== */
 
@@ -2487,7 +2559,7 @@
       @apply grid-cols-1;
     }
   }
-	  /* ========================================
+  /* ========================================
      SESSIONS PAGE
      ======================================== */
 
@@ -2778,7 +2850,7 @@
     color: var(--color-light-text-primary);
   }
 
-	 /* ========================================
+  /* ========================================
      LOGIN ATTEMPTS PAGE
      ======================================== */
 
@@ -3118,7 +3190,7 @@
     background-color: var(--color-light-active-bg);
     color: var(--color-light-text-primary);
   }
-	  /* ========================================
+  /* ========================================
      IP BAN PAGE
      ======================================== */
 
@@ -3652,7 +3724,7 @@
     color: var(--color-light-text-primary);
   }
 
-	  /* ========================================
+  /* ========================================
      RESET PASSWORD PAGE
      ======================================== */
 
@@ -3868,7 +3940,7 @@
     border-color: var(--color-light-accent-hover);
     box-shadow: 0 4px 12px rgba(0, 90, 158, 0.2);
   }
-	/* ========================================
+  /* ========================================
      LOGIN PAGE
      ======================================== */
 
@@ -4043,7 +4115,7 @@
     box-shadow: 0 4px 12px rgba(0, 90, 158, 0.2);
   }
 
-	  /* ========================================
+  /* ========================================
      POST FORM / EDITOR
      ======================================== */
 
@@ -4387,6 +4459,41 @@
     box-shadow: 0 4px 12px rgba(0, 90, 158, 0.2);
   }
 
+  /* Syntax Highlighting Overrides */
+  .prose pre code.hljs {
+    background-color: var(--color-sidebar-bg) !important;
+    color: var(--color-text-primary) !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  body[data-theme="light"] .prose pre code.hljs {
+    background-color: var(--color-light-sidebar-bg) !important;
+    color: var(--color-light-text-primary) !important;
+  }
+
+  /* Ensure code block styling matches */
+  .prose pre {
+    background-color: var(--color-sidebar-bg) !important;
+    padding: 1.25rem !important;
+  }
+
+  body[data-theme="light"] .prose pre {
+    background-color: var(--color-light-sidebar-bg) !important;
+  }
+
+  /* Syntax highlighting colors */
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-literal,
+  .hljs-title,
+  .hljs-section,
+  .hljs-doctag,
+  .hljs-type,
+  .hljs-name,
+  .hljs-strong {
+    font-weight: 600;
+  }
 }
 
 @layer utilities {

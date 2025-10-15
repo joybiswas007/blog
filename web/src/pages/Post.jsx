@@ -4,6 +4,7 @@ import api from "@/services/api";
 import { CalculateReadTime, formatDate } from "@/utils/helpers";
 const Markdown = lazy(() => import("react-markdown"));
 import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
 import SEO from "@/components/SEO";
 import {
   TwitterShareButton,
@@ -13,6 +14,7 @@ import {
   LinkedinIcon,
   BlueskyIcon
 } from "react-share";
+import "highlight.js/styles/atom-one-dark.css";
 
 // Utility function to generate heading IDs from text
 const generateHeadingId = text => {
@@ -188,6 +190,7 @@ const Post = () => {
           <div className="prose">
             <Markdown
               remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeHighlight]}
               components={{
                 h1: props => <HeadingRenderer level={1} {...props} />,
                 h2: props => <HeadingRenderer level={2} {...props} />,
@@ -245,4 +248,3 @@ const Post = () => {
 };
 
 export default Post;
-
