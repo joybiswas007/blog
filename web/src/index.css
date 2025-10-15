@@ -263,32 +263,6 @@
     border-bottom-color: var(--color-light-panel-border);
   }
 
-  .window-controls {
-    @apply flex gap-2 items-center;
-    min-width: 60px;
-  }
-
-  .control-dot {
-    @apply w-3 h-3 rounded-full;
-    transition: opacity 0.2s;
-  }
-
-  .control-dot[data-color="red"] {
-    background-color: #ff5f57;
-  }
-
-  .control-dot[data-color="yellow"] {
-    background-color: #febc2e;
-  }
-
-  .control-dot[data-color="green"] {
-    background-color: #28c840;
-  }
-
-  .title-bar:not(:hover) .control-dot {
-    opacity: 0.6;
-  }
-
   .title-bar-center {
     @apply flex-1 flex justify-center items-center;
     font-family: var(--font-sans);
