@@ -14,14 +14,7 @@ import {
   LinkedinIcon,
   BlueskyIcon
 } from "react-share";
-import {
-  BsCalendar3,
-  BsClock,
-  BsPerson,
-  BsChevronLeft,
-  BsChevronRight,
-  BsShare
-} from "react-icons/bs";
+import { BsChevronLeft, BsChevronRight, BsShare } from "react-icons/bs";
 import "highlight.js/styles/atom-one-dark.css";
 
 // Utility function to generate heading IDs from text
@@ -182,22 +175,12 @@ const Post = () => {
             {post.title}
           </h1>
 
-          {/* Meta Info */}
-          <div className="flex flex-wrap items-center gap-3 text-[12px] font-mono">
-            <div className="flex items-center gap-1.5 text-[#5c6370]">
-              <BsCalendar3 className="w-3 h-3" />
-              <span>{formatDate(post.created_at)}</span>
-            </div>
-            <span className="text-[#5c6370]">·</span>
-            <div className="flex items-center gap-1.5 text-[#5c6370]">
-              <BsClock className="w-3 h-3" />
-              <span>{CalculateReadTime(post.content)}</span>
-            </div>
-            <span className="text-[#5c6370]">·</span>
-            <div className="flex items-center gap-1.5 text-[#5c6370]">
-              <BsPerson className="w-3 h-3" />
-              <span>{post.author}</span>
-            </div>
+          <div className="flex flex-wrap items-center gap-2 text-[13px] font-mono text-[#5c6370]">
+            <span>{formatDate(post.created_at)}</span>
+            <span>·</span>
+            <span>{CalculateReadTime(post.content)}</span>
+            <span>·</span>
+            <span>{post.author}</span>
           </div>
 
           {/* Tags */}

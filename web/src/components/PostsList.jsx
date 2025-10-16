@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import remarkGfm from "remark-gfm";
-import { BsFileText, BsClock, BsCalendar3 } from "react-icons/bs";
+import { BsFileText } from "react-icons/bs";
 
 import { CalculateReadTime, TruncateText } from "@/utils/helpers";
 
@@ -25,29 +25,20 @@ const PostItem = ({
         className="block no-underline"
       >
         <div className="flex-1 min-w-0">
-          {/* Title with file icon */}
-          <div className="flex items-center gap-2 mb-2">
-            <BsFileText className="shrink-0 w-3.5 h-3.5 text-[#61afef] group-hover:text-[#84c0f4] transition-colors" />
-            <h2 className="text-[15px] font-medium font-sans text-[#abb2bf] transition-colors duration-150 group-hover:text-[#61afef] line-clamp-1">
-              {post.title}
-            </h2>
-          </div>
+          {/* Title */}
+          <h2 className="text-[15px] font-medium font-sans text-[#abb2bf] transition-colors duration-150 group-hover:text-[#61afef] line-clamp-1 mb-2">
+            {post.title}
+          </h2>
 
           {/* Meta info */}
-          <div className="flex items-center gap-3 mb-2 ml-5">
-            <span className="flex items-center gap-1.5 text-[11px] font-mono text-[#5c6370]">
-              <BsCalendar3 className="w-3 h-3" />
-              {formatDate(post.created_at)}
-            </span>
-            <span className="text-[#5c6370]">·</span>
-            <span className="flex items-center gap-1.5 text-[11px] font-mono text-[#5c6370]">
-              <BsClock className="w-3 h-3" />
-              {CalculateReadTime(post.content)}
-            </span>
+          <div className="flex items-center gap-2 mb-2 text-[11px] font-mono text-[#5c6370]">
+            <span>{formatDate(post.created_at)}</span>
+            <span>·</span>
+            <span>{CalculateReadTime(post.content)}</span>
           </div>
 
           {/* Preview */}
-          <div className="text-[13px] ml-5 text-[#5c6370] font-sans line-clamp-2 leading-[1.6] group-hover:text-[#abb2bf] transition-colors duration-150">
+          <div className="text-[13px] text-[#5c6370] font-sans line-clamp-2 leading-[1.6] group-hover:text-[#abb2bf] transition-colors duration-150">
             <Suspense
               fallback={
                 <span className="text-[13px] font-mono text-[#5c6370] animate-pulse">
@@ -65,7 +56,7 @@ const PostItem = ({
 
       {/* Tags */}
       {post.tags?.length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap mt-3 ml-5">
+        <div className="flex items-center gap-2 flex-wrap mt-3">
           {post.tags.map(tagVal => (
             <Link
               key={tagVal}
