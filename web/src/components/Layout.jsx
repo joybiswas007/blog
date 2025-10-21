@@ -1,9 +1,9 @@
 import Header from "@/components/Header";
 import StatusBar from "@/components/StatusBar";
 import Sidebar from "@/components/Sidebar";
-import BackToTopButton from "@/components/BackToTop";
+import BackToTop from "@/components/BackToTop";
 
-export default function Layout({ children }) {
+const Layout = ({ children }) => {
   const {
     VITE_AUTHOR_NAME: author,
     VITE_BLOG_NAME: blogName,
@@ -26,7 +26,9 @@ export default function Layout({ children }) {
       </div>
 
       <StatusBar authorName={author} sourceCode={sourceCode} />
-      <BackToTopButton />
+      <BackToTop />
     </div>
   );
-}
+};
+
+export default Layout;
