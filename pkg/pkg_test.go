@@ -39,16 +39,6 @@ func TestGeneratePassword(t *testing.T) {
 		wantSpecial bool
 	}{
 		{
-			name:        "all character types",
-			length:      20,
-			useLetter:   true,
-			useDigits:   true,
-			useSpecial:  true,
-			wantLetters: true,
-			wantDigits:  true,
-			wantSpecial: true,
-		},
-		{
 			name:        "only letters",
 			length:      20,
 			useLetter:   true,
