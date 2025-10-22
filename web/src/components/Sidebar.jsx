@@ -1,9 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
   BsFolder2Open,
   BsFileText,
   BsTag,
-  BsChevronRight
+  BsChevronRight,
+  BsList,
+  BsX
 } from "react-icons/bs";
 
 const NAV_ITEMS = [
@@ -14,15 +17,47 @@ const NAV_ITEMS = [
 
 const Sidebar = () => {
   const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  return (
-    <aside className="flex flex-col w-60 bg-[#21252b] overflow-y-auto shrink-0">
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsOpen(false);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsOpen(false);
+    }
+  }, [location.pathname, isMobile]);
+
+  const SidebarContent = () => (
+    <>
       {/* Explorer Header */}
-      <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34]">
-        <BsChevronRight className="w-3 h-3 text-[#5c6370]" />
-        <span className="text-[10px] font-bold tracking-widest uppercase font-sans text-[#5c6370]">
-          Netrw
-        </span>
+      <div className="flex items-center justify-between px-3 py-2 bg-[#282c34]">
+        <div className="flex items-center gap-2">
+          <BsChevronRight className="w-3 h-3 text-[#5c6370]" />
+          <span className="text-[10px] font-bold tracking-widest uppercase font-sans text-[#5c6370]">
+            Netrw
+          </span>
+        </div>
+        {isMobile && (
+          <button
+            onClick={() => setIsOpen(false)}
+            className="text-[#5c6370] hover:text-[#abb2bf] transition-colors"
+            aria-label="Close menu"
+          >
+            <BsX className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Navigation Tree */}
@@ -40,7 +75,6 @@ const Sidebar = () => {
               }`}
               aria-label={`Navigate to ${item.label}`}
             >
-              {/* Tree indent indicator */}
               <span className="w-3 flex items-center justify-center">
                 {isActive ? (
                   <span className="w-1 h-1 rounded-full bg-[#61afef]"></span>
@@ -49,7 +83,6 @@ const Sidebar = () => {
                 )}
               </span>
 
-              {/* Icon */}
               <span
                 className={`flex items-center transition-colors ${
                   isActive
@@ -60,10 +93,8 @@ const Sidebar = () => {
                 {item.icon}
               </span>
 
-              {/* Label */}
               <span className="flex-1">{item.label}</span>
 
-              {/* Active indicator */}
               {isActive && (
                 <span className="text-[10px] font-mono text-[#5c6370]">●</span>
               )}
@@ -72,13 +103,52 @@ const Sidebar = () => {
         })}
       </nav>
 
-      {/* Optional: File count or status */}
       <div className="mt-auto px-3 py-2 bg-[#1e2127]">
         <span className="text-[10px] font-mono text-[#5c6370]">
           {NAV_ITEMS.length} items
         </span>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile toggle button */}
+      {isMobile && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed top-0 left-0 z-50 w-12 h-8 flex items-center justify-center bg-[#21252b] text-[#abb2bf] hover:bg-[#282c34] transition-colors md:hidden"
+          aria-label="Open menu"
+        >
+          <BsList className="w-5 h-5" />
+        </button>
+      )}
+
+      {/* Overlay */}
+      {isMobile && isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`
+          flex flex-col bg-[#21252b] overflow-y-auto shrink-0
+          ${
+            isMobile
+              ? `fixed top-0 left-0 h-full w-60 z-50 transition-transform duration-300 ${
+                  isOpen ? "translate-x-0" : "-translate-x-full"
+                }`
+              : "w-60"
+          }
+        `}
+      >
+        <SidebarContent />
+      </aside>
+    </>
   );
 };
 

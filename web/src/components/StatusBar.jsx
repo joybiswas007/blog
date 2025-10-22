@@ -68,59 +68,63 @@ const StatusBar = ({ authorName, sourceCode }) => {
   };
 
   return (
-    <footer className="flex items-center justify-between px-0 py-0 bg-[#21252b] text-white font-sans text-[11px] min-h-6 shrink-0">
+    <footer className="flex items-center justify-between px-0 py-0 bg-[#21252b] text-white font-sans text-[11px] min-h-6 shrink-0 overflow-x-auto scrollbar-hide">
       {/* Left Section - Git Info */}
-      <div className="flex items-center h-6">
+      <div className="flex items-center h-6 shrink-0">
         {buildInfo && buildInfo.branch && (
           <>
             {/* Branch */}
-            <div className="flex items-center gap-1.5 px-3 h-full bg-[#98c379] text-[#21252b]">
+            <div className="flex items-center gap-1.5 px-2 md:px-3 h-full bg-[#98c379] text-[#21252b]">
               <FiGitBranch className="shrink-0 w-3 h-3" />
-              <span className="font-semibold">{buildInfo.branch}</span>
+              <span className="font-semibold whitespace-nowrap hidden sm:inline">
+                {buildInfo.branch}
+              </span>
             </div>
 
             {/* Separator */}
-            <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#98c379]"></div>
+            <div className="hidden sm:block w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#98c379]"></div>
 
             {/* Commit */}
-            <div className="flex items-center gap-1.5 px-3 h-full bg-[#2c313a]">
+            <div className="flex items-center gap-1.5 px-2 md:px-3 h-full bg-[#2c313a]">
               <FiGitCommit className="shrink-0 w-3 h-3 text-[#61afef]" />
               {getCommitUrl(buildInfo.commit) ? (
                 <Link
                   to={getCommitUrl(buildInfo.commit)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="no-underline font-medium font-mono text-[#abb2bf] transition-colors hover:text-[#61afef]"
+                  className="no-underline font-medium font-mono text-[#abb2bf] transition-colors hover:text-[#61afef] whitespace-nowrap"
                   aria-label="View commit on GitHub"
                 >
                   {shortCommit}
                 </Link>
               ) : (
-                <span className="font-medium font-mono text-[#abb2bf]">
+                <span className="font-medium font-mono text-[#abb2bf] whitespace-nowrap">
                   {shortCommit}
                 </span>
               )}
             </div>
 
             {/* Separator */}
-            <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#2c313a]"></div>
+            <div className="hidden sm:block w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#2c313a]"></div>
 
             {/* Language */}
-            <div className="flex items-center gap-1.5 px-3 h-full bg-[#353b45]">
+            <div className="flex items-center gap-1.5 px-2 md:px-3 h-full bg-[#353b45]">
               <FiCode className="shrink-0 w-3 h-3 text-[#e5c07b]" />
-              <span className="font-medium text-[#abb2bf]">{goVersion}</span>
+              <span className="font-medium text-[#abb2bf] whitespace-nowrap">
+                {goVersion}
+              </span>
             </div>
 
             {/* End separator */}
-            <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#353b45]"></div>
+            <div className="hidden sm:block w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#353b45]"></div>
           </>
         )}
       </div>
 
       {/* Right Section - Author & Social */}
-      <div className="flex items-center h-6">
+      <div className="flex items-center h-6 shrink-0 ml-auto">
         {/* Social Links */}
-        <div className="flex items-center gap-0 px-3 h-full bg-[#353b45]">
+        <div className="flex items-center gap-0 px-2 md:px-3 h-full bg-[#353b45]">
           {socialLinks.map(
             (social, index) =>
               social.url &&
@@ -130,7 +134,7 @@ const StatusBar = ({ authorName, sourceCode }) => {
                   to={getLink(social)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center w-6 h-6 rounded transition-colors no-underline text-[#5c6370] hover:text-[#61afef]"
+                  className="flex items-center justify-center w-5 md:w-6 h-6 rounded transition-colors no-underline text-[#5c6370] hover:text-[#61afef]"
                   aria-label={social.label}
                   title={social.label}
                 >
@@ -140,7 +144,7 @@ const StatusBar = ({ authorName, sourceCode }) => {
                 <Link
                   key={index}
                   to={getLink(social)}
-                  className="flex items-center justify-center w-6 h-6 rounded transition-colors no-underline text-[#5c6370] hover:text-[#61afef]"
+                  className="flex items-center justify-center w-5 md:w-6 h-6 rounded transition-colors no-underline text-[#5c6370] hover:text-[#61afef]"
                   aria-label={social.label}
                   title={social.label}
                 >
@@ -151,12 +155,14 @@ const StatusBar = ({ authorName, sourceCode }) => {
         </div>
 
         {/* Separator */}
-        <div className="w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#353b45]"></div>
+        <div className="hidden sm:block w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-l-[8px] border-l-[#353b45]"></div>
 
         {/* Copyright */}
-        <div className="flex items-center px-3 h-full bg-[#61afef] text-[#21252b]">
-          <span className="font-semibold">
-            © {new Date().getFullYear()} {authorName}
+        <div className="flex items-center px-2 md:px-3 h-full bg-[#61afef] text-[#21252b]">
+          <span className="font-semibold whitespace-nowrap text-[10px] md:text-[11px]">
+            © {new Date().getFullYear()}{" "}
+            <span className="hidden sm:inline">{authorName}</span>
+            <span className="sm:hidden">{authorName.split(" ")[0]}</span>
           </span>
         </div>
       </div>

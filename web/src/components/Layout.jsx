@@ -21,7 +21,9 @@ const Layout = ({ children }) => {
           id="editor-pane"
           className="flex-1 overflow-y-auto bg-[var(--color-editor-bg)]"
         >
-          <div className="max-w-4xl mx-auto py-8 px-6">{children}</div>
+          <div className="max-w-4xl mx-auto py-8 px-6 md:px-6 px-4">
+            {children}
+          </div>
         </main>
       </div>
 
