@@ -5,6 +5,7 @@ import { CalculateReadTime, formatDate } from "@/utils/helpers";
 const Markdown = lazy(() => import("react-markdown"));
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
+import rehypeExternalLinks from "rehype-external-links";
 import SEO from "@/components/SEO";
 import {
   TwitterShareButton,
@@ -213,7 +214,16 @@ const Post = () => {
           <div className="prose">
             <Markdown
               remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeHighlight]}
+              rehypePlugins={[
+                rehypeHighlight,
+                [
+                  rehypeExternalLinks,
+                  {
+                    target: "_blank",
+                    rel: ["noopener", "noreferrer"]
+                  }
+                ]
+              ]}
               components={{
                 h1: props => <HeadingRenderer level={1} {...props} />,
                 h2: props => <HeadingRenderer level={2} {...props} />,
