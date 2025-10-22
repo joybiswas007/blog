@@ -8,6 +8,8 @@ import {
   BsList,
   BsX
 } from "react-icons/bs";
+import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
+import { FaXTwitter } from "react-icons/fa6";
 
 const NAV_ITEMS = [
   { label: "Posts", to: "/", icon: <BsFileText /> },
@@ -19,6 +21,36 @@ const Sidebar = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const {
+    VITE_AUTHOR_EMAIL,
+    VITE_AUTHOR_GITHUB,
+    VITE_AUTHOR_LINKEDIN,
+    VITE_AUTHOR_TWITTER
+  } = import.meta.env;
+
+  const socialLinks = [
+    { url: VITE_AUTHOR_GITHUB, icon: <FiGithub />, label: "GitHub" },
+    { url: VITE_AUTHOR_LINKEDIN, icon: <FiLinkedin />, label: "LinkedIn" },
+    { url: VITE_AUTHOR_TWITTER, icon: <FaXTwitter />, label: "Twitter" },
+    { url: VITE_AUTHOR_EMAIL, icon: <FiMail />, type: "email", label: "Email" }
+  ].filter(link => link.url);
+
+  const getLink = social => {
+    if (social.type === "email") {
+      return `mailto:${social.url}`;
+    }
+    return social.url;
+  };
+
+  const isExternalLink = url => {
+    return (
+      url &&
+      (url.startsWith("http://") ||
+        url.startsWith("https://") ||
+        url.startsWith("mailto:"))
+    );
+  };
 
   useEffect(() => {
     const checkMobile = () => {
@@ -103,10 +135,40 @@ const Sidebar = () => {
         })}
       </nav>
 
-      <div className="mt-auto px-3 py-2 bg-[#1e2127]">
-        <span className="text-[10px] font-mono text-[#5c6370]">
-          {NAV_ITEMS.length} items
-        </span>
+      {/* Footer Section with Social Icons */}
+      <div className="mt-auto">
+        {/* Social Icons */}
+        {socialLinks.length > 0 && (
+          <div className="px-3 py-3">
+            <div className="flex items-center gap-2">
+              {socialLinks.map((social, index) =>
+                isExternalLink(getLink(social)) ? (
+                  <Link
+                    key={index}
+                    to={getLink(social)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center w-8 h-8 rounded transition-colors no-underline text-[#5c6370] hover:text-[#61afef] hover:bg-[#2c313a]"
+                    aria-label={social.label}
+                    title={social.label}
+                  >
+                    <span className="w-4 h-4">{social.icon}</span>
+                  </Link>
+                ) : (
+                  <Link
+                    key={index}
+                    to={getLink(social)}
+                    className="flex items-center justify-center w-8 h-8 rounded transition-colors no-underline text-[#5c6370] hover:text-[#61afef] hover:bg-[#2c313a]"
+                    aria-label={social.label}
+                    title={social.label}
+                  >
+                    <span className="w-4 h-4">{social.icon}</span>
+                  </Link>
+                )
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
