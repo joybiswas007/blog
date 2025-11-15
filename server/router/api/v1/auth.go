@@ -56,9 +56,9 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 	}
 
 	var (
-		currentAttempt, currentBans int64 = 1, 0
-		attemptID                   int64
-		bannedUntil                 time.Time
+		currentAttempt int64 = 1
+		attemptID      int64
+		bannedUntil    time.Time
 	)
 
 	// Handle existing attempt record.
@@ -81,16 +81,14 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		}
 
 		currentAttempt = userAttempts.Attempts + 1
-		currentBans = userAttempts.Bans
 		attemptID = userAttempts.ID
 		bannedUntil = userAttempts.BannedUntil.Time
 
 		// If attempts exceed limit, apply ban.
 		if currentAttempt > int64(s.config.MaxLoginAttempts) {
 			bannedUntil = time.Now().Add(time.Hour * time.Duration(s.config.BanDuration))
-			currentBans++ // Increment ban count.
 
-			err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, &bannedUntil, currentBans)
+			err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, &bannedUntil)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
@@ -102,7 +100,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		}
 
 		// Always update the attempt count on each request.
-		err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, nil, currentBans)
+		err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, nil)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -110,7 +108,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 
 	} else {
 		// No record exists, so create one.
-		aid, err := s.db.Users.LogAttempt(user.ID, c.ClientIP(), c.Request.UserAgent(), currentAttempt, currentBans)
+		aid, err := s.db.Users.LogAttempt(user.ID, c.ClientIP(), c.Request.UserAgent(), currentAttempt)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

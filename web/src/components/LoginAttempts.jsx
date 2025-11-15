@@ -54,6 +54,11 @@ const LoginAttempts = () => {
         })
       : "—";
 
+  const truncateUserAgent = (ua, maxLength = 40) => {
+    if (!ua || ua === "Unknown") return ua;
+    return ua.length > maxLength ? ua.substring(0, maxLength) + "..." : ua;
+  };
+
   const totalPages = Math.ceil(totalAttempts / attemptsPerPage);
 
   const handlePageChange = page => {
@@ -67,7 +72,7 @@ const LoginAttempts = () => {
   return (
     <>
       <title>{pageTitle}</title>
-      <div className="w-full max-w-6xl mx-auto space-y-6">
+      <div className="w-full max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
           <div>
@@ -106,7 +111,7 @@ const LoginAttempts = () => {
         )}
 
         {/* Attempts Table */}
-        <div className="border border-[var(--color-panel-border)] rounded overflow-x-auto">
+        <div className="border border-[var(--color-panel-border)] rounded overflow-hidden">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="w-8 h-8 border-[3px] border-t-transparent border-[var(--color-accent-primary)] rounded-full animate-spin mb-3"></div>
@@ -121,81 +126,80 @@ const LoginAttempts = () => {
               </p>
             </div>
           ) : (
-            <table className="w-full border-collapse font-mono text-[13px]">
-              <thead className="bg-[var(--color-hover-bg)]">
-                <tr>
-                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
-                    #
-                  </th>
-                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
-                    IP Address
-                  </th>
-                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
-                    Last Attempt
-                  </th>
-                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
-                    Attempts
-                  </th>
-                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
-                    Bans
-                  </th>
-                  <th className="text-left px-4 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
-                    Banned Until
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {attempts.map((attempt, index) => (
-                  <tr
-                    key={attempt.id}
-                    className="border-b border-b-[var(--color-panel-border)] transition-colors hover:bg-[var(--color-hover-bg)]"
-                  >
-                    <td className="px-4 py-3 text-[var(--color-text-secondary)]">
-                      {(currentPage - 1) * attemptsPerPage + index + 1}
-                    </td>
-                    <td className="px-4 py-3 font-medium text-[var(--color-accent-primary)]">
-                      {attempt.ip}
-                    </td>
-                    <td className="px-4 py-3 text-[var(--color-text-primary)]">
-                      {formatDateTime(attempt.last_attempt)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="inline-block px-2 py-1 rounded text-xs font-bold bg-[var(--color-active-bg)] text-[var(--color-text-primary)]">
-                        {attempt.attempts}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                          attempt.bans > 0
-                            ? "bg-[rgba(248,113,113,0.15)] text-[#f87171] border border-[rgba(248,113,113,0.3)]"
-                            : "bg-[rgba(52,211,153,0.15)] text-[#34d399] border border-[rgba(52,211,153,0.3)]"
-                        }`}
-                      >
-                        {attempt.bans}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      {attempt.banned_until ? (
-                        <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-[rgba(248,113,113,0.15)] text-[#f87171] border border-[rgba(248,113,113,0.3)]">
-                          {formatDateTime(attempt.banned_until)}
-                        </span>
-                      ) : (
-                        <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-[rgba(52,211,153,0.15)] text-[#34d399] border border-[rgba(52,211,153,0.3)]">
-                          Not banned
-                        </span>
-                      )}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse font-mono text-[13px]">
+                <thead className="bg-[var(--color-hover-bg)]">
+                  <tr>
+                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                      #
+                    </th>
+                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                      IP Address
+                    </th>
+                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap min-w-[200px]">
+                      User Agent
+                    </th>
+                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                      Last Attempt
+                    </th>
+                    <th className="text-center px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                      Attempts
+                    </th>
+                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                      Banned Until
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {attempts.map((attempt, index) => (
+                    <tr
+                      key={attempt.id}
+                      className="border-b border-b-[var(--color-panel-border)] transition-colors hover:bg-[var(--color-hover-bg)]"
+                    >
+                      <td className="px-3 py-3 text-[var(--color-text-secondary)]">
+                        {(currentPage - 1) * attemptsPerPage + index + 1}
+                      </td>
+                      <td className="px-3 py-3 font-medium text-[var(--color-accent-primary)]">
+                        {attempt.ip}
+                      </td>
+                      <td
+                        className="px-3 py-3 text-[var(--color-text-primary)] max-w-[300px]"
+                        title={attempt.user_agent}
+                      >
+                        <span className="inline-block truncate max-w-full">
+                          {truncateUserAgent(attempt.user_agent, 50)}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3 text-[var(--color-text-primary)] whitespace-nowrap">
+                        {formatDateTime(attempt.last_attempt)}
+                      </td>
+                      <td className="px-3 py-3 text-center">
+                        <span className="inline-block px-2 py-1 rounded text-xs font-bold bg-[var(--color-active-bg)] text-[var(--color-text-primary)]">
+                          {attempt.attempts}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap">
+                        {attempt.banned_until ? (
+                          <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-[rgba(248,113,113,0.15)] text-[#f87171] border border-[rgba(248,113,113,0.3)]">
+                            {formatDateTime(attempt.banned_until)}
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2 py-1 rounded text-xs font-mono bg-[rgba(52,211,153,0.15)] text-[#34d399] border border-[rgba(52,211,153,0.3)]">
+                            Not banned
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between p-4 border-t border-t-[var(--color-panel-border)]">
+          <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
             <span className="text-sm font-mono text-[var(--color-text-secondary)]">
               Page {currentPage} of {totalPages}
             </span>

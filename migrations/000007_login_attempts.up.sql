@@ -6,7 +6,6 @@ CREATE TABLE "login_attempts" (
 	"attempts" INTEGER NOT NULL DEFAULT 0,
 	"user_agent" TEXT NOT NULL DEFAULT 'Unknown',
 	"banned_until" TIMESTAMPTZ,
-	"bans" INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY("id")
 );
 

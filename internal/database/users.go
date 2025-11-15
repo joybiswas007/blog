@@ -41,7 +41,6 @@ type LoginAttempt struct {
 	UserAgent       string       `json:"user_agent"`   // UserAgent used while attempting login
 	BannedUntil     sql.NullTime `json:"-"`            // Timestamp until which the user/IP is banned
 	BannedUntilJSON *time.Time   `json:"banned_until"` // Timestamp until which the user/IP is banned
-	Bans            int64        `json:"bans"`         // Number of times this user/IP has been banned
 }
 
 // Create a custom password type which is a struct containing the plaintext and hashed
@@ -234,7 +233,7 @@ func (m UserModel) UpdatePassword(user *User) error {
 // LogAttempt logs a user's login attempt into the login_attempts table.
 // It inserts a new record with the provided userID, IP, and attempts, bans count.
 // Returns the generated attempt ID or an error.
-func (m UserModel) LogAttempt(userID int64, ip, userAgent string, attempts, bans int64) (attemptID int64, err error) {
+func (m UserModel) LogAttempt(userID int64, ip, userAgent string, attempts int64) (attemptID int64, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -243,12 +242,11 @@ func (m UserModel) LogAttempt(userID int64, ip, userAgent string, attempts, bans
 			user_id, 
 			ip,
 			attempts,
-			user_agent,
-			bans
+			user_agent
 		) VALUES ($1, $2, $3, $4)
 		RETURNING id`
 
-	args := []any{userID, ip, attempts, userAgent, bans}
+	args := []any{userID, ip, attempts, userAgent}
 
 	err = m.DB.QueryRow(ctx, query, args...).Scan(&attemptID)
 	if err != nil {
@@ -265,7 +263,7 @@ func (m UserModel) GetLoginAttempt(userID int64, ip string) (*LoginAttempt, erro
 	defer cancel()
 
 	query := `
-		SELECT id, user_id, host(ip), last_attempt, attempts, banned_until, bans
+		SELECT id, user_id, host(ip), last_attempt, attempts, banned_until
 		FROM login_attempts
 		WHERE user_id = $1 AND ip = $2
 		ORDER BY last_attempt DESC
@@ -281,7 +279,6 @@ func (m UserModel) GetLoginAttempt(userID int64, ip string) (*LoginAttempt, erro
 		&attempt.LastAttempt,
 		&attempt.Attempts,
 		&attempt.BannedUntil,
-		&attempt.Bans,
 	)
 	if err != nil {
 		// If no rows found (pgx.ErrNoRows), treat it as "ok" - no previous attempt exists.
@@ -302,7 +299,7 @@ func (m UserModel) GetAllLoginAttempts(limit, offset int64) ([]LoginAttempt, int
 	defer cancel()
 
 	query := `
-        	SELECT COUNT(*) OVER() AS total_count, id, user_id, host(ip), last_attempt, attempts, user_agent, banned_until, bans
+        	SELECT COUNT(*) OVER() AS total_count, id, user_id, host(ip), last_attempt, attempts, user_agent, banned_until
         	FROM login_attempts
         	ORDER BY last_attempt DESC
         	LIMIT $1 OFFSET $2`
@@ -330,7 +327,6 @@ func (m UserModel) GetAllLoginAttempts(limit, offset int64) ([]LoginAttempt, int
 			&attempt.Attempts,
 			&attempt.UserAgent,
 			&attempt.BannedUntil,
-			&attempt.Bans,
 		)
 		if err != nil {
 			return nil, 0, err
@@ -352,16 +348,16 @@ func (m UserModel) GetAllLoginAttempts(limit, offset int64) ([]LoginAttempt, int
 }
 
 // UpdateLoginAttempt updates the attempts, banned_until, and bans fields for a specific login attempt record by its ID.
-func (m UserModel) UpdateLoginAttempt(attemptID, attempts int64, bannedUntil *time.Time, bans int64) error {
+func (m UserModel) UpdateLoginAttempt(attemptID, attempts int64, bannedUntil *time.Time) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	query := `
 		UPDATE login_attempts
-		SET attempts = $2, banned_until = $3, bans = $4
-		WHERE id = $1`
+		SET attempts = $1, banned_until = $2
+		WHERE id = $3`
 
-	args := []any{attemptID, attempts, bannedUntil, bans}
+	args := []any{attempts, bannedUntil, attemptID}
 
 	_, err := m.DB.Exec(ctx, query, args...)
 	if err != nil {
@@ -381,7 +377,7 @@ func (m UserModel) ResetAllLoginAttempt(userID, attemptID int64) error {
 
 	query := `
 		UPDATE login_attempts
-		SET attempts = 0, banned_until = NULL, bans = 0
+		SET attempts = 0, banned_until = NULL
 		WHERE id = $1 AND user_id = $2`
 
 	args := []any{attemptID, userID}
