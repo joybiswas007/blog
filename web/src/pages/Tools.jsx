@@ -8,9 +8,6 @@ import {
 } from "react-icons/fi";
 
 const Tools = () => {
-  const { VITE_BLOG_NAME: blogName } = import.meta.env;
-  const pageTitle = `Tools :: ${blogName}`;
-
   const tools = [
     {
       name: "Sessions",
@@ -34,6 +31,8 @@ const Tools = () => {
       color: "#98c379" // green
     }
   ];
+
+  const pageTitle = "Tools :: Joy's Blog";
 
   return (
     <>

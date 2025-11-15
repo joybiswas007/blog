@@ -4,7 +4,6 @@ import { FiRefreshCw, FiArrowLeft } from "react-icons/fi";
 import api from "@/services/api";
 
 const Sessions = () => {
-  const { VITE_BLOG_NAME: blogName } = import.meta.env;
   const [sessions, setSessions] = useState([]);
   const [totalSessions, setTotalSessions] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,7 +62,7 @@ const Sessions = () => {
     }
   };
 
-  const pageTitle = `Sessions :: ${blogName}`;
+  const pageTitle = "Sessions :: Joy's Blog";
 
   return (
     <>

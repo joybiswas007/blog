@@ -22,18 +22,16 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const {
-    VITE_AUTHOR_EMAIL,
-    VITE_AUTHOR_GITHUB,
-    VITE_AUTHOR_LINKEDIN,
-    VITE_AUTHOR_TWITTER
-  } = import.meta.env;
+  const github = "https://github.com/joybiswas007";
+  const linkedin = "https://www.linkedin.com/in/joybtw";
+  const twitter = "https://x.com/joybiswas1337";
+  const email = "joybiswas040701@gmail.com";
 
   const socialLinks = [
-    { url: VITE_AUTHOR_GITHUB, icon: <FiGithub />, label: "GitHub" },
-    { url: VITE_AUTHOR_LINKEDIN, icon: <FiLinkedin />, label: "LinkedIn" },
-    { url: VITE_AUTHOR_TWITTER, icon: <FaXTwitter />, label: "Twitter" },
-    { url: VITE_AUTHOR_EMAIL, icon: <FiMail />, type: "email", label: "Email" }
+    { url: github, icon: <FiGithub />, label: "GitHub" },
+    { url: linkedin, icon: <FiLinkedin />, label: "LinkedIn" },
+    { url: twitter, icon: <FaXTwitter />, label: "Twitter" },
+    { url: email, icon: <FiMail />, type: "email", label: "Email" }
   ].filter(link => link.url);
 
   const getLink = social => {

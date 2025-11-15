@@ -10,8 +10,6 @@ import {
 import api from "@/services/api";
 
 const IPBan = () => {
-  const { VITE_BLOG_NAME: blogName } = import.meta.env;
-
   const [ipBans, setIpBans] = useState([]);
   const [totalBans, setTotalBans] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -106,7 +104,7 @@ const IPBan = () => {
         ban.reason?.toLowerCase().includes(searchReason.toLowerCase()))
   );
 
-  const pageTitle = `IP Bans :: ${blogName}`;
+  const pageTitle = "IP Bans :: Joy's Blog";
 
   return (
     <>

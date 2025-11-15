@@ -15,8 +15,6 @@ import {
 } from "react-icons/fi";
 
 const Dashboard = () => {
-  const { VITE_BLOG_NAME: blogName } = import.meta.env;
-
   const [posts, setPosts] = useState([]);
   const [totalPosts, setTotalPosts] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -97,7 +95,7 @@ const Dashboard = () => {
     });
   };
 
-  const pageTitle = `Dashboard :: ${blogName}`;
+  const pageTitle = "Dashboard :: Joy's Blog";
 
   return (
     <>

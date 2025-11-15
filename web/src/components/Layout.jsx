@@ -4,15 +4,13 @@ import Sidebar from "@/components/Sidebar";
 import BackToTop from "@/components/BackToTop";
 
 const Layout = ({ children }) => {
-  const {
-    VITE_AUTHOR_NAME: author,
-    VITE_BLOG_NAME: blogName,
-    VITE_BLOG_SOURCE: sourceCode
-  } = import.meta.env;
+  const author = "Joy Biswas";
+
+  const sourceCode = "https://github.com/joybiswas007/blog";
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[var(--color-editor-bg)]">
-      <Header blogName={blogName} />
+      <Header blogName="Joy's Blog" />
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />

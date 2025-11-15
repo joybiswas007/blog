@@ -1,10 +1,10 @@
 import axios from "axios";
 import { clearAuthTokens, getAuthTokens, setAuthTokens } from "@/utils/auth";
 
-const { VITE_BASE_URL } = import.meta.env;
+const baseURL = "http://localhost:8080";
 
 const api = axios.create({
-  baseURL: `${VITE_BASE_URL}/api/v1`,
+  baseURL: `${baseURL}/api/v1`,
   headers: {
     "Content-Type": "application/json"
   }
@@ -87,7 +87,7 @@ api.interceptors.response.use(
         }
 
         const response = await axios.post(
-          `${VITE_BASE_URL}/api/v1/auth/refresh`,
+          `${baseURL}/api/v1/auth/refresh`,
           "",
           {
             headers: {

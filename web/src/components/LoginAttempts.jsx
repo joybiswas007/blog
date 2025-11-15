@@ -5,7 +5,6 @@ import api from "@/services/api";
 
 const LoginAttempts = () => {
   const attemptsPerPage = 10;
-  const { VITE_BLOG_NAME: blogName } = import.meta.env;
   const [attempts, setAttempts] = useState([]);
   const [totalAttempts, setTotalAttempts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,7 +62,7 @@ const LoginAttempts = () => {
     }
   };
 
-  const pageTitle = `Login Attempts :: ${blogName}`;
+  const pageTitle = "Login Attempts :: Joy's Blog";
 
   return (
     <>
