@@ -22,6 +22,7 @@ RUN --mount=type=cache,target=/gomod-cache --mount=type=cache,target=/go-cache \
 
 FROM alpine:latest AS runtime
 WORKDIR /app
+RUN apk add --no-cache tzdata
 ENV TZ="UTC"
 COPY --from=backend /backend-build/blog /app/blog
 ENTRYPOINT [ "/app/blog" ]
