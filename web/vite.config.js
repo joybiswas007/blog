@@ -31,24 +31,7 @@ export default defineConfig({
     }
   },
   build: {
-    manifest: true,
-    outDir: "dist",
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["react", "react-dom"],
-          router: ["react-router-dom"],
-          icons: [
-            "react-icons",
-            "react-icons/fi",
-            "react-icons/tb",
-            "react-icons/fa6",
-            "react-icons/bs"
-          ],
-          markdown: ["react-markdown", "remark-gfm"]
-        }
-      }
-    }
+    outDir: "dist"
   },
   preview: {
     host: "0.0.0.0",
