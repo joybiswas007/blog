@@ -1,6 +1,6 @@
 module github.com/joybiswas007/blog
 
-go 1.25.0
+go 1.25.3
 
 require (
 	github.com/chenyahui/gin-cache v1.10.0

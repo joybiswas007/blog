@@ -14,7 +14,6 @@ CLI_ENTRY = cmd/cli/main.go
 # ==============================================================================
 GIT_COMMIT := $(shell git rev-parse --short HEAD)
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
-# BUILD_TIME := $(shell date -u +'%Y-%m-%dT%H:%M:%S.%3NZ')
 #Current UTC time in milliseconds.
 BUILD_TIME := $(shell date -u +%s%3N)
 
