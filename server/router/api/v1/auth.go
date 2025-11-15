@@ -110,7 +110,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 
 	} else {
 		// No record exists, so create one.
-		aid, err := s.db.Users.LogAttempt(user.ID, c.ClientIP(), currentAttempt, currentBans)
+		aid, err := s.db.Users.LogAttempt(user.ID, c.ClientIP(), c.Request.UserAgent(), currentAttempt, currentBans)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
