@@ -47,7 +47,6 @@ func (s *APIV1Service) RegisterRoutes() http.Handler {
 
 	if s.config.IsProduction {
 		gin.SetMode(gin.ReleaseMode)
-		r.Use(s.CheckIP())
 	}
 	r.Use(s.RateLimiter())
 

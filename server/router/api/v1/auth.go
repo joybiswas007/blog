@@ -11,7 +11,6 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/joybiswas007/blog/internal/database"
-	"github.com/joybiswas007/blog/pkg"
 )
 
 // registerAuthRoutes registers the routes related to authentication.
@@ -28,11 +27,6 @@ func registerAuthRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	auth.GET("attempts", s.handleLoginAttemptsViewer)
 
 	auth.POST("reset-password", s.resetPasswdHandler)
-
-	ip := auth.Group("ip")
-	ip.POST("ban", s.banIPHandler)
-	ip.POST("unban/:id", s.unbanIPHandler)
-	ip.GET("bans-list", s.bannedIPLists)
 
 	// this route is only being used to securely manage the posts.
 	registerPostRoutes(auth, s)
@@ -102,32 +96,6 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 				return
 			}
 
-			// Automated bruteforce prevention.
-			if currentBans > 9 {
-				ipInt := pkg.IPToInt64(c.ClientIP())
-				isBanned, banDetails, err := s.db.Users.IP.IsBanned(ipInt)
-				if err != nil {
-					c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
-					return
-				}
-				switch isBanned {
-				case true:
-					c.JSON(http.StatusForbidden, gin.H{"error": banDetails.Reason})
-				case false:
-					ipBan := &database.IPBan{
-						FromIP: ipInt,
-						ToIP:   ipInt,
-						Reason: database.DefaultBanReason,
-					}
-					err = s.db.Users.IP.Ban(ipBan)
-					if err != nil {
-						c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-						return
-					}
-					c.JSON(http.StatusForbidden, gin.H{"error": "This ip address has been banned."})
-				}
-				return
-			}
 			ipBanMsg := fmt.Sprintf("This ip address has been banned for %d hours.", s.config.BanDuration)
 			c.JSON(http.StatusForbidden, gin.H{"error": ipBanMsg})
 			return
@@ -270,81 +238,6 @@ func (s *APIV1Service) sessionsHandler(c *gin.Context) {
 			"history":     iphistory,
 			"total_count": totalCount,
 		}})
-}
-
-// banIPHandler ban IPAddresses.
-func (s *APIV1Service) banIPHandler(c *gin.Context) {
-	var input struct {
-		FromIP string `json:"from_ip" binding:"required,ip"`
-		ToIP   string `json:"to_ip" binding:"required,ip"`
-		Reason string `json:"reason" binding:"required"`
-	}
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	ban := &database.IPBan{
-		FromIP: pkg.IPToInt64(input.FromIP),
-		ToIP:   pkg.IPToInt64(input.ToIP),
-		Reason: input.Reason,
-	}
-
-	err := s.db.Users.IP.Ban(ban)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "IP has been banned!"})
-}
-
-// unbanIPHandler removes ip from the bans list.
-func (s *APIV1Service) unbanIPHandler(c *gin.Context) {
-	banID, err := getIDFromParam(c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	err = s.db.Users.IP.Unban(int64(banID))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "IP has been unbanned!"})
-}
-
-func (s *APIV1Service) bannedIPLists(c *gin.Context) {
-	limitStr := c.DefaultQuery("limit", "25")
-	offsetStr := c.DefaultQuery("offset", "0")
-
-	limit, err := strconv.ParseInt(limitStr, 10, 64)
-	if err != nil {
-		s.logger.Error(err.Error())
-		limit = 10
-	}
-
-	offset, err := strconv.ParseInt(offsetStr, 10, 64)
-	if err != nil {
-		s.logger.Error(err.Error())
-		offset = 0
-	}
-
-	lists, totalCount, err := s.db.Users.IP.GetBansList(limit, offset)
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "IP Bans List is Empty!"})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"lists": lists, "total_count": totalCount})
-
 }
 
 // resetPasswdHandler reset password.

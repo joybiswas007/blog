@@ -6,8 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/joybiswas007/blog/pkg"
-
 	"golang.org/x/time/rate"
 )
 
@@ -85,35 +83,6 @@ func (s *APIV1Service) RateLimiter() gin.HandlerFunc {
 		}
 
 		// If the request is allowed, proceed to the next handler in the chain.
-		c.Next()
-	}
-}
-
-// CheckIP returns a Gin middleware handler that checks if the client's IP address is banned.
-// If banned, it aborts the request with a forbidden error response using AbortWithError.
-// If an internal error occurs during the check, it aborts with an internal server error.
-// Otherwise, it calls c.Next() to proceed with the handler chain.
-// This middleware should be used to protect routes from banned IPs.
-func (s *APIV1Service) CheckIP() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		// Convert client's IP to int64 for ban range checking.
-		ipInt := pkg.IPToInt64(c.ClientIP())
-
-		// Check if the IP is banned using the database model.
-		isBanned, _, err := s.db.Users.IP.IsBanned(ipInt)
-		if err != nil {
-			// Abort on internal errors (e.g., DB connection issues).
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		// If banned, abort with forbidden error and message.
-		if isBanned {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "This ip address has been banned."})
-			return
-		}
-
-		// IP is not banned; proceed to the next handler.
 		c.Next()
 	}
 }
