@@ -1,10 +1,8 @@
 import axios from "axios";
 import { clearAuthTokens, getAuthTokens, setAuthTokens } from "@/utils/auth";
 
-const baseURL = "http://localhost:8080";
-
 const api = axios.create({
-  baseURL: `${baseURL}/api/v1`,
+  baseURL: "/api/v1",
   headers: {
     "Content-Type": "application/json"
   }
@@ -86,16 +84,12 @@ api.interceptors.response.use(
           throw new Error("No refresh token available");
         }
 
-        const response = await axios.post(
-          `${baseURL}/api/v1/auth/refresh`,
-          "",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${refresh_token}`
-            }
+        const response = await axios.post("/api/v1/auth/refresh", "", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${refresh_token}`
           }
-        );
+        });
 
         const { access_token, refresh_token: newRefreshToken } = response.data;
         setAuthTokens({ access_token, refresh_token: newRefreshToken });

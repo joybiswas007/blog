@@ -1,11 +1,12 @@
 {
   "name": "web",
   "private": true,
-  "version": "1.2.1",
+  "version": "1.2.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "release": "vite build --mode release --outDir=../server/router/frontend/dist --emptyOutDir",
     "lint": "eslint . --ext .js,.jsx",
     "lint:fix": "eslint . --ext .js,.jsx --fix",
     "format": "prettier --write \"**/*.{js,jsx,json,css,scss}\"",
