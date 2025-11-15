@@ -1,11 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  FiUsers,
-  FiSlash,
-  FiShield,
-  FiArrowLeft,
-  FiChevronRight
-} from "react-icons/fi";
+import { FiUsers, FiShield, FiArrowLeft, FiChevronRight } from "react-icons/fi";
 
 const Tools = () => {
   const tools = [
@@ -15,13 +9,6 @@ const Tools = () => {
       desc: "View and manage active user sessions",
       icon: <FiUsers />,
       color: "#61afef" // blue
-    },
-    {
-      name: "IP Bans",
-      path: "/auth/tools/ip-bans",
-      desc: "Manage IP address restrictions",
-      icon: <FiSlash />,
-      color: "#e06c75" // red
     },
     {
       name: "Login Attempts",

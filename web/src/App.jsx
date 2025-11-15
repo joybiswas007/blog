@@ -15,7 +15,6 @@ const EditPost = lazy(() => import("@/pages/EditPost"));
 const ResetPassword = lazy(() => import("@/components/ResetPassword"));
 const Tools = lazy(() => import("@/pages/Tools"));
 const Sessions = lazy(() => import("@/components/Sessions"));
-const IPBan = lazy(() => import("@/components/IPBan"));
 const LoginAttempts = lazy(() => import("@/components/LoginAttempts"));
 const NotFound = lazy(() => import("@/components/NotFound"));
 
@@ -46,7 +45,6 @@ const App = () => {
               <Route path="/auth/reset-password" element={<ResetPassword />} />
               <Route path="/auth/tools" element={<Tools />} />
               <Route path="/auth/tools/sessions" element={<Sessions />} />
-              <Route path="/auth/tools/ip-bans" element={<IPBan />} />
               <Route
                 path="/auth/tools/login-attempts"
                 element={<LoginAttempts />}
