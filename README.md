@@ -1,6 +1,6 @@
 # Blog
 
-A personal blog built with Go (backend) & React (frontend).
+A personal blog built with Go & React.
 
 ---
 
@@ -46,11 +46,6 @@ You can run the blog with Docker or manually.
     cp example.redis.conf redis.conf
     # Edit .blog.yaml, redis.conf as you need
    ```
-   - Copy `env.example` to `.env` inside the `web` directory and configure as needed:
-     ```bash
-     cp web/env.example web/.env
-     # Edit web/.env to match your environment
-     ```
 2. **Build and Start:**
    ```bash
    make build-docker
@@ -78,9 +73,6 @@ You can run the blog with Docker or manually.
    ```bash
    cd web
    npm install
-   cp env.example .env
-   # Edit .env as needed
-   ```
 3. Start development server:
    ```bash
    npm run dev
