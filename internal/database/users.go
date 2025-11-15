@@ -38,7 +38,6 @@ type LoginAttempt struct {
 	IP              string       `json:"ip"`           // IP address of the login attempt (defaults to '0.0.0.0')
 	LastAttempt     time.Time    `json:"last_attempt"` // Timestamp of the last attempt (defaults to NOW())
 	Attempts        int64        `json:"attempts"`     // Number of failed attempts in the current window
-	UserAgent       string       `json:"user_agent"`   // UserAgent used while attempting login
 	BannedUntil     sql.NullTime `json:"-"`            // Timestamp until which the user/IP is banned
 	BannedUntilJSON *time.Time   `json:"banned_until"` // Timestamp until which the user/IP is banned
 }
@@ -233,7 +232,7 @@ func (m UserModel) UpdatePassword(user *User) error {
 // LogAttempt logs a user's login attempt into the login_attempts table.
 // It inserts a new record with the provided userID, IP, and attempts, bans count.
 // Returns the generated attempt ID or an error.
-func (m UserModel) LogAttempt(userID int64, ip, userAgent string, attempts int64) (attemptID int64, err error) {
+func (m UserModel) LogAttempt(userID int64, ip string, attempts int64) (attemptID int64, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -242,11 +241,10 @@ func (m UserModel) LogAttempt(userID int64, ip, userAgent string, attempts int64
 			user_id, 
 			ip,
 			attempts,
-			user_agent
-		) VALUES ($1, $2, $3, $4)
+		) VALUES ($1, $2, $3)
 		RETURNING id`
 
-	args := []any{userID, ip, attempts, userAgent}
+	args := []any{userID, ip, attempts}
 
 	err = m.DB.QueryRow(ctx, query, args...).Scan(&attemptID)
 	if err != nil {
@@ -299,7 +297,7 @@ func (m UserModel) GetAllLoginAttempts(limit, offset int64) ([]LoginAttempt, int
 	defer cancel()
 
 	query := `
-        	SELECT COUNT(*) OVER() AS total_count, id, user_id, host(ip), last_attempt, attempts, user_agent, banned_until
+        	SELECT COUNT(*) OVER() AS total_count, id, user_id, host(ip), last_attempt, attempts, banned_until
         	FROM login_attempts
         	ORDER BY last_attempt DESC
         	LIMIT $1 OFFSET $2`
@@ -325,7 +323,6 @@ func (m UserModel) GetAllLoginAttempts(limit, offset int64) ([]LoginAttempt, int
 			&attempt.IP,
 			&attempt.LastAttempt,
 			&attempt.Attempts,
-			&attempt.UserAgent,
 			&attempt.BannedUntil,
 		)
 		if err != nil {
