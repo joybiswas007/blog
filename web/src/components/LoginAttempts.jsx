@@ -136,9 +136,6 @@ const LoginAttempts = () => {
                     <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
                       IP Address
                     </th>
-                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap min-w-[200px]">
-                      User Agent
-                    </th>
                     <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
                       Last Attempt
                     </th>
@@ -161,14 +158,6 @@ const LoginAttempts = () => {
                       </td>
                       <td className="px-3 py-3 font-medium text-[var(--color-accent-primary)]">
                         {attempt.ip}
-                      </td>
-                      <td
-                        className="px-3 py-3 text-[var(--color-text-primary)] max-w-[300px]"
-                        title={attempt.user_agent}
-                      >
-                        <span className="inline-block truncate max-w-full">
-                          {truncateUserAgent(attempt.user_agent, 50)}
-                        </span>
                       </td>
                       <td className="px-3 py-3 text-[var(--color-text-primary)] whitespace-nowrap">
                         {formatDateTime(attempt.last_attempt)}
