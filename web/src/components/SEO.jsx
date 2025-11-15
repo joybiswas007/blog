@@ -10,6 +10,7 @@ export default function SEO({
     VITE_BLOG_DESCRIPTION,
     VITE_BLOG_KEYWORDS,
     VITE_AUTHOR_NAME: author,
+    VITE_AUTHOR_TWITTER: twitter,
     VITE_GTAGID: gTagID
   } = import.meta.env;
   title = title ? `${title} - ${blogName}` : blogName;
@@ -20,6 +21,9 @@ export default function SEO({
 
   // Get current URL safely for SSR compatibility
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+
+  const twitterHandle = new URL(twitter).pathname.replace("/", "@");
+  const og_image = `${window.location.protocol}//${window.location.host}/og-image.png`;
 
   return (
     <>
@@ -35,46 +39,21 @@ export default function SEO({
         title={`${blogName} RSS Feed`}
       />
       {gTagID && <GoogleAnalytics gTagID={gTagID} />}
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:type" content={ogType} />
-      <meta property="og:url" content={currentUrl} />
-      <meta property="og:site_name" content={blogName} />
-      {/* {ogImage && <meta property="og:image" content={ogImage} />} */}
 
       {/* Open Graph / Facebook */}
-      <meta property="og:type" content="website" />
+      <meta property="og:type" content={ogType} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={currentUrl} />
       <meta property="og:site_name" content={blogName} />
-      <meta property="og:locale" content="en_US" />
+      <meta property="og:image" content={og_image} />
 
       {/* Twitter Card */}
-      <meta name="twitter:card" content="twitter_card_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-
-      {/* Additional SEO Meta Tags */}
-      <meta name="theme-color" content="#0d1117" />
-      <meta name="msapplication-navbutton-color" content="#0d1117" />
-      <meta name="mobile-web-app-capable" content="yes" />
-      <meta
-        name="apple-mobile-web-app-status-bar-style"
-        content="black-translucent"
-      />
-      <meta name="msapplication-TileColor" content="#0d1117" />
-
-      {/* Geo Tags */}
-      <meta name="geo.region" content="Global" />
-      <meta name="geo.placename" content="Remote" />
-
-      {/* Professional Tags */}
-      <meta name="category" content="Technology" />
-      <meta name="coverage" content="Worldwide" />
-      <meta name="rating" content="General" />
-      <meta name="HandheldFriendly" content="True" />
-      <meta name="MobileOptimized" content="320" />
+      <meta name="twitter:site" content={twitterHandle} />
+      <meta name="twitter:creator" content={twitterHandle} />
+      <meta name="twitter:image" content={og_image} />
     </>
   );
 }
