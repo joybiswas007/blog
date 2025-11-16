@@ -111,18 +111,18 @@ const Dashboard = () => {
             <span>New Post</span>
           </Link>
           <Link
-            to="/auth/tools"
+            to="/auth/login-attempts"
             className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef] hover:-translate-y-px"
           >
             <FiTool />
-            <span>Tools</span>
+            <span>Login Attempts</span>
           </Link>
           <Link
             to="/auth/reset-password"
             className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef] hover:-translate-y-px"
           >
             <FiKey />
-            <span>Password</span>
+            <span>Reset Password</span>
           </Link>
           <button
             onClick={handleLogout}

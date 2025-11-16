@@ -54,11 +54,6 @@ const LoginAttempts = () => {
         })
       : "—";
 
-  const truncateUserAgent = (ua, maxLength = 40) => {
-    if (!ua || ua === "Unknown") return ua;
-    return ua.length > maxLength ? ua.substring(0, maxLength) + "..." : ua;
-  };
-
   const totalPages = Math.ceil(totalAttempts / attemptsPerPage);
 
   const handlePageChange = page => {
@@ -94,11 +89,11 @@ const LoginAttempts = () => {
               <span>Refresh</span>
             </button>
             <Link
-              to="/auth/tools"
+              to="/dashboard"
               className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
             >
               <FiArrowLeft />
-              <span>Tools</span>
+              <span>Dashboard</span>
             </Link>
           </div>
         </div>
