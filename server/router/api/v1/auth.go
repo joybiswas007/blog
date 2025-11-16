@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/joybiswas007/blog/internal/database"
 )
 
 // registerAuthRoutes registers the routes related to authentication.
@@ -22,8 +20,6 @@ func registerAuthRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 		c.JSON(http.StatusOK, gin.H{"message": "OK"})
 	})
 	auth.GET("login-attempts", s.handleLoginAttemptsViewer)
-
-	auth.POST("reset-password", s.resetPasswdHandler)
 
 	// this route is only being used to securely manage the posts.
 	registerPostRoutes(auth, s)
@@ -181,52 +177,6 @@ func (s *APIV1Service) refreshTokenHandler(c *gin.Context) {
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
 	})
-}
-
-// resetPasswdHandler reset password.
-func (s *APIV1Service) resetPasswdHandler(c *gin.Context) {
-	var input struct {
-		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required,min=8,max=72"`
-	}
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	uid := c.GetFloat64("user_id")
-	if uid == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": ErrNotEnoughPerm})
-		return
-	}
-
-	user, err := s.db.Users.GetByEmail(input.Email)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	if user.ID != int64(uid) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrUnauthorized})
-		return
-	}
-
-	updateUser := &database.User{
-		ID: user.ID,
-	}
-
-	err = updateUser.Password.Set(input.Password)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	if err := s.db.Users.UpdatePassword(updateUser); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Password updated successfully!"})
 }
 
 // handleLoginAttemptsViewer handle login attempts data.
