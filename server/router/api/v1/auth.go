@@ -1,14 +1,12 @@
 package v1
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
 
 	"github.com/joybiswas007/blog/internal/database"
 )
@@ -23,8 +21,7 @@ func registerAuthRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	auth.GET("status", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "OK"})
 	})
-	auth.GET("sessions", s.sessionsHandler)
-	auth.GET("attempts", s.handleLoginAttemptsViewer)
+	auth.GET("login-attempts", s.handleLoginAttemptsViewer)
 
 	auth.POST("reset-password", s.resetPasswdHandler)
 
@@ -133,12 +130,6 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		return
 	}
 
-	err = s.updateIPHistory(user.ID, c.ClientIP())
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
 	// Successful login, reset all login_attempts restriction.
 	err = s.db.Users.ResetAllLoginAttempt(user.ID, attemptID)
 	if err != nil {
@@ -179,12 +170,6 @@ func (s *APIV1Service) refreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	err = s.updateIPHistory(int64(uid), c.ClientIP())
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
 	accessToken, refreshToken, err := generateTokens(int64(uid), s)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -196,46 +181,6 @@ func (s *APIV1Service) refreshTokenHandler(c *gin.Context) {
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
 	})
-}
-
-// sessionsHandler fetches users serssions.
-func (s *APIV1Service) sessionsHandler(c *gin.Context) {
-	limitStr := c.DefaultQuery("limit", "10")
-	offsetStr := c.DefaultQuery("offset", "0")
-
-	uid := c.GetFloat64("user_id")
-	if uid == 0 {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrNotEnoughPerm})
-		return
-	}
-
-	limit, err := strconv.ParseInt(limitStr, 10, 64)
-	if err != nil {
-		s.logger.Error(err.Error())
-		limit = 10
-	}
-
-	offset, err := strconv.ParseInt(offsetStr, 10, 64)
-	if err != nil {
-		s.logger.Error(err.Error())
-		offset = 0
-	}
-
-	iphistory, totalCount, err := s.db.Users.IP.GetAllHistory(int64(uid), limit, offset)
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": database.ErrRecordNotFound})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"sessions": gin.H{
-			"history":     iphistory,
-			"total_count": totalCount,
-		}})
 }
 
 // resetPasswdHandler reset password.

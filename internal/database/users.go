@@ -14,7 +14,6 @@ import (
 // UserModel type.
 type UserModel struct {
 	DB *pgxpool.Pool
-	IP IPModel
 }
 
 // User struct to represent an individual user. Importantly, notice how we are

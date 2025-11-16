@@ -58,6 +58,6 @@ func NewModels(pool *pgxpool.Pool) Models {
 	return Models{
 		Posts: PostModel{DB: pool},
 		Tags:  TagModel{DB: pool},
-		Users: UserModel{DB: pool, IP: IPModel{DB: pool}},
+		Users: UserModel{DB: pool},
 	}
 }
