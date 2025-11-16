@@ -7,12 +7,11 @@ import {
   FiEdit2,
   FiTrash2,
   FiLogOut,
-  FiKey,
   FiPlus,
   FiSend,
-  FiTool,
   FiFileText
 } from "react-icons/fi";
+import { GiAngryEyes } from "react-icons/gi";
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
@@ -107,29 +106,22 @@ const Dashboard = () => {
             to="/auth/posts/create"
             className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[#61afef] text-[#21252b] border border-[#61afef] hover:bg-[#84c0f4] hover:border-[#84c0f4] hover:-translate-y-px"
           >
-            <FiPlus />
+            <FiPlus size={24} />
             <span>New Post</span>
           </Link>
           <Link
             to="/auth/login-attempts"
             className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef] hover:-translate-y-px"
           >
-            <FiTool />
+            <GiAngryEyes size={24} />
             <span>Login Attempts</span>
-          </Link>
-          <Link
-            to="/auth/reset-password"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef] hover:-translate-y-px"
-          >
-            <FiKey />
-            <span>Reset Password</span>
           </Link>
           <button
             onClick={handleLogout}
             className="inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans text-[#e06c75] bg-[#2c313a] border border-[#353b45] hover:bg-[rgba(224,108,117,0.1)] hover:border-[#e06c75] hover:-translate-y-px"
             type="button"
           >
-            <FiLogOut />
+            <FiLogOut size={24} />
             <span>Logout</span>
           </button>
         </div>
