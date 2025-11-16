@@ -62,11 +62,9 @@ const LoginAttempts = () => {
     }
   };
 
-  const pageTitle = "Login Attempts :: Joy's Blog";
-
   return (
     <>
-      <title>{pageTitle}</title>
+      <title>Login Attempts</title>
       <div className="w-full max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">

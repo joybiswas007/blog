@@ -94,11 +94,9 @@ const Dashboard = () => {
     });
   };
 
-  const pageTitle = "Dashboard :: Joy's Blog";
-
   return (
     <>
-      <title>{pageTitle}</title>
+      <title>Dashboard</title>
       <div className="w-full max-w-5xl mx-auto space-y-6">
         {/* Action Toolbar */}
         <div className="flex flex-wrap items-center gap-3 p-4 bg-[#21252b] border border-[#2c313a] rounded">
