@@ -20,7 +20,7 @@ const LoginAttempts = () => {
     try {
       setLoading(true);
       const offset = (page - 1) * attemptsPerPage;
-      const response = await api.get("/auth/attempts", {
+      const response = await api.get("/auth/login-attempts", {
         params: {
           limit: attemptsPerPage,
           offset: offset

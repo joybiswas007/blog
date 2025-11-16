@@ -1,15 +1,8 @@
 import { Link } from "react-router-dom";
-import { FiUsers, FiShield, FiArrowLeft, FiChevronRight } from "react-icons/fi";
+import { FiShield, FiArrowLeft, FiChevronRight } from "react-icons/fi";
 
 const Tools = () => {
   const tools = [
-    {
-      name: "Sessions",
-      path: "/auth/tools/sessions",
-      desc: "View and manage active user sessions",
-      icon: <FiUsers />,
-      color: "#61afef" // blue
-    },
     {
       name: "Login Attempts",
       path: "/auth/tools/login-attempts",
