@@ -239,7 +239,7 @@ func (m UserModel) LogAttempt(userID int64, ip string, attempts int64) (attemptI
 		INSERT INTO login_attempts (
 			user_id, 
 			ip,
-			attempts,
+			attempts
 		) VALUES ($1, $2, $3)
 		RETURNING id`
 
