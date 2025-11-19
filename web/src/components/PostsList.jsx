@@ -18,7 +18,7 @@ const PostItem = ({
   const tagLinkParams = { limit, offset: 0, order_by: orderBy, sort };
 
   return (
-    <article className="group relative px-4 py-3 transition-all duration-150 border-l-2 border-l-transparent hover:bg-[#2c313a] hover:border-l-[#61afef]">
+    <article className="group relative px-4 py-3 transition-all duration-150 border-l-2 border-l-transparent hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-accent-primary)]">
       <Link
         to={`/posts/${post.slug}`}
         aria-label={`Read post: ${post.title}`}
@@ -26,22 +26,22 @@ const PostItem = ({
       >
         <div className="flex-1 min-w-0">
           {/* Title */}
-          <h2 className="text-[15px] font-medium font-sans text-[#abb2bf] transition-colors duration-150 group-hover:text-[#61afef] line-clamp-1 mb-2">
+          <h2 className="text-[15px] font-medium font-sans text-[var(--color-text-primary)] transition-colors duration-150 group-hover:text-[var(--color-accent-primary)] line-clamp-1 mb-2">
             {post.title}
           </h2>
 
           {/* Meta info */}
-          <div className="flex items-center gap-2 mb-2 text-[11px] font-mono text-[#5c6370]">
+          <div className="flex items-center gap-2 mb-2 text-[11px] font-mono text-[var(--color-text-secondary)]">
             <span>{formatDate(post.created_at)}</span>
             <span>·</span>
             <span>{CalculateReadTime(post.content)}</span>
           </div>
 
           {/* Preview */}
-          <div className="text-[13px] text-[#5c6370] font-sans line-clamp-2 leading-[1.6] group-hover:text-[#abb2bf] transition-colors duration-150">
+          <div className="text-[13px] text-[var(--color-text-secondary)] font-sans line-clamp-2 leading-[1.6] group-hover:text-[var(--color-text-primary)] transition-colors duration-150">
             <Suspense
               fallback={
-                <span className="text-[13px] font-mono text-[#5c6370] animate-pulse">
+                <span className="text-[13px] font-mono text-[var(--color-text-secondary)] animate-pulse">
                   Loading preview...
                 </span>
               }
@@ -61,7 +61,7 @@ const PostItem = ({
             <Link
               key={tagVal}
               to={buildQueryString({ ...tagLinkParams, tag: tagVal })}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] no-underline font-mono bg-[rgba(97,175,239,0.1)] text-[#61afef] transition-all duration-150 hover:bg-[rgba(97,175,239,0.2)]"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] no-underline font-mono bg-[rgba(97,175,239,0.1)] text-[var(--color-accent-primary)] transition-all duration-150 hover:bg-[rgba(97,175,239,0.2)]"
               aria-label={`Filter by tag ${tagVal}`}
               onClick={e => e.stopPropagation()}
             >
@@ -77,14 +77,39 @@ const PostItem = ({
 // --- Sub-components for different states ---
 
 const LoadingState = () => (
-  <div className="flex flex-col items-center justify-center py-16">
-    <div className="w-8 h-8 border-[3px] border-t-transparent border-[#61afef] rounded-full animate-spin mb-3"></div>
-    <p className="text-[13px] font-mono text-[#5c6370]">Loading posts...</p>
+  <div className="bg-[var(--color-sidebar-bg)] space-y-0">
+    {[1, 2, 3, 4, 5].map((index) => (
+      <div key={index} className="px-4 py-3 border-l-2 border-l-transparent">
+        {/* Title skeleton */}
+        <div className="h-5 bg-[var(--color-hover-bg)] rounded animate-shimmer mb-2 w-3/4"></div>
+
+        {/* Meta info skeleton */}
+        <div className="flex items-center gap-2 mb-2">
+          <div className="h-3 bg-[var(--color-hover-bg)] rounded animate-shimmer w-20"></div>
+          <div className="h-3 w-1 bg-[var(--color-hover-bg)] rounded"></div>
+          <div className="h-3 bg-[var(--color-hover-bg)] rounded animate-shimmer w-16"></div>
+        </div>
+
+        {/* Preview skeleton */}
+        <div className="space-y-2">
+          <div className="h-3 bg-[var(--color-hover-bg)] rounded animate-shimmer w-full"></div>
+          <div className="h-3 bg-[var(--color-hover-bg)] rounded animate-shimmer w-5/6"></div>
+        </div>
+
+        {/* Tags skeleton */}
+        <div className="flex items-center gap-2 mt-3">
+          <div className="h-5 bg-[var(--color-hover-bg)] rounded animate-shimmer w-16"></div>
+          <div className="h-5 bg-[var(--color-hover-bg)] rounded animate-shimmer w-20"></div>
+        </div>
+
+        {index < 5 && <div className="h-px bg-[var(--color-editor-bg)] mx-0 mt-3" />}
+      </div>
+    ))}
   </div>
 );
 
 const ErrorState = ({ error }) => (
-  <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+  <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[var(--color-syntax-variable)] text-[var(--color-syntax-variable)] font-mono text-[13px]">
     <strong className="font-semibold">Error:</strong> {error}
   </div>
 );
@@ -100,21 +125,21 @@ const NoPostsFound = ({ tag, buildQueryString, limit }) => {
 
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-      <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[#2c313a] mb-4">
-        <BsFileText className="w-7 h-7 text-[#5c6370]" />
+      <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-hover-bg)] mb-4">
+        <BsFileText className="w-7 h-7 text-[var(--color-text-secondary)]" />
       </div>
-      <h3 className="text-base font-medium mb-2 font-sans text-[#abb2bf]">
+      <h3 className="text-base font-medium mb-2 font-sans text-[var(--color-text-primary)]">
         No posts found
       </h3>
-      <p className="text-[13px] max-w-md text-[#5c6370] leading-relaxed">
+      <p className="text-[13px] max-w-md text-[var(--color-text-secondary)] leading-relaxed">
         {tag ? (
           <>
             No posts tagged with{" "}
-            <strong className="font-semibold text-[#61afef]">#{tag}</strong>.
+            <strong className="font-semibold text-[var(--color-accent-primary)]">#{tag}</strong>.
             Try removing the filter or{" "}
             <Link
               to={allPostsLink}
-              className="no-underline text-[#61afef] transition-colors duration-150 hover:text-[#84c0f4] hover:underline"
+              className="no-underline text-[var(--color-accent-primary)] transition-colors duration-150 hover:text-[var(--color-accent-hover)] hover:underline"
             >
               view all posts
             </Link>
@@ -143,12 +168,15 @@ const PostsList = ({ posts, loading, error, ...props }) => {
   if (!posts || posts.length === 0) return <NoPostsFound {...props} />;
 
   return (
-    <div className="bg-[#21252b]">
+    <div className="bg-[var(--color-sidebar-bg)]">
       {posts.map((post, index) => (
-        <div key={post.id}>
+        <div
+          key={post.id}
+          className={`animate-fade-in opacity-0 stagger-${Math.min(index + 1, 5)}`}
+        >
           <PostItem post={post} {...props} />
           {index < posts.length - 1 && (
-            <div className="h-px bg-[#282c34] mx-4" />
+            <div className="h-px bg-[var(--color-editor-bg)] mx-4" />
           )}
         </div>
       ))}

@@ -72,17 +72,17 @@ const Sidebar = () => {
   const SidebarContent = () => (
     <>
       {/* Explorer Header */}
-      <div className="flex items-center justify-between px-3 py-2 bg-[#282c34]">
+      <div className="flex items-center justify-between px-3 py-2 bg-[var(--color-editor-bg)]">
         <div className="flex items-center gap-2">
-          <BsChevronRight className="w-3 h-3 text-[#5c6370]" />
-          <span className="text-[10px] font-bold tracking-widest uppercase font-sans text-[#5c6370]">
+          <BsChevronRight className="w-3 h-3 text-[var(--color-text-secondary)]" />
+          <span className="text-[10px] font-bold tracking-widest uppercase font-sans text-[var(--color-text-secondary)]">
             Netrw
           </span>
         </div>
         {isMobile && (
           <button
             onClick={() => setIsOpen(false)}
-            className="text-[#5c6370] hover:text-[#abb2bf] transition-colors"
+            className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
             aria-label="Close menu"
           >
             <BsX className="w-5 h-5" />
@@ -98,27 +98,25 @@ const Sidebar = () => {
             <Link
               key={item.to}
               to={item.to}
-              className={`group flex items-center gap-2 px-3 py-1.5 no-underline font-sans text-[13px] transition-all duration-150 border-l-2 ${
-                isActive
-                  ? "bg-[#2c313a] border-l-[#61afef] text-[#61afef]"
-                  : "border-l-transparent text-[#abb2bf] hover:bg-[#2c313a] hover:border-l-[#5c6370]"
-              }`}
+              className={`group flex items-center gap-2 px-3 py-1.5 no-underline font-sans text-[13px] transition-all duration-150 border-l-2 ${isActive
+                  ? "bg-[var(--color-hover-bg)] border-l-[var(--color-accent-primary)] text-[var(--color-accent-primary)]"
+                  : "border-l-transparent text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-text-secondary)]"
+                }`}
               aria-label={`Navigate to ${item.label}`}
             >
               <span className="w-3 flex items-center justify-center">
                 {isActive ? (
-                  <span className="w-1 h-1 rounded-full bg-[#61afef]"></span>
+                  <span className="w-1 h-1 rounded-full bg-[var(--color-accent-primary)]"></span>
                 ) : (
-                  <span className="w-1 h-1 rounded-full bg-[#5c6370] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                  <span className="w-1 h-1 rounded-full bg-[var(--color-text-secondary)] opacity-0 group-hover:opacity-100 transition-opacity"></span>
                 )}
               </span>
 
               <span
-                className={`flex items-center transition-colors ${
-                  isActive
-                    ? "text-[#61afef]"
-                    : "text-[#5c6370] group-hover:text-[#abb2bf]"
-                }`}
+                className={`flex items-center transition-colors ${isActive
+                    ? "text-[var(--color-accent-primary)]"
+                    : "text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]"
+                  }`}
               >
                 {item.icon}
               </span>
@@ -126,7 +124,7 @@ const Sidebar = () => {
               <span className="flex-1">{item.label}</span>
 
               {isActive && (
-                <span className="text-[10px] font-mono text-[#5c6370]">●</span>
+                <span className="text-[10px] font-mono text-[var(--color-text-secondary)]">●</span>
               )}
             </Link>
           );
@@ -146,7 +144,7 @@ const Sidebar = () => {
                     to={getLink(social)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center w-8 h-8 rounded transition-colors no-underline text-[#5c6370] hover:text-[#61afef] hover:bg-[#2c313a]"
+                    className="flex items-center justify-center w-8 h-8 rounded transition-colors no-underline text-[var(--color-text-secondary)] hover:text-[var(--color-accent-primary)] hover:bg-[var(--color-hover-bg)]"
                     aria-label={social.label}
                     title={social.label}
                   >
@@ -156,7 +154,7 @@ const Sidebar = () => {
                   <Link
                     key={index}
                     to={getLink(social)}
-                    className="flex items-center justify-center w-8 h-8 rounded transition-colors no-underline text-[#5c6370] hover:text-[#61afef] hover:bg-[#2c313a]"
+                    className="flex items-center justify-center w-8 h-8 rounded transition-colors no-underline text-[var(--color-text-secondary)] hover:text-[var(--color-accent-primary)] hover:bg-[var(--color-hover-bg)]"
                     aria-label={social.label}
                     title={social.label}
                   >
@@ -177,7 +175,7 @@ const Sidebar = () => {
       {isMobile && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed top-0 left-0 z-50 w-12 h-8 flex items-center justify-center bg-[#21252b] text-[#abb2bf] hover:bg-[#282c34] transition-colors md:hidden"
+          className="fixed top-0 left-0 z-50 w-12 h-8 flex items-center justify-center bg-[var(--color-sidebar-bg)] text-[var(--color-text-primary)] hover:bg-[var(--color-editor-bg)] transition-colors md:hidden"
           aria-label="Open menu"
         >
           <BsList className="w-5 h-5" />
@@ -196,13 +194,11 @@ const Sidebar = () => {
       {/* Sidebar */}
       <aside
         className={`
-          flex flex-col bg-[#21252b] overflow-y-auto shrink-0
-          ${
-            isMobile
-              ? `fixed top-0 left-0 h-full w-60 z-50 transition-transform duration-300 ${
-                  isOpen ? "translate-x-0" : "-translate-x-full"
-                }`
-              : "w-60"
+          flex flex-col bg-[var(--color-sidebar-bg)] overflow-y-auto shrink-0
+          ${isMobile
+            ? `fixed top-0 left-0 h-full w-60 z-50 transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"
+            }`
+            : "w-60"
           }
         `}
       >

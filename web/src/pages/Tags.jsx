@@ -27,10 +27,24 @@ const Tags = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <div className="w-8 h-8 border-[3px] border-t-transparent border-[#61afef] rounded-full animate-spin mb-3"></div>
-        <div className="text-[13px] font-mono text-[#5c6370]">
-          Loading tags...
+      <div className="w-full max-w-3xl mx-auto">
+        {/* Header skeleton */}
+        <div className="flex items-center gap-2 px-3 py-2 mb-4 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
+          <div className="h-3 w-3 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
+          <div className="h-3 bg-[var(--color-hover-bg)] rounded animate-shimmer w-20"></div>
+        </div>
+
+        {/* Tags list skeleton */}
+        <div className="space-y-0 border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <div key={i} className="flex items-center justify-between px-4 py-3 border-b border-b-[var(--color-editor-bg)] last:border-b-0">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 bg-[var(--color-hover-bg)] rounded-full animate-shimmer"></div>
+                <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-24"></div>
+              </div>
+              <div className="h-5 bg-[var(--color-hover-bg)] rounded animate-shimmer w-16"></div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -38,7 +52,7 @@ const Tags = () => {
 
   if (error) {
     return (
-      <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+      <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[var(--color-syntax-variable)] text-[var(--color-syntax-variable)] font-mono text-[13px]">
         {error}
       </div>
     );
@@ -49,7 +63,7 @@ const Tags = () => {
       <SEO title="Tags" />
       <div className="w-full max-w-3xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-2 px-3 py-2 mb-4 bg-[#282c34] border-b border-b-[#2c313a]">
+        <div className="flex items-center gap-2 px-3 py-2 mb-4 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
           <BsChevronRight className="w-3 h-3 text-[#5c6370]" />
           <h1 className="text-[10px] font-bold tracking-widest uppercase font-sans text-[#5c6370]">
             All Tags
@@ -57,7 +71,7 @@ const Tags = () => {
         </div>
 
         {tags && tags.length > 0 ? (
-          <div className="space-y-0 border border-[#2c313a] rounded overflow-hidden bg-[#21252b]">
+          <div className="space-y-0 border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
             {tags.map((tag, index) => (
               <Link
                 key={index}
@@ -92,7 +106,7 @@ const Tags = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[#2c313a] mb-4">
+            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-hover-bg)] mb-4">
               <BsTag className="w-7 h-7 text-[#5c6370]" />
             </div>
             <h2 className="text-base font-medium mb-2 font-sans text-[#abb2bf]">

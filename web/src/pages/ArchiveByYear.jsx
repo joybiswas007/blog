@@ -59,10 +59,38 @@ const ArchiveByYear = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <div className="w-8 h-8 border-[3px] border-t-transparent border-[#61afef] rounded-full animate-spin mb-3"></div>
-        <div className="text-[13px] font-mono text-[#5c6370]">
-          Loading {year} posts...
+      <div className="w-full max-w-3xl mx-auto">
+        {/* Year Header skeleton */}
+        <div className="flex items-center justify-between px-4 py-3 mb-6 bg-[var(--color-sidebar-bg)] border border-[var(--color-hover-bg)] rounded">
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
+            <div className="h-6 bg-[var(--color-hover-bg)] rounded animate-shimmer w-20"></div>
+          </div>
+          <div className="h-5 bg-[var(--color-hover-bg)] rounded animate-shimmer w-16"></div>
+        </div>
+
+        {/* Month sections skeleton */}
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+              {/* Month header skeleton */}
+              <div className="flex items-center justify-between px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
+                <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-24"></div>
+                <div className="h-5 bg-[var(--color-hover-bg)] rounded animate-shimmer w-8"></div>
+              </div>
+
+              {/* Posts list skeleton */}
+              <div className="space-y-0">
+                {[1, 2, 3, 4].map((j) => (
+                  <div key={j} className="flex items-center gap-3 px-4 py-3 border-b border-b-[var(--color-editor-bg)] last:border-b-0">
+                    <div className="h-3 bg-[var(--color-hover-bg)] rounded animate-shimmer w-12"></div>
+                    <div className="w-3 h-3 bg-[var(--color-hover-bg)] rounded-full animate-shimmer"></div>
+                    <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer flex-1"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -70,7 +98,7 @@ const ArchiveByYear = () => {
 
   if (error) {
     return (
-      <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+      <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[var(--color-syntax-variable)] text-[var(--color-syntax-variable)] font-mono text-[13px]">
         {error}
       </div>
     );
@@ -84,7 +112,7 @@ const ArchiveByYear = () => {
       <SEO title={`Archives - ${year}`} />
       <div className="w-full max-w-3xl mx-auto">
         {/* Year Header */}
-        <div className="flex items-center justify-between px-4 py-3 mb-6 bg-[#21252b] border border-[#2c313a] rounded">
+        <div className="flex items-center justify-between px-4 py-3 mb-6 bg-[var(--color-sidebar-bg)] border border-[var(--color-hover-bg)] rounded">
           <div className="flex items-center gap-3">
             <BsCalendar3 className="w-5 h-5 text-[#61afef]" />
             <h1 className="text-xl font-bold font-sans text-[#abb2bf]">
@@ -101,10 +129,10 @@ const ArchiveByYear = () => {
             {months.map((month, monthIndex) => (
               <div
                 key={monthIndex}
-                className="border border-[#2c313a] rounded overflow-hidden bg-[#21252b]"
+                className="border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]"
               >
                 {/* Month Header */}
-                <div className="flex items-center justify-between px-3 py-2 bg-[#282c34] border-b border-b-[#2c313a]">
+                <div className="flex items-center justify-between px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
                   <h2 className="text-[13px] font-semibold font-sans text-[#abb2bf]">
                     {month}
                   </h2>
@@ -149,7 +177,7 @@ const ArchiveByYear = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[#2c313a] mb-4">
+            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--color-hover-bg)] mb-4">
               <BsCalendar3 className="w-7 h-7 text-[#5c6370]" />
             </div>
             <h3 className="text-base font-medium mb-2 font-sans text-[#abb2bf]">

@@ -112,6 +112,41 @@
     opacity: 0.5;
     @apply cursor-not-allowed;
   }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes pulse-glow {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.5;
+    }
+  }
 }
 
 @layer components {
@@ -121,6 +156,7 @@
     padding: 0 !important;
     border-radius: 0 !important;
   }
+
   .prose pre {
     background-color: var(--color-sidebar-bg) !important;
     padding: 1.25rem !important;
@@ -283,7 +319,7 @@
     line-height: 1.7;
   }
 
-  .prose li > p {
+  .prose li>p {
     @apply my-2;
   }
 
@@ -479,5 +515,39 @@
 
   .prose .footnotes li {
     @apply pl-6;
+  }
+
+  /* Animation Utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(to right,
+        transparent 0%,
+        rgba(171, 178, 191, 0.1) 50%,
+        transparent 100%);
+    background-size: 1000px 100%;
+  }
+
+  .stagger-1 {
+    animation-delay: 0.05s;
+  }
+
+  .stagger-2 {
+    animation-delay: 0.1s;
+  }
+
+  .stagger-3 {
+    animation-delay: 0.15s;
+  }
+
+  .stagger-4 {
+    animation-delay: 0.2s;
+  }
+
+  .stagger-5 {
+    animation-delay: 0.25s;
   }
 }

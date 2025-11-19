@@ -29,7 +29,7 @@ const BackToTop = () => {
   return (
     <button
       onClick={handleClick}
-      className="fixed z-50 bottom-20 md:bottom-8 right-4 md:right-6 bg-[#61afef] hover:bg-[#84c0f4] text-[#21252b] p-3 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.3)] transition-all duration-300 border-2 border-[#61afef] hover:scale-110 active:scale-95"
+      className="fixed z-50 bottom-20 md:bottom-8 right-4 md:right-6 bg-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] text-[var(--color-sidebar-bg)] p-3 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.3)] transition-all duration-300 border-2 border-[var(--color-accent-primary)] hover:scale-110 active:scale-95"
       aria-label="Back to top"
       type="button"
     >

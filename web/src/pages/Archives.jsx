@@ -56,18 +56,56 @@ const Archives = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <div className="w-8 h-8 border-[3px] border-t-transparent border-[#61afef] rounded-full animate-spin mb-3"></div>
-        <div className="text-[13px] font-mono text-[#5c6370]">
-          Loading archives...
-        </div>
+      <div className="w-full max-w-3xl mx-auto space-y-6">
+        {/* RSS Feed skeleton */}
+        <section className="border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
+            <div className="h-3.5 w-3.5 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
+            <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-24"></div>
+          </div>
+          <div className="p-4">
+            <div className="h-10 bg-[var(--color-hover-bg)] rounded animate-shimmer w-32"></div>
+          </div>
+        </section>
+
+        {/* Top Posts skeleton */}
+        <section className="border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
+            <div className="h-3.5 w-3.5 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
+            <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-24"></div>
+          </div>
+          <div className="space-y-0">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="flex items-center gap-3 px-4 py-3 border-b border-b-[var(--color-editor-bg)] last:border-b-0">
+                <div className="w-6 h-6 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
+                <div className="w-3 h-3 bg-[var(--color-hover-bg)] rounded-full animate-shimmer"></div>
+                <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer flex-1"></div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Archives by Year skeleton */}
+        <section className="border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
+            <div className="h-3.5 w-3.5 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
+            <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-20"></div>
+          </div>
+          <div className="p-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="h-12 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+      <div className="mx-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[var(--color-syntax-variable)] text-[var(--color-syntax-variable)] font-mono text-[13px]">
         {error}
       </div>
     );
@@ -78,8 +116,8 @@ const Archives = () => {
       <SEO title="Archives" />
       <div className="w-full max-w-3xl mx-auto space-y-6">
         {/* RSS Feed Section */}
-        <section className="border border-[#2c313a] rounded overflow-hidden bg-[#21252b]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34] border-b border-b-[#2c313a]">
+        <section className="border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
             <BsRss className="w-3.5 h-3.5 text-[#e5c07b]" />
             <h2 className="text-[13px] font-semibold font-sans text-[#abb2bf]">
               RSS Feed
@@ -108,7 +146,7 @@ const Archives = () => {
           </div>
           <div className="p-0">
             {topError ? (
-              <div className="m-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75] font-mono text-[13px]">
+              <div className="m-4 px-4 py-3 rounded-l-none bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[var(--color-syntax-variable)] text-[var(--color-syntax-variable)] font-mono text-[13px]">
                 {topError}
               </div>
             ) : topPosts && topPosts.length > 0 ? (
