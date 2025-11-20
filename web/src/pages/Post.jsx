@@ -187,17 +187,38 @@ const Post = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <div className="text-[13px] font-mono text-[var(--color-syntax-variable)]">{error}</div>
+      <div className="flex flex-col items-center justify-center py-16 px-4">
+        <div className="max-w-lg w-full text-center space-y-3">
+          <p className="text-lg font-mono text-[var(--color-syntax-variable)]">
+            {error}
+          </p>
+          <Link
+            to="/"
+            className="inline-block mt-4 text-base text-[var(--color-accent-primary)] hover:underline"
+          >
+            ← Back to Home
+          </Link>
+        </div>
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <div className="text-[13px] font-mono text-[var(--color-text-secondary)]">
-          Post not found
+      <div className="flex flex-col items-center justify-center py-16 px-4">
+        <div className="max-w-lg w-full text-center space-y-3">
+          <h2 className="text-lg font-semibold font-sans text-[var(--color-text-primary)]">
+            Post Not Found
+          </h2>
+          <p className="text-sm font-sans text-[var(--color-text-secondary)]">
+            The post you're looking for doesn't exist or may have been removed.
+          </p>
+          <Link
+            to="/"
+            className="inline-block mt-4 text-sm text-[var(--color-accent-primary)] hover:underline"
+          >
+            ← Back to Home
+          </Link>
         </div>
       </div>
     );

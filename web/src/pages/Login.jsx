@@ -20,7 +20,7 @@ const Login = () => {
       const response = await api.post("/auth/login", { email, password });
       const { access_token, refresh_token } = response.data;
       setAuthTokens({ access_token, refresh_token });
-      navigate("/auth/drafts");
+      navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed. Please try again.");
     } finally {
@@ -31,14 +31,14 @@ const Login = () => {
   return (
     <>
       <title>Login</title>
-      <div className="flex items-center justify-center min-h-screen py-12">
+      <div className="flex items-center justify-center min-h-full py-8">
         <div className="w-full max-w-md space-y-0">
           {/* Header */}
-          <div className="text-center space-y-3 p-8 rounded-t bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] border-b-0">
-            <div className="w-16 h-16 mx-auto flex items-center justify-center rounded-full mb-4 bg-[var(--color-active-bg)] text-[var(--color-accent-primary)] text-[28px]">
+          <div className="text-center space-y-2 p-6 rounded-t bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] border-b-0">
+            <div className="w-12 h-12 mx-auto flex items-center justify-center rounded-full mb-2 bg-[var(--color-active-bg)] text-[var(--color-accent-primary)] text-xl">
               <FiLogIn />
             </div>
-            <h1 className="text-3xl font-bold font-sans text-[var(--color-text-primary)]">
+            <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
               Welcome Back
             </h1>
           </div>
@@ -46,13 +46,13 @@ const Login = () => {
           {/* Form */}
           <form
             onSubmit={handleLogin}
-            className="space-y-5 p-8 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] border-t-0 rounded-b"
+            className="space-y-4 p-6 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] border-t-0 rounded-b"
           >
             {/* Error Message */}
             {error && (
-              <div className="flex items-center gap-3 px-4 py-3 rounded text-sm font-sans bg-[rgba(220,38,38,0.1)] text-[#fca5a5] border border-[rgba(220,38,38,0.3)]">
+              <div className="flex items-center gap-2 px-3 py-2 rounded text-sm font-sans bg-[rgba(220,38,38,0.1)] text-[#fca5a5] border border-[rgba(220,38,38,0.3)]">
                 <svg
-                  className="w-5 h-5 shrink-0"
+                  className="w-4 h-4 shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -69,12 +69,12 @@ const Login = () => {
             )}
 
             {/* Email Field */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label
                 htmlFor="email"
                 className="flex items-center gap-2 text-sm font-medium font-sans text-[var(--color-text-secondary)]"
               >
-                <FiMail className="text-base" />
+                <FiMail className="text-sm" />
                 <span>Email Address</span>
               </label>
               <input
@@ -85,18 +85,18 @@ const Login = () => {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 autoComplete="email"
-                className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
+                className="w-full px-3 py-2 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
                 placeholder="you@example.com"
               />
             </div>
 
             {/* Password Field */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label
                 htmlFor="password"
                 className="flex items-center gap-2 text-sm font-medium font-sans text-[var(--color-text-secondary)]"
               >
-                <FiLock className="text-base" />
+                <FiLock className="text-sm" />
                 <span>Password</span>
               </label>
               <input
@@ -107,7 +107,7 @@ const Login = () => {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 autoComplete="current-password"
-                className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
+                className="w-full px-3 py-2 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(0,122,204,0.1)] placeholder:text-[var(--color-text-muted)]"
                 placeholder="••••••••"
               />
             </div>
@@ -116,12 +116,12 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(0,122,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-white border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(0,122,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
                   <svg
-                    className="animate-spin h-5 w-5"
+                    className="animate-spin h-4 w-4"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
