@@ -1,6 +1,11 @@
+export const calculateWordCount = content => {
+  if (!content) return 0;
+  return content.trim().split(/\s+/).filter(word => word.length > 0).length;
+};
+
 export const CalculateReadTime = content => {
   const wordsPerMinute = 200;
-  const wordCount = content.split(/\s+/).length;
+  const wordCount = calculateWordCount(content);
   const readTime = Math.ceil(wordCount / wordsPerMinute);
   return `${readTime} min read`;
 };

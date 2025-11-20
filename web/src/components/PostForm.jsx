@@ -1,7 +1,8 @@
 import { lazy, Suspense, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FiArrowLeft, FiSave, FiX } from "react-icons/fi";
+import { FiArrowLeft, FiSave, FiX, FiClock, FiType } from "react-icons/fi";
 import api from "@/services/api";
+import { calculateWordCount, CalculateReadTime } from "@/utils/helpers";
 const MarkdownEditor = lazy(() => import("@/components/MarkdownEditor"));
 import EditorSkeleton from "@/components/EditorSkeleton";
 
@@ -10,15 +11,15 @@ export const PostEditorHeader = ({
   subtitle,
   showBackButton = true
 }) => (
-  <div className="flex items-center justify-between p-4 bg-[#21252b] border border-[#2c313a] rounded">
+  <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
     <div>
-      <h1 className="text-2xl font-bold font-sans text-[#abb2bf]">{title}</h1>
-      <p className="text-sm mt-1 font-sans text-[#5c6370]">{subtitle}</p>
+      <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">{title}</h1>
+      <p className="text-sm mt-1 font-sans text-[var(--color-text-secondary)]">{subtitle}</p>
     </div>
     {showBackButton && (
       <Link
         to="/dashboard"
-        className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef]"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-active-bg)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
       >
         <FiArrowLeft />
         <span>Dashboard</span>
@@ -48,48 +49,60 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
 
   const titleError = validateTitle(formData.title);
   const tagsError = validateTags(formData.tags);
+  const wordCount = calculateWordCount(formData.content);
+  const readTime = CalculateReadTime(formData.content);
 
   return (
     <div className="space-y-6">
       {/* Title Field */}
       <div className="space-y-2">
-        <label
-          htmlFor="title"
-          className="flex items-center text-sm font-medium font-sans text-[#5c6370]"
-        >
-          Title <span className="ml-1 text-[#e06c75]">*</span>
-        </label>
+        <div className="flex justify-between items-center">
+          <label
+            htmlFor="title"
+            className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+          >
+            Title <span className="ml-1 text-[var(--color-syntax-variable)]">*</span>
+          </label>
+          <span className={`text-xs font-mono ${formData.title.length > 90 ? "text-[var(--color-syntax-variable)]" : "text-[var(--color-text-muted)]"}`}>
+            {formData.title.length}/100
+          </span>
+        </div>
         <input
           type="text"
           id="title"
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded text-sm font-mono bg-[#1e2127] text-[#abb2bf] border border-[#3e4451] transition-all focus:outline-none focus:border-[#61afef] focus:ring-1 focus:ring-[#61afef] placeholder:text-[#4b5263]"
+          className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:ring-1 focus:ring-[var(--color-accent-primary)] placeholder:text-[var(--color-text-muted)]"
           required
           maxLength={100}
           placeholder="Enter post title..."
         />
         {titleError && (
-          <p className="text-xs font-mono text-[#e06c75]">{titleError}</p>
+          <p className="text-xs font-mono text-[var(--color-syntax-variable)]">{titleError}</p>
         )}
       </div>
 
       {/* Description Field */}
       <div className="space-y-2">
-        <label
-          htmlFor="description"
-          className="flex items-center text-sm font-medium font-sans text-[#5c6370]"
-        >
-          Description
-        </label>
+        <div className="flex justify-between items-center">
+          <label
+            htmlFor="description"
+            className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
+          >
+            Description
+          </label>
+          <span className="text-xs font-mono text-[var(--color-text-muted)]">
+            {formData.description.length}/150
+          </span>
+        </div>
         <input
           type="text"
           id="description"
           name="description"
           value={formData.description}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded text-sm font-mono bg-[#1e2127] text-[#abb2bf] border border-[#3e4451] transition-all focus:outline-none focus:border-[#61afef] focus:ring-1 focus:ring-[#61afef] placeholder:text-[#4b5263]"
+          className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:ring-1 focus:ring-[var(--color-accent-primary)] placeholder:text-[var(--color-text-muted)]"
           maxLength={150}
           placeholder="Brief description (optional)"
         />
@@ -99,9 +112,9 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
       <div className="space-y-2">
         <label
           htmlFor="tags"
-          className="flex items-center text-sm font-medium font-sans text-[#5c6370]"
+          className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
         >
-          Tags <span className="ml-1 text-[#e06c75]">*</span>
+          Tags <span className="ml-1 text-[var(--color-syntax-variable)]">*</span>
         </label>
         {formData.tags && (
           <div className="flex flex-wrap gap-2 mb-2">
@@ -111,7 +124,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
               .map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-2 px-3 py-1 rounded text-sm font-mono bg-[rgba(97,175,239,0.15)] text-[#61afef] border border-[rgba(97,175,239,0.3)]"
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded text-sm font-mono bg-[rgba(97,175,239,0.15)] text-[var(--color-accent-primary)] border border-[rgba(97,175,239,0.3)]"
                 >
                   #{tag.trim()}
                   <button
@@ -125,7 +138,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
                         target: { name: "tags", value: newTags }
                       });
                     }}
-                    className="flex items-center justify-center w-4 h-4 rounded transition-colors bg-transparent text-[#5c6370] hover:text-[#e06c75]"
+                    className="flex items-center justify-center w-4 h-4 rounded transition-colors bg-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-syntax-variable)]"
                   >
                     <FiX />
                   </button>
@@ -140,22 +153,34 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           value={formData.tags}
           onChange={handleChange}
           placeholder="tag1, tag2, tag3"
-          className="w-full px-4 py-3 rounded text-sm font-mono bg-[#1e2127] text-[#abb2bf] border border-[#3e4451] transition-all focus:outline-none focus:border-[#61afef] focus:ring-1 focus:ring-[#61afef] placeholder:text-[#4b5263]"
+          className="w-full px-4 py-3 rounded text-sm font-mono bg-[var(--color-input-bg)] text-[var(--color-text-primary)] border border-[var(--color-input-border)] transition-all focus:outline-none focus:border-[var(--color-accent-primary)] focus:ring-1 focus:ring-[var(--color-accent-primary)] placeholder:text-[var(--color-text-muted)]"
         />
-        <p className="text-xs font-mono text-[#4b5263]">
+        <p className="text-xs font-mono text-[var(--color-text-muted)]">
           Separate tags with commas (max 10 tags, 30 chars each)
         </p>
         {tagsError && (
-          <p className="text-xs font-mono text-[#e06c75]">{tagsError}</p>
+          <p className="text-xs font-mono text-[var(--color-syntax-variable)]">{tagsError}</p>
         )}
       </div>
 
       {/* Content Field */}
       <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium font-sans text-[#5c6370]">
-          Content <span className="ml-1 text-[#e06c75]">*</span>
-        </label>
-        <div className="rounded overflow-hidden bg-[#1e2127] border border-[#3e4451]">
+        <div className="flex justify-between items-end">
+          <label className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]">
+            Content <span className="ml-1 text-[var(--color-syntax-variable)]">*</span>
+          </label>
+          <div className="flex items-center gap-3 text-xs font-mono text-[var(--color-text-muted)]">
+            <span className="flex items-center gap-1.5">
+              <FiType className="w-3 h-3" />
+              {wordCount} words
+            </span>
+            <span className="flex items-center gap-1.5">
+              <FiClock className="w-3 h-3" />
+              {readTime}
+            </span>
+          </div>
+        </div>
+        <div className="rounded overflow-hidden bg-[var(--color-input-bg)] border border-[var(--color-input-border)] focus-within:border-[var(--color-accent-primary)] focus-within:ring-1 focus-within:ring-[var(--color-accent-primary)] transition-all">
           <Suspense fallback={<EditorSkeleton />}>
             <MarkdownEditor
               value={formData.content}
@@ -173,7 +198,7 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
 export const ErrorMessage = ({ error }) => {
   if (!error) return null;
   return (
-    <div className="px-4 py-3 rounded-l-none text-sm font-mono bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[#e06c75] text-[#e06c75]">
+    <div className="px-4 py-3 rounded-l-none text-sm font-mono bg-[rgba(224,108,117,0.1)] border-l-4 border-l-[var(--color-syntax-variable)] text-[var(--color-syntax-variable)]">
       {error}
     </div>
   );
@@ -243,7 +268,7 @@ const PostForm = ({ post, isEditing = false }) => {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 p-6 bg-[#21252b] border border-[#2c313a] rounded"
+        className="space-y-6 p-6 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded"
       >
         <ErrorMessage error={error} />
         <PostFormFields
@@ -252,17 +277,17 @@ const PostForm = ({ post, isEditing = false }) => {
           setFormData={setFormData}
         />
 
-        <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-t-[#2c313a]">
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-t-[var(--color-panel-border)]">
           <Link
             to="/dashboard"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef]"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-active-bg)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-active-bg)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
