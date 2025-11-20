@@ -18,11 +18,11 @@ export const PostEditorHeader = ({
     </div>
     {showBackButton && (
       <Link
-        to="/auth/drafts"
+        to="/"
         className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-active-bg)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
       >
         <FiArrowLeft />
-        <span>Drafts</span>
+        <span>Home</span>
       </Link>
     )}
   </div>
@@ -242,7 +242,7 @@ const PostForm = ({ post, isEditing = false }) => {
       } else {
         await api.post("/auth/posts", submitData);
       }
-      navigate("/auth/drafts");
+      navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Failed to save post");
     } finally {
@@ -279,7 +279,7 @@ const PostForm = ({ post, isEditing = false }) => {
 
         <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-t-[var(--color-panel-border)]">
           <Link
-            to="/auth/drafts"
+            to="/"
             className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-active-bg)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
           >
             Cancel

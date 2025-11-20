@@ -71,35 +71,35 @@ const Tags = () => {
         </div>
 
         {tags && tags.length > 0 ? (
-          <div className="space-y-0 border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="space-y-0 border border-[var(--color-panel-border)] rounded overflow-hidden">
             {tags.map((tag, index) => (
               <Link
                 key={index}
                 to={`/?tag=${tag.name}`}
-                className="group flex items-center justify-between px-4 py-3 no-underline transition-all bg-transparent border-l-2 border-l-transparent border-b border-b-[#282c34] last:border-b-0 hover:bg-[#2c313a] hover:border-l-[#61afef]"
+                className="group flex items-center justify-between px-4 py-3 no-underline transition-all bg-[var(--color-sidebar-bg)] border-l-2 border-l-transparent border-b border-b-[var(--color-panel-border)] last:border-b-0 hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-accent-primary)]"
                 aria-label={`View ${tag.post_count} posts tagged with ${tag.name}`}
               >
                 <div className="flex items-center gap-3">
                   {/* Tree indent indicator */}
                   <span className="w-3 flex items-center justify-center">
-                    <span className="w-1 h-1 rounded-full bg-[#5c6370] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                    <span className="w-1 h-1 rounded-full bg-[var(--color-text-secondary)] opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   </span>
 
                   {/* Tag icon */}
-                  <BsTag className="w-3.5 h-3.5 text-[#5c6370] group-hover:text-[#61afef] transition-colors" />
+                  <BsTag className="w-3.5 h-3.5 text-[var(--color-text-secondary)] group-hover:text-[var(--color-accent-primary)] transition-colors" />
 
                   {/* Tag name */}
-                  <span className="font-medium text-[14px] font-sans text-[#abb2bf] group-hover:text-[#61afef] transition-colors">
+                  <span className="font-medium text-[14px] font-sans text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-primary)] transition-colors">
                     {tag.name}
                   </span>
                 </div>
 
                 {/* Post count badge */}
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] px-2 py-0.5 rounded font-mono bg-[#2c313a] text-[#5c6370] border border-[#353b45]">
+                  <span className="text-[11px] px-2 py-0.5 rounded font-mono bg-[var(--color-hover-bg)] text-[var(--color-text-secondary)] border border-[var(--color-active-bg)]">
                     {tag.post_count} {tag.post_count === 1 ? "post" : "posts"}
                   </span>
-                  <BsChevronRight className="w-3 h-3 text-[#5c6370] opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
+                  <BsChevronRight className="w-3 h-3 text-[var(--color-text-secondary)] opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
                 </div>
               </Link>
             ))}

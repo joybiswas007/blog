@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { FiRefreshCw, FiArrowLeft } from "react-icons/fi";
+import { FiRefreshCw } from "react-icons/fi";
 import api from "@/services/api";
 
 const LoginAttempts = () => {
@@ -65,18 +64,18 @@ const LoginAttempts = () => {
   return (
     <>
       <title>Login Attempts</title>
-      <div className="w-full max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
-          <div>
-            <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
-              Login Attempts
-            </h1>
-            <p className="text-xs mt-1 font-mono text-[var(--color-text-secondary)]">
-              {totalAttempts} total attempts
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="border border-[var(--color-panel-border)] rounded overflow-hidden">
+          {/* Header inside table container */}
+          <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border-b border-b-[var(--color-panel-border)]">
+            <div>
+              <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
+                Login Attempts
+              </h1>
+              <p className="text-xs mt-1 font-mono text-[var(--color-text-secondary)]">
+                {totalAttempts} total attempts
+              </p>
+            </div>
             <button
               onClick={handleRefresh}
               className="inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
@@ -86,31 +85,58 @@ const LoginAttempts = () => {
               <FiRefreshCw className={refreshing ? "animate-spin" : ""} />
               <span>Refresh</span>
             </button>
-            <Link
-              to="/auth/drafts"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
-            >
-              <FiArrowLeft />
-              <span>Drafts</span>
-            </Link>
           </div>
-        </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="px-4 py-3 rounded border-l-4 text-sm font-mono bg-[rgba(220,38,38,0.1)] border-l-[#dc2626] text-[#fca5a5]">
-            {error}
-          </div>
-        )}
-
-        {/* Attempts Table */}
-        <div className="border border-[var(--color-panel-border)] rounded overflow-hidden">
+          {/* Error Message */}
+          {error && (
+            <div className="mx-4 mt-4 px-4 py-3 rounded border-l-4 text-sm font-mono bg-[rgba(220,38,38,0.1)] border-l-[#dc2626] text-[#fca5a5]">
+              {error}
+            </div>
+          )}
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-8 h-8 border-[3px] border-t-transparent border-[var(--color-accent-primary)] rounded-full animate-spin mb-3"></div>
-              <p className="text-sm font-mono text-[var(--color-text-secondary)]">
-                Loading login attempts...
-              </p>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse font-mono text-[13px]">
+                <thead className="bg-[var(--color-hover-bg)]">
+                  <tr>
+                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                      #
+                    </th>
+                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                      IP Address
+                    </th>
+                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                      User Agent
+                    </th>
+                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                      Status
+                    </th>
+                    <th className="text-left px-3 py-3 font-semibold text-xs text-[var(--color-text-secondary)] border-b-2 border-b-[var(--color-panel-border)] uppercase tracking-wider whitespace-nowrap">
+                      Timestamp
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-[var(--color-sidebar-bg)] divide-y divide-[var(--color-panel-border)]">
+                  {[1, 2, 3, 4, 5].map((index) => (
+                    <tr key={index} className="hover:bg-[var(--color-hover-bg)] transition-colors">
+                      <td className="px-3 py-3 whitespace-nowrap">
+                        <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-8"></div>
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap">
+                        <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-28"></div>
+                      </td>
+                      <td className="px-3 py-3">
+                        <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-48"></div>
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap">
+                        <div className="h-5 bg-[var(--color-hover-bg)] rounded animate-shimmer w-16"></div>
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap">
+                        <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-36"></div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           ) : attempts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -181,7 +207,7 @@ const LoginAttempts = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
+          <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded mt-6">
             <span className="text-sm font-mono text-[var(--color-text-secondary)]">
               Page {currentPage} of {totalPages}
             </span>

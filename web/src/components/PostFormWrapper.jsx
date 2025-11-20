@@ -4,7 +4,6 @@ import { FiSend } from "react-icons/fi";
 import {
   PostFormFields,
   ErrorMessage,
-  PostEditorHeader,
   LoadingSpinner
 } from "@/components/PostForm";
 import api from "@/services/api";
@@ -98,7 +97,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
         }
       }
 
-      navigate("/auth/drafts", { state: { success: true } });
+      navigate("/", { state: { success: true } });
     } catch (err) {
       const responseError = err.response?.data;
       if (responseError?.errors && Array.isArray(responseError.errors)) {
@@ -125,17 +124,19 @@ const PostFormWrapper = ({ mode = "create" }) => {
   return (
     <>
       <title>{mode === "edit" ? "Edit Post" : "Create Post"}</title>
-      <div className="w-full max-w-4xl mx-auto space-y-6">
-        <PostEditorHeader
-          title={mode === "edit" ? "Edit Post" : "Create New Post"}
-          subtitle={
-            mode === "edit"
-              ? "Make changes to your post below"
-              : "Fill in the details below to create a new post"
-          }
-        />
-
+      <div className="w-full max-w-4xl mx-auto">
         <div className="space-y-6 p-6 bg-[#21252b] border border-[#2c313a] rounded">
+          <div>
+            <h1 className="text-2xl font-bold font-sans text-[#abb2bf]">
+              {mode === "edit" ? "Edit Post" : "Create New Post"}
+            </h1>
+            <p className="text-sm mt-1 font-sans text-[#5c6370]">
+              {mode === "edit"
+                ? "Make changes to your post below"
+                : "Fill in the details below to create a new post"}
+            </p>
+          </div>
+
           <ErrorMessage error={error} />
 
           <PostFormFields
@@ -146,7 +147,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
 
           <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-t-[#2c313a]">
             <Link
-              to="/auth/drafts"
+              to="/"
               className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef]"
             >
               Cancel

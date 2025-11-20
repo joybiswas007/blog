@@ -201,7 +201,7 @@ const NoPostsFound = ({ tag, buildQueryString, limit }) => {
             No posts available yet.{" "}
             <Link
               to={allPostsLink}
-              className="no-underline text-[#61afef] transition-colors duration-150 hover:text-[#84c0f4] hover:underline"
+              className="no-underline text-[var(--color-accent-primary)] transition-colors duration-150 hover:text-[var(--color-accent-hover)] hover:underline"
             >
               Refresh
             </Link>{" "}

@@ -58,8 +58,8 @@ const Archives = () => {
     return (
       <div className="w-full max-w-3xl mx-auto space-y-6">
         {/* RSS Feed skeleton */}
-        <section className="border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
+        <section className="border border-[var(--color-panel-border)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-panel-border)]">
             <div className="h-3.5 w-3.5 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
             <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-24"></div>
           </div>
@@ -69,14 +69,14 @@ const Archives = () => {
         </section>
 
         {/* Top Posts skeleton */}
-        <section className="border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
+        <section className="border border-[var(--color-panel-border)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-panel-border)]">
             <div className="h-3.5 w-3.5 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
             <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-24"></div>
           </div>
           <div className="space-y-0">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="flex items-center gap-3 px-4 py-3 border-b border-b-[var(--color-editor-bg)] last:border-b-0">
+              <div key={i} className="flex items-center gap-3 px-4 py-3 border-b border-b-[var(--color-panel-border)] last:border-b-0">
                 <div className="w-6 h-6 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
                 <div className="w-3 h-3 bg-[var(--color-hover-bg)] rounded-full animate-shimmer"></div>
                 <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer flex-1"></div>
@@ -86,8 +86,8 @@ const Archives = () => {
         </section>
 
         {/* Archives by Year skeleton */}
-        <section className="border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
+        <section className="border border-[var(--color-panel-border)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-panel-border)]">
             <div className="h-3.5 w-3.5 bg-[var(--color-hover-bg)] rounded animate-shimmer"></div>
             <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-20"></div>
           </div>
@@ -116,10 +116,10 @@ const Archives = () => {
       <SEO title="Archives" />
       <div className="w-full max-w-3xl mx-auto space-y-6">
         {/* RSS Feed Section */}
-        <section className="border border-[var(--color-hover-bg)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-hover-bg)]">
-            <BsRss className="w-3.5 h-3.5 text-[#e5c07b]" />
-            <h2 className="text-[13px] font-semibold font-sans text-[#abb2bf]">
+        <section className="border border-[var(--color-panel-border)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-panel-border)]">
+            <BsRss className="w-3.5 h-3.5 text-[var(--color-syntax-keyword)]" />
+            <h2 className="text-[13px] font-semibold font-sans text-[var(--color-text-primary)]">
               RSS Feed
             </h2>
           </div>
@@ -128,7 +128,7 @@ const Archives = () => {
               target="_blank"
               rel="noopener noreferrer"
               to="/rss.xml"
-              className="inline-flex items-center gap-2 px-3 py-2 rounded no-underline transition-all bg-[#2c313a] border border-[#353b45] text-[#abb2bf] hover:bg-[#353b45] hover:border-[#61afef] hover:text-[#61afef]"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded no-underline transition-all bg-[var(--color-hover-bg)] border border-[var(--color-active-bg)] text-[var(--color-text-primary)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
             >
               <BsRss className="w-3.5 h-3.5" />
               <span className="font-mono text-[13px]">/rss.xml</span>
@@ -137,10 +137,10 @@ const Archives = () => {
         </section>
 
         {/* Top Posts Section */}
-        <section className="border border-[#2c313a] rounded overflow-hidden bg-[#21252b]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34] border-b border-b-[#2c313a]">
-            <BsFire className="w-3.5 h-3.5 text-[#e06c75]" />
-            <h2 className="text-[13px] font-semibold font-sans text-[#abb2bf]">
+        <section className="border border-[var(--color-panel-border)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-panel-border)]">
+            <BsFire className="w-3.5 h-3.5 text-[var(--color-syntax-variable)]" />
+            <h2 className="text-[13px] font-semibold font-sans text-[var(--color-text-primary)]">
               Top Posts
             </h2>
           </div>
@@ -155,33 +155,33 @@ const Archives = () => {
                   <Link
                     key={topPost.id}
                     to={`/posts/${topPost.slug}`}
-                    className="group flex items-center gap-3 px-4 py-3 no-underline transition-all bg-transparent border-l-2 border-l-transparent border-b border-b-[#282c34] last:border-b-0 hover:bg-[#2c313a] hover:border-l-[#61afef]"
+                    className="group flex items-center gap-3 px-4 py-3 no-underline transition-all bg-[var(--color-sidebar-bg)] border-l-2 border-l-transparent border-b border-b-[var(--color-panel-border)] last:border-b-0 hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-accent-primary)]"
                   >
                     {/* Rank badge */}
-                    <span className="flex items-center justify-center w-6 h-6 rounded text-[11px] font-bold font-mono bg-[#61afef] text-[#21252b] shrink-0">
+                    <span className="flex items-center justify-center w-6 h-6 rounded text-[11px] font-bold font-mono bg-[var(--color-accent-primary)] text-[var(--color-sidebar-bg)] shrink-0">
                       {index + 1}
                     </span>
 
                     {/* Tree indent */}
                     <span className="w-3 flex items-center justify-center">
-                      <span className="w-1 h-1 rounded-full bg-[#5c6370] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                      <span className="w-1 h-1 rounded-full bg-[var(--color-text-secondary)] opacity-0 group-hover:opacity-100 transition-opacity"></span>
                     </span>
 
                     {/* File icon */}
-                    <BsFileText className="w-3.5 h-3.5 text-[#5c6370] group-hover:text-[#61afef] transition-colors shrink-0" />
+                    <BsFileText className="w-3.5 h-3.5 text-[var(--color-text-secondary)] group-hover:text-[var(--color-accent-primary)] transition-colors shrink-0" />
 
                     {/* Title */}
-                    <span className="flex-1 text-[14px] font-sans text-[#abb2bf] group-hover:text-[#61afef] transition-colors">
+                    <span className="flex-1 text-[14px] font-sans text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-primary)] transition-colors">
                       {topPost.title}
                     </span>
 
                     {/* Arrow */}
-                    <BsChevronRight className="w-3 h-3 text-[#5c6370] opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
+                    <BsChevronRight className="w-3 h-3 text-[var(--color-text-secondary)] opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
                   </Link>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-[13px] font-sans text-[#5c6370]">
+              <div className="text-center py-8 text-[13px] font-sans text-[var(--color-text-secondary)]">
                 No top posts available
               </div>
             )}
@@ -189,10 +189,10 @@ const Archives = () => {
         </section>
 
         {/* Archives by Year Section */}
-        <section className="border border-[#2c313a] rounded overflow-hidden bg-[#21252b]">
-          <div className="flex items-center gap-2 px-3 py-2 bg-[#282c34] border-b border-b-[#2c313a]">
-            <BsFolder2Open className="w-3.5 h-3.5 text-[#e5c07b]" />
-            <h2 className="text-[13px] font-semibold font-sans text-[#abb2bf]">
+        <section className="border border-[var(--color-panel-border)] rounded overflow-hidden bg-[var(--color-sidebar-bg)]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-panel-border)]">
+            <BsFolder2Open className="w-3.5 h-3.5 text-[var(--color-syntax-keyword)]" />
+            <h2 className="text-[13px] font-semibold font-sans text-[var(--color-text-primary)]">
               By Year
             </h2>
           </div>
@@ -203,20 +203,20 @@ const Archives = () => {
                   <Link
                     key={index}
                     to={`/archives/${list.year}`}
-                    className="group flex items-center gap-3 px-3 py-2.5 rounded no-underline transition-all bg-[#2c313a] border border-[#353b45] border-l-2 border-l-transparent hover:bg-[#353b45] hover:border-[#61afef] hover:border-l-[#61afef]"
+                    className="group flex items-center gap-3 px-3 py-2.5 rounded no-underline transition-all bg-[var(--color-hover-bg)] border border-[var(--color-active-bg)] border-l-2 border-l-transparent hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:border-l-[var(--color-accent-primary)]"
                   >
-                    <BsFolder2Open className="w-4 h-4 text-[#e5c07b] shrink-0" />
-                    <span className="flex-1 font-sans text-[14px] font-medium text-[#abb2bf] group-hover:text-[#61afef] transition-colors">
+                    <BsFolder2Open className="w-4 h-4 text-[var(--color-syntax-keyword)] shrink-0" />
+                    <span className="flex-1 font-sans text-[14px] font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-primary)] transition-colors">
                       {list.year}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-[#353b45] text-[#5c6370] border border-[#3e4451] shrink-0">
+                    <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-[var(--color-active-bg)] text-[var(--color-text-secondary)] border border-[var(--color-panel-border)] shrink-0">
                       {list.post_count}
                     </span>
                   </Link>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-[13px] font-sans text-[#5c6370]">
+              <div className="text-center py-8 text-[13px] font-sans text-[var(--color-text-secondary)]">
                 No archives found
               </div>
             )}
