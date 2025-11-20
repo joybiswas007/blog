@@ -25,25 +25,31 @@ const PaginationControls = ({
           sort,
           tag
         })}
-        className={`inline-flex items-center gap-2 px-4 py-2 text-[13px] no-underline font-mono bg-[#2c313a] rounded-l transition-all duration-150 ${
+        className={`inline-flex items-center gap-2 px-4 py-2 text-[13px] no-underline font-mono bg-[var(--color-hover-bg)] rounded-l transition-all duration-150 ${
           !hasPrevious
-            ? "opacity-30 cursor-not-allowed pointer-events-none text-[#5c6370]"
-            : "text-[#abb2bf] hover:bg-[#353b45] hover:text-[#61afef]"
+            ? "opacity-30 cursor-not-allowed pointer-events-none text-[var(--color-text-secondary)]"
+            : "text-[var(--color-text-primary)] hover:bg-[var(--color-active-bg)] hover:text-[var(--color-accent-primary)]"
         }`}
         aria-label="Previous page"
         aria-disabled={!hasPrevious}
         tabIndex={hasPrevious ? 0 : -1}
       >
-        <span className="text-[#61afef] font-semibold text-base">‹</span>
+        <span className="text-[var(--color-accent-primary)] font-semibold text-base">
+          ‹
+        </span>
         <span>Previous</span>
       </Link>
 
       {/* Page Counter */}
-      <div className="inline-flex items-center px-5 py-2 text-[13px] font-mono bg-[#353b45] text-[#abb2bf]">
-        <span className="text-[#5c6370]">Page</span>
-        <span className="mx-2 text-[#61afef] font-semibold">{currentPage}</span>
-        <span className="text-[#5c6370]">of</span>
-        <span className="ml-2 text-[#5c6370]">{totalPages}</span>
+      <div className="inline-flex items-center px-5 py-2 text-[13px] font-mono bg-[var(--color-active-bg)] text-[var(--color-text-primary)]">
+        <span className="text-[var(--color-text-secondary)]">Page</span>
+        <span className="mx-2 text-[var(--color-accent-primary)] font-semibold">
+          {currentPage}
+        </span>
+        <span className="text-[var(--color-text-secondary)]">of</span>
+        <span className="ml-2 text-[var(--color-text-secondary)]">
+          {totalPages}
+        </span>
       </div>
 
       {/* Next Button */}
@@ -55,17 +61,19 @@ const PaginationControls = ({
           sort,
           tag
         })}
-        className={`inline-flex items-center gap-2 px-4 py-2 text-[13px] no-underline font-mono bg-[#2c313a] rounded-r transition-all duration-150 ${
+        className={`inline-flex items-center gap-2 px-4 py-2 text-[13px] no-underline font-mono bg-[var(--color-hover-bg)] rounded-r transition-all duration-150 ${
           !hasNext
-            ? "opacity-30 cursor-not-allowed pointer-events-none text-[#5c6370]"
-            : "text-[#abb2bf] hover:bg-[#353b45] hover:text-[#61afef]"
+            ? "opacity-30 cursor-not-allowed pointer-events-none text-[var(--color-text-secondary)]"
+            : "text-[var(--color-text-primary)] hover:bg-[var(--color-active-bg)] hover:text-[var(--color-accent-primary)]"
         }`}
         aria-label="Next page"
         aria-disabled={!hasNext}
         tabIndex={hasNext ? 0 : -1}
       >
         <span>Next</span>
-        <span className="text-[#61afef] font-semibold text-base">›</span>
+        <span className="text-[var(--color-accent-primary)] font-semibold text-base">
+          ›
+        </span>
       </Link>
     </div>
   ) : null;

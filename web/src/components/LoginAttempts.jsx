@@ -45,12 +45,12 @@ const LoginAttempts = () => {
   const formatDateTime = timestamp =>
     timestamp
       ? new Date(timestamp).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      })
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        })
       : "—";
 
   const totalPages = Math.ceil(totalAttempts / attemptsPerPage);
@@ -67,7 +67,7 @@ const LoginAttempts = () => {
       <div className="w-full max-w-7xl mx-auto">
         <div className="border border-[var(--color-panel-border)] rounded overflow-hidden">
           {/* Header inside table container */}
-          <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border-b border-b-[var(--color-panel-border)]">
+          <div className="flex items-center justify-between p-4 bg-[var(--color-editor-bg)] border-b border-b-[var(--color-panel-border)]">
             <div>
               <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
                 Login Attempts
@@ -116,8 +116,11 @@ const LoginAttempts = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-[var(--color-sidebar-bg)] divide-y divide-[var(--color-panel-border)]">
-                  {[1, 2, 3, 4, 5].map((index) => (
-                    <tr key={index} className="hover:bg-[var(--color-hover-bg)] transition-colors">
+                  {[1, 2, 3, 4, 5].map(index => (
+                    <tr
+                      key={index}
+                      className="hover:bg-[var(--color-hover-bg)] transition-colors"
+                    >
                       <td className="px-3 py-3 whitespace-nowrap">
                         <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-8"></div>
                       </td>

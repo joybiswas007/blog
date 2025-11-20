@@ -104,14 +104,16 @@ const Drafts = () => {
       <title>Drafts</title>
       <div className="w-full max-w-5xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Drafts</h1>
-             <Link
-                to="/auth/posts/create"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-[var(--color-sidebar-bg)] border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-lg"
-            >
-                <FiPlus size={20} />
-                <span>New Post</span>
-            </Link>
+          <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">
+            Drafts
+          </h1>
+          <Link
+            to="/auth/posts/create"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-[var(--color-sidebar-bg)] border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-lg"
+          >
+            <FiPlus size={20} />
+            <span>New Post</span>
+          </Link>
         </div>
 
         {/* Error Display */}
@@ -182,7 +184,9 @@ const Drafts = () => {
                           {/* Reading Time */}
                           {wordCount > 0 && (
                             <>
-                              <span className="text-[var(--color-text-muted)]">•</span>
+                              <span className="text-[var(--color-text-muted)]">
+                                •
+                              </span>
                               <span className="flex items-center gap-1 whitespace-nowrap">
                                 <FiClock className="w-3 h-3" />
                                 {readingTime} min read
@@ -193,7 +197,9 @@ const Drafts = () => {
                           {/* Word Count */}
                           {wordCount > 0 && (
                             <>
-                              <span className="text-[var(--color-text-muted)]">•</span>
+                              <span className="text-[var(--color-text-muted)]">
+                                •
+                              </span>
                               <span className="whitespace-nowrap">
                                 {wordCount.toLocaleString()} words
                               </span>
@@ -203,7 +209,9 @@ const Drafts = () => {
                           {/* Tags Preview */}
                           {displayTags.length > 0 && (
                             <>
-                              <span className="text-[var(--color-text-muted)]">•</span>
+                              <span className="text-[var(--color-text-muted)]">
+                                •
+                              </span>
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <FiTag className="w-3 h-3" />
                                 {displayTags.map((tag, idx) => (
@@ -265,10 +273,11 @@ const Drafts = () => {
           <div className="flex items-center justify-center gap-6 py-4 border-t border-t-[var(--color-panel-border)]">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans text-[var(--color-text-primary)] bg-[var(--color-hover-bg)] border border-[var(--color-active-bg)] ${pagination.page === 1
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans text-[var(--color-text-primary)] bg-[var(--color-hover-bg)] border border-[var(--color-active-bg)] ${
+                pagination.page === 1
                   ? "opacity-30 cursor-not-allowed"
                   : "hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
-                }`}
+              }`}
               disabled={pagination.page === 1}
               type="button"
             >
@@ -280,10 +289,11 @@ const Drafts = () => {
             </span>
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans text-[var(--color-text-primary)] bg-[var(--color-hover-bg)] border border-[var(--color-active-bg)] ${pagination.page === pagination.totalPages
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-sans text-[var(--color-text-primary)] bg-[var(--color-hover-bg)] border border-[var(--color-active-bg)] ${
+                pagination.page === pagination.totalPages
                   ? "opacity-30 cursor-not-allowed"
                   : "hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]"
-                }`}
+              }`}
               disabled={pagination.page === pagination.totalPages}
               type="button"
             >

@@ -1,30 +1,21 @@
 import { lazy, Suspense, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FiArrowLeft, FiSave, FiX, FiClock, FiType } from "react-icons/fi";
+import { FiSave, FiX, FiClock, FiType } from "react-icons/fi";
 import api from "@/services/api";
 import { calculateWordCount, CalculateReadTime } from "@/utils/helpers";
 const MarkdownEditor = lazy(() => import("@/components/MarkdownEditor"));
 import EditorSkeleton from "@/components/EditorSkeleton";
 
-export const PostEditorHeader = ({
-  title,
-  subtitle,
-  showBackButton = true
-}) => (
+export const PostEditorHeader = ({ title, subtitle }) => (
   <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
     <div>
-      <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">{title}</h1>
-      <p className="text-sm mt-1 font-sans text-[var(--color-text-secondary)]">{subtitle}</p>
+      <h1 className="text-2xl font-bold font-sans text-[var(--color-text-primary)]">
+        {title}
+      </h1>
+      <p className="text-sm mt-1 font-sans text-[var(--color-text-secondary)]">
+        {subtitle}
+      </p>
     </div>
-    {showBackButton && (
-      <Link
-        to="/"
-        className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-active-bg)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
-      >
-        <FiArrowLeft />
-        <span>Home</span>
-      </Link>
-    )}
   </div>
 );
 
@@ -61,9 +52,12 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
             htmlFor="title"
             className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
           >
-            Title <span className="ml-1 text-[var(--color-syntax-variable)]">*</span>
+            Title{" "}
+            <span className="ml-1 text-[var(--color-syntax-variable)]">*</span>
           </label>
-          <span className={`text-xs font-mono ${formData.title.length > 90 ? "text-[var(--color-syntax-variable)]" : "text-[var(--color-text-muted)]"}`}>
+          <span
+            className={`text-xs font-mono ${formData.title.length > 90 ? "text-[var(--color-syntax-variable)]" : "text-[var(--color-text-muted)]"}`}
+          >
             {formData.title.length}/100
           </span>
         </div>
@@ -79,7 +73,9 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           placeholder="Enter post title..."
         />
         {titleError && (
-          <p className="text-xs font-mono text-[var(--color-syntax-variable)]">{titleError}</p>
+          <p className="text-xs font-mono text-[var(--color-syntax-variable)]">
+            {titleError}
+          </p>
         )}
       </div>
 
@@ -114,7 +110,8 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           htmlFor="tags"
           className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]"
         >
-          Tags <span className="ml-1 text-[var(--color-syntax-variable)]">*</span>
+          Tags{" "}
+          <span className="ml-1 text-[var(--color-syntax-variable)]">*</span>
         </label>
         {formData.tags && (
           <div className="flex flex-wrap gap-2 mb-2">
@@ -159,7 +156,9 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
           Separate tags with commas (max 10 tags, 30 chars each)
         </p>
         {tagsError && (
-          <p className="text-xs font-mono text-[var(--color-syntax-variable)]">{tagsError}</p>
+          <p className="text-xs font-mono text-[var(--color-syntax-variable)]">
+            {tagsError}
+          </p>
         )}
       </div>
 
@@ -167,7 +166,8 @@ export const PostFormFields = ({ formData, handleChange, setFormData }) => {
       <div className="space-y-2">
         <div className="flex justify-between items-end">
           <label className="flex items-center text-sm font-medium font-sans text-[var(--color-text-secondary)]">
-            Content <span className="ml-1 text-[var(--color-syntax-variable)]">*</span>
+            Content{" "}
+            <span className="ml-1 text-[var(--color-syntax-variable)]">*</span>
           </label>
           <div className="flex items-center gap-3 text-xs font-mono text-[var(--color-text-muted)]">
             <span className="flex items-center gap-1.5">
