@@ -98,7 +98,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
         }
       }
 
-      navigate("/dashboard", { state: { success: true } });
+      navigate("/auth/drafts", { state: { success: true } });
     } catch (err) {
       const responseError = err.response?.data;
       if (responseError?.errors && Array.isArray(responseError.errors)) {
@@ -146,7 +146,7 @@ const PostFormWrapper = ({ mode = "create" }) => {
 
           <div className="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-t-[#2c313a]">
             <Link
-              to="/dashboard"
+              to="/auth/drafts"
               className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans no-underline bg-[#2c313a] text-[#abb2bf] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef]"
             >
               Cancel

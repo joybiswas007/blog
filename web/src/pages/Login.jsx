@@ -20,7 +20,7 @@ const Login = () => {
       const response = await api.post("/auth/login", { email, password });
       const { access_token, refresh_token } = response.data;
       setAuthTokens({ access_token, refresh_token });
-      navigate("/dashboard");
+      navigate("/auth/drafts");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed. Please try again.");
     } finally {

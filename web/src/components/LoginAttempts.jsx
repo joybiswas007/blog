@@ -46,12 +46,12 @@ const LoginAttempts = () => {
   const formatDateTime = timestamp =>
     timestamp
       ? new Date(timestamp).toLocaleString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit"
-        })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      })
       : "—";
 
   const totalPages = Math.ceil(totalAttempts / attemptsPerPage);
@@ -87,11 +87,11 @@ const LoginAttempts = () => {
               <span>Refresh</span>
             </button>
             <Link
-              to="/dashboard"
+              to="/auth/drafts"
               className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-panel-border)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)]"
             >
               <FiArrowLeft />
-              <span>Dashboard</span>
+              <span>Drafts</span>
             </Link>
           </div>
         </div>

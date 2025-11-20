@@ -1,19 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "@/services/api";
-import { ErrorMessage, LoadingSpinner } from "@/components/PostForm";
-import { clearAuthTokens } from "@/utils/auth";
+import { ErrorMessage } from "@/components/PostForm";
 import {
   FiEdit2,
   FiTrash2,
-  FiLogOut,
-  FiPlus,
   FiSend,
   FiFileText,
   FiClock,
-  FiTag
+  FiTag,
+  FiPlus
 } from "react-icons/fi";
-import { GiAngryEyes } from "react-icons/gi";
 import DashboardSkeleton from "@/components/DashboardSkeleton";
 
 // Utility functions for post metadata
@@ -28,24 +25,17 @@ const calculateReadingTime = wordCount => {
   return minutes;
 };
 
-const Dashboard = () => {
+const Drafts = () => {
   const [posts, setPosts] = useState([]);
-  const [totalPosts, setTotalPosts] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("published");
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
     totalPosts: 0,
     totalPages: 1
   });
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    clearAuthTokens();
-    navigate("/login");
-  };
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -54,7 +44,7 @@ const Dashboard = () => {
 
       const offset = (pagination.page - 1) * pagination.limit;
       const response = await api.get(
-        `/auth/posts?limit=${pagination.limit}&offset=${offset}&order_by=created_at&sort=DESC&is_published=${activeTab === "published"}`
+        `/auth/posts?limit=${pagination.limit}&offset=${offset}&order_by=created_at&sort=DESC&is_published=false`
       );
 
       setPosts(response.data.posts);
@@ -65,23 +55,23 @@ const Dashboard = () => {
         totalPages: Math.ceil(response.data.total_post / prev.limit)
       }));
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to fetch posts");
+      setError(err.response?.data?.error || "Failed to fetch drafts");
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, activeTab]);
+  }, [pagination.page, pagination.limit]);
 
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
 
   const handleDelete = async postId => {
-    if (window.confirm("Are you sure you want to delete this post?")) {
+    if (window.confirm("Are you sure you want to delete this draft?")) {
       try {
         await api.delete(`/auth/posts/${postId}`);
         fetchPosts();
       } catch (err) {
-        setError(err.response?.data?.error || "Failed to delete post");
+        setError(err.response?.data?.error || "Failed to delete draft");
       }
     }
   };
@@ -91,7 +81,7 @@ const Dashboard = () => {
       await api.post(`/auth/posts/publish/${postId}`);
       fetchPosts();
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to publish post");
+      setError(err.response?.data?.error || "Failed to publish draft");
     }
   };
 
@@ -111,62 +101,17 @@ const Dashboard = () => {
 
   return (
     <>
-      <title>Dashboard</title>
+      <title>Drafts</title>
       <div className="w-full max-w-5xl mx-auto space-y-6">
-        {/* Action Toolbar */}
-        <div className="flex flex-wrap items-center gap-3 p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
-          <Link
-            to="/auth/posts/create"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-[var(--color-sidebar-bg)] border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-lg"
-          >
-            <FiPlus size={24} />
-            <span>New Post</span>
-          </Link>
-          <Link
-            to="/auth/login-attempts"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-hover-bg)] text-[var(--color-text-primary)] border border-[var(--color-active-bg)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] hover:-translate-y-px"
-          >
-            <GiAngryEyes size={24} />
-            <span>Login Attempts</span>
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded transition-all text-sm font-medium font-sans text-[var(--color-syntax-variable)] bg-[var(--color-hover-bg)] border border-[var(--color-active-bg)] hover:bg-[rgba(224,108,117,0.1)] hover:border-[var(--color-syntax-variable)] hover:-translate-y-px"
-            type="button"
-          >
-            <FiLogOut size={24} />
-            <span>Logout</span>
-          </button>
-        </div>
-
-        {/* Tabs & Stats */}
-        <div className="flex items-center justify-between p-4 bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded">
-          <div className="flex items-center gap-2">
-            <button
-              className={`px-4 py-2 rounded text-sm font-medium transition-all font-sans border ${activeTab === "published"
-                ? "text-[var(--color-text-primary)] bg-[var(--color-active-bg)] border-[var(--color-accent-primary)]"
-                : "text-[var(--color-text-secondary)] bg-transparent border-transparent hover:text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)]"
-                }`}
-              onClick={() => setActiveTab("published")}
-              type="button"
+        <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Drafts</h1>
+             <Link
+                to="/auth/posts/create"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded no-underline transition-all text-sm font-medium font-sans bg-[var(--color-accent-primary)] text-[var(--color-sidebar-bg)] border border-[var(--color-accent-primary)] hover:bg-[var(--color-accent-hover)] hover:border-[var(--color-accent-hover)] hover:-translate-y-px hover:shadow-lg"
             >
-              Published
-            </button>
-            <button
-              className={`px-4 py-2 rounded text-sm font-medium transition-all font-sans border ${activeTab === "drafts"
-                ? "text-[var(--color-text-primary)] bg-[var(--color-active-bg)] border-[var(--color-accent-primary)]"
-                : "text-[var(--color-text-secondary)] bg-transparent border-transparent hover:text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)]"
-                }`}
-              onClick={() => setActiveTab("drafts")}
-              type="button"
-            >
-              Drafts
-            </button>
-          </div>
-          <div className="text-xs font-mono text-[var(--color-text-secondary)]">
-            {totalPosts} {activeTab === "published" ? "published" : "draft"}{" "}
-            post{totalPosts !== 1 ? "s" : ""}
-          </div>
+                <FiPlus size={20} />
+                <span>New Post</span>
+            </Link>
         </div>
 
         {/* Error Display */}
@@ -186,13 +131,10 @@ const Dashboard = () => {
                 <FiFileText />
               </div>
               <h3 className="text-lg font-semibold mb-2 font-sans text-[var(--color-text-primary)]">
-                No {activeTab === "published" ? "published posts" : "drafts"}{" "}
-                yet
+                No drafts yet
               </h3>
               <p className="text-sm mb-6 text-[var(--color-text-secondary)]">
-                {activeTab === "published"
-                  ? "Start writing and publish your first post"
-                  : "Create a draft to get started"}
+                Create a draft to get started
               </p>
               <Link
                 to="/auth/posts/create"
@@ -218,7 +160,7 @@ const Dashboard = () => {
                     <div className="flex items-start justify-between px-4 py-3 gap-4">
                       {/* Post Info */}
                       <Link
-                        to={`/posts/${post.slug}`}
+                        to={`/auth/posts/${post.id}/edit`}
                         className="flex-1 flex flex-col gap-2 no-underline min-w-0"
                       >
                         {/* Title */}
@@ -286,16 +228,14 @@ const Dashboard = () => {
 
                       {/* Action Buttons */}
                       <div className="flex items-center gap-1 shrink-0">
-                        {activeTab === "drafts" && (
-                          <button
-                            onClick={() => handlePublish(post.id)}
-                            className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-active-bg)] hover:text-[var(--color-syntax-string)] hover:border-[var(--color-syntax-string)]"
-                            title="Publish"
-                            type="button"
-                          >
-                            <FiSend />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => handlePublish(post.id)}
+                          className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-active-bg)] hover:text-[var(--color-syntax-string)] hover:border-[var(--color-syntax-string)]"
+                          title="Publish"
+                          type="button"
+                        >
+                          <FiSend />
+                        </button>
                         <Link
                           to={`/auth/posts/${post.id}/edit`}
                           className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-active-bg)] hover:text-[var(--color-accent-primary)] hover:border-[var(--color-accent-primary)]"
@@ -357,4 +297,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Drafts;

@@ -9,7 +9,7 @@ const Tags = lazy(() => import("@/pages/Tags"));
 const Archives = lazy(() => import("@/pages/Archives"));
 const ArchiveByYear = lazy(() => import("@/pages/ArchiveByYear"));
 const Login = lazy(() => import("@/pages/Login"));
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Drafts = lazy(() => import("@/pages/Drafts"));
 const CreatePost = lazy(() => import("@/pages/CreatePost"));
 const EditPost = lazy(() => import("@/pages/EditPost"));
 const LoginAttempts = lazy(() => import("@/components/LoginAttempts"));
@@ -36,7 +36,7 @@ const App = () => {
             <Route path="/archives/:year" element={<ArchiveByYear />} />
             <Route path="/login" element={<Login />} />
             <Route element={<PrivateRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/auth/drafts" element={<Drafts />} />
               <Route path="/auth/posts/create" element={<CreatePost />} />
               <Route path="/auth/posts/:id/edit" element={<EditPost />} />
               <Route path="/auth/login-attempts" element={<LoginAttempts />} />

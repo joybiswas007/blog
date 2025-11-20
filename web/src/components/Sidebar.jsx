@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
   BsFolder2Open,
@@ -6,10 +6,14 @@ import {
   BsTag,
   BsChevronRight,
   BsList,
-  BsX
+  BsX,
+  BsPencilSquare,
+  BsShieldLock,
+  BsFileEarmarkText
 } from "react-icons/bs";
-import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
+import { FiGithub, FiLinkedin, FiMail, FiLogOut } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
+import { getAuthTokens, clearAuthTokens } from "@/utils/auth";
 
 const NAV_ITEMS = [
   { label: "Posts", to: "/", icon: <BsFileText /> },
@@ -19,8 +23,10 @@ const NAV_ITEMS = [
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const github = "https://github.com/joybiswas007";
   const linkedin = "https://www.linkedin.com/in/joybtw";
@@ -51,6 +57,17 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
+    const checkAuth = () => {
+      const { access_token } = getAuthTokens();
+      setIsAuthenticated(!!access_token);
+    };
+    checkAuth();
+    // Listen for storage events to update auth state across tabs/windows
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
+  }, [location.pathname]); // Re-check on navigation
+
+  useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
       if (window.innerWidth >= 768) {
@@ -68,6 +85,12 @@ const Sidebar = () => {
       setIsOpen(false);
     }
   }, [location.pathname, isMobile]);
+
+  const handleLogout = () => {
+    clearAuthTokens();
+    setIsAuthenticated(false);
+    navigate("/");
+  };
 
   const SidebarContent = () => (
     <>
@@ -99,8 +122,8 @@ const Sidebar = () => {
               key={item.to}
               to={item.to}
               className={`group flex items-center gap-2 px-3 py-1.5 no-underline font-sans text-[13px] transition-all duration-150 border-l-2 ${isActive
-                  ? "bg-[var(--color-hover-bg)] border-l-[var(--color-accent-primary)] text-[var(--color-accent-primary)]"
-                  : "border-l-transparent text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-text-secondary)]"
+                ? "bg-[var(--color-hover-bg)] border-l-[var(--color-accent-primary)] text-[var(--color-accent-primary)]"
+                : "border-l-transparent text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-text-secondary)]"
                 }`}
               aria-label={`Navigate to ${item.label}`}
             >
@@ -114,8 +137,8 @@ const Sidebar = () => {
 
               <span
                 className={`flex items-center transition-colors ${isActive
-                    ? "text-[var(--color-accent-primary)]"
-                    : "text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]"
+                  ? "text-[var(--color-accent-primary)]"
+                  : "text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]"
                   }`}
               >
                 {item.icon}
@@ -129,6 +152,85 @@ const Sidebar = () => {
             </Link>
           );
         })}
+
+        {/* Authenticated Links */}
+        {isAuthenticated && (
+          <>
+            <div className="my-2 border-t border-[var(--color-editor-bg)] mx-3"></div>
+            <Link
+              to="/auth/drafts"
+              className={`group flex items-center gap-2 px-3 py-1.5 no-underline font-sans text-[13px] transition-all duration-150 border-l-2 ${location.pathname === "/auth/drafts"
+                ? "bg-[var(--color-hover-bg)] border-l-[var(--color-accent-primary)] text-[var(--color-accent-primary)]"
+                : "border-l-transparent text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-text-secondary)]"
+                }`}
+            >
+              <span className="w-3 flex items-center justify-center">
+                {location.pathname === "/auth/drafts" ? (
+                  <span className="w-1 h-1 rounded-full bg-[var(--color-accent-primary)]"></span>
+                ) : (
+                  <span className="w-1 h-1 rounded-full bg-[var(--color-text-secondary)] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                )}
+              </span>
+              <span className={`flex items-center transition-colors ${location.pathname === "/auth/drafts" ? "text-[var(--color-accent-primary)]" : "text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]"}`}>
+                <BsFileEarmarkText />
+              </span>
+              <span className="flex-1">Drafts</span>
+            </Link>
+
+            <Link
+              to="/auth/posts/create"
+              className={`group flex items-center gap-2 px-3 py-1.5 no-underline font-sans text-[13px] transition-all duration-150 border-l-2 ${location.pathname === "/auth/posts/create"
+                ? "bg-[var(--color-hover-bg)] border-l-[var(--color-accent-primary)] text-[var(--color-accent-primary)]"
+                : "border-l-transparent text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-text-secondary)]"
+                }`}
+            >
+              <span className="w-3 flex items-center justify-center">
+                {location.pathname === "/auth/posts/create" ? (
+                  <span className="w-1 h-1 rounded-full bg-[var(--color-accent-primary)]"></span>
+                ) : (
+                  <span className="w-1 h-1 rounded-full bg-[var(--color-text-secondary)] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                )}
+              </span>
+              <span className={`flex items-center transition-colors ${location.pathname === "/auth/posts/create" ? "text-[var(--color-accent-primary)]" : "text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]"}`}>
+                <BsPencilSquare />
+              </span>
+              <span className="flex-1">New Post</span>
+            </Link>
+
+            <Link
+              to="/auth/login-attempts"
+              className={`group flex items-center gap-2 px-3 py-1.5 no-underline font-sans text-[13px] transition-all duration-150 border-l-2 ${location.pathname === "/auth/login-attempts"
+                ? "bg-[var(--color-hover-bg)] border-l-[var(--color-accent-primary)] text-[var(--color-accent-primary)]"
+                : "border-l-transparent text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-text-secondary)]"
+                }`}
+            >
+              <span className="w-3 flex items-center justify-center">
+                {location.pathname === "/auth/login-attempts" ? (
+                  <span className="w-1 h-1 rounded-full bg-[var(--color-accent-primary)]"></span>
+                ) : (
+                  <span className="w-1 h-1 rounded-full bg-[var(--color-text-secondary)] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                )}
+              </span>
+              <span className={`flex items-center transition-colors ${location.pathname === "/auth/login-attempts" ? "text-[var(--color-accent-primary)]" : "text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]"}`}>
+                <BsShieldLock />
+              </span>
+              <span className="flex-1">Login Attempts</span>
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="group flex w-full items-center gap-2 px-3 py-1.5 no-underline font-sans text-[13px] transition-all duration-150 border-l-2 border-l-transparent text-[var(--color-text-primary)] hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-text-secondary)]"
+            >
+              <span className="w-3 flex items-center justify-center">
+                <span className="w-1 h-1 rounded-full bg-[var(--color-text-secondary)] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+              </span>
+              <span className="flex items-center text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]">
+                <FiLogOut />
+              </span>
+              <span className="flex-1 text-left">Logout</span>
+            </button>
+          </>
+        )}
       </nav>
 
       {/* Footer Section with Social Icons */}

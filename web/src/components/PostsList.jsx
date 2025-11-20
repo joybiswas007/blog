@@ -1,7 +1,10 @@
-import { lazy, Suspense } from "react";
-import { Link } from "react-router-dom";
+import { lazy, Suspense, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 import { BsFileText } from "react-icons/bs";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { getAuthTokens } from "@/utils/auth";
+import api from "@/services/api";
 
 import { CalculateReadTime, TruncateText } from "@/utils/helpers";
 
@@ -13,9 +16,33 @@ const PostItem = ({
   buildQueryString,
   limit,
   orderBy,
-  sort
+  sort,
+  onDelete
 }) => {
+  const navigate = useNavigate();
   const tagLinkParams = { limit, offset: 0, order_by: orderBy, sort };
+  const { access_token } = getAuthTokens();
+  const isAuthenticated = !!access_token;
+
+  const handleEdit = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/auth/posts/${post.id}/edit`);
+  };
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (window.confirm(`Are you sure you want to delete "${post.title}"?`)) {
+      try {
+        await api.delete(`/auth/posts/${post.id}`);
+        if (onDelete) onDelete(post.id);
+      } catch (err) {
+        alert(err.response?.data?.error || "Failed to delete post");
+      }
+    }
+  };
 
   return (
     <article className="group relative px-4 py-3 transition-all duration-150 border-l-2 border-l-transparent hover:bg-[var(--color-hover-bg)] hover:border-l-[var(--color-accent-primary)]">
@@ -24,33 +51,57 @@ const PostItem = ({
         aria-label={`Read post: ${post.title}`}
         className="block no-underline"
       >
-        <div className="flex-1 min-w-0">
-          {/* Title */}
-          <h2 className="text-[15px] font-medium font-sans text-[var(--color-text-primary)] transition-colors duration-150 group-hover:text-[var(--color-accent-primary)] line-clamp-1 mb-2">
-            {post.title}
-          </h2>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            {/* Title */}
+            <h2 className="text-[15px] font-medium font-sans text-[var(--color-text-primary)] transition-colors duration-150 group-hover:text-[var(--color-accent-primary)] line-clamp-1 mb-2">
+              {post.title}
+            </h2>
 
-          {/* Meta info */}
-          <div className="flex items-center gap-2 mb-2 text-[11px] font-mono text-[var(--color-text-secondary)]">
-            <span>{formatDate(post.created_at)}</span>
-            <span>·</span>
-            <span>{CalculateReadTime(post.content)}</span>
+            {/* Meta info */}
+            <div className="flex items-center gap-2 mb-2 text-[11px] font-mono text-[var(--color-text-secondary)]">
+              <span>{formatDate(post.created_at)}</span>
+              <span>·</span>
+              <span>{CalculateReadTime(post.content)}</span>
+            </div>
+
+            {/* Preview */}
+            <div className="text-[13px] text-[var(--color-text-secondary)] font-sans line-clamp-2 leading-[1.6] group-hover:text-[var(--color-text-primary)] transition-colors duration-150">
+              <Suspense
+                fallback={
+                  <span className="text-[13px] font-mono text-[var(--color-text-secondary)] animate-pulse">
+                    Loading preview...
+                  </span>
+                }
+              >
+                <Markdown remarkPlugins={[remarkGfm]}>
+                  {TruncateText(post.content, 120)}
+                </Markdown>
+              </Suspense>
+            </div>
           </div>
 
-          {/* Preview */}
-          <div className="text-[13px] text-[var(--color-text-secondary)] font-sans line-clamp-2 leading-[1.6] group-hover:text-[var(--color-text-primary)] transition-colors duration-150">
-            <Suspense
-              fallback={
-                <span className="text-[13px] font-mono text-[var(--color-text-secondary)] animate-pulse">
-                  Loading preview...
-                </span>
-              }
-            >
-              <Markdown remarkPlugins={[remarkGfm]}>
-                {TruncateText(post.content, 120)}
-              </Markdown>
-            </Suspense>
-          </div>
+          {/* Action Buttons - Only visible when authenticated */}
+          {isAuthenticated && (
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0">
+              <button
+                onClick={handleEdit}
+                className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-active-bg)] hover:text-[var(--color-accent-primary)] hover:border-[var(--color-accent-primary)]"
+                title="Edit post"
+                aria-label="Edit post"
+              >
+                <FiEdit2 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex items-center justify-center w-8 h-8 rounded transition-all text-[var(--color-text-secondary)] bg-transparent border border-transparent hover:bg-[var(--color-hover-bg)] hover:border-[var(--color-active-bg)] hover:text-[var(--color-syntax-variable)] hover:border-[var(--color-syntax-variable)]"
+                title="Delete post"
+                aria-label="Delete post"
+              >
+                <FiTrash2 className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
       </Link>
 
@@ -162,20 +213,32 @@ const NoPostsFound = ({ tag, buildQueryString, limit }) => {
   );
 };
 
-const PostsList = ({ posts, loading, error, ...props }) => {
+const PostsList = ({ posts, loading, error, onPostDeleted, ...props }) => {
+  const [localPosts, setLocalPosts] = useState(posts);
+
+  // Update local posts when props change
+  useEffect(() => {
+    setLocalPosts(posts);
+  }, [posts]);
+
+  const handleDelete = (postId) => {
+    setLocalPosts(prev => prev.filter(p => p.id !== postId));
+    if (onPostDeleted) onPostDeleted(postId);
+  };
+
   if (loading) return <LoadingState />;
   if (error) return <ErrorState error={error} />;
-  if (!posts || posts.length === 0) return <NoPostsFound {...props} />;
+  if (!localPosts || localPosts.length === 0) return <NoPostsFound {...props} />;
 
   return (
     <div className="bg-[var(--color-sidebar-bg)]">
-      {posts.map((post, index) => (
+      {localPosts.map((post, index) => (
         <div
           key={post.id}
           className={`animate-fade-in opacity-0 stagger-${Math.min(index + 1, 5)}`}
         >
-          <PostItem post={post} {...props} />
-          {index < posts.length - 1 && (
+          <PostItem post={post} onDelete={handleDelete} {...props} />
+          {index < localPosts.length - 1 && (
             <div className="h-px bg-[var(--color-editor-bg)] mx-4" />
           )}
         </div>
