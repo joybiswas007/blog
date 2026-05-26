@@ -7,7 +7,7 @@ COPY web/ .
 RUN npm run build
 
 # Backend build stage
-FROM golang:1.25.3-alpine AS backend
+FROM golang:1.26.3-alpine AS backend
 WORKDIR /backend-build
 RUN apk --no-cache add git make build-base coreutils
 ENV GOPROXY=direct

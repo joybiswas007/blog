@@ -1,6 +1,6 @@
 module github.com/joybiswas007/blog
 
-go 1.25.3
+go 1.26.3
 
 require (
 	github.com/chenyahui/gin-cache v1.10.0
@@ -13,7 +13,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/gorilla/feeds v1.2.0
 	github.com/gosimple/slug v1.15.0
-	github.com/jackc/pgx/v5 v5.7.5
+	github.com/jackc/pgx/v5 v5.9.2
 	github.com/samber/slog-gin v1.15.1
 	github.com/spf13/viper v1.20.1
 	github.com/yuin/goldmark v1.7.12
@@ -64,9 +64,9 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.19.0 // indirect
 	golang.org/x/net v0.42.0 // indirect
-	golang.org/x/sync v0.16.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
-	golang.org/x/text v0.27.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
