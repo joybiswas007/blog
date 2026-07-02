@@ -54,7 +54,7 @@ type YearlyStats struct {
 }
 
 // Get retrieves a single post by its ID including associated tags.
-func (m PostModel) Get(postID int) (*Post, error) {
+func (m PostModel) Get(ctx context.Context, postID int) (*Post, error) {
 	query := `
         SELECT
             bp.id,
@@ -80,8 +80,6 @@ func (m PostModel) Get(postID int) (*Post, error) {
         GROUP BY
             bp.id, u.name;
     `
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	var p Post
 	err := m.DB.QueryRow(ctx, query, postID).Scan(
@@ -110,10 +108,7 @@ func (m PostModel) Get(postID int) (*Post, error) {
 
 // Exists checks if a blog post with the given slug already exists in the database.
 // Returns true if it exists, false otherwise, or an error on failure.
-func (m PostModel) Exists(slug string) (exists bool, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
+func (m PostModel) Exists(ctx context.Context, slug string) (exists bool, err error) {
 	// SQL query to efficiently check existence by slug
 	query := `SELECT EXISTS(SELECT 1 FROM blog_posts WHERE slug = $1)`
 
@@ -126,7 +121,7 @@ func (m PostModel) Exists(slug string) (exists bool, err error) {
 }
 
 // GetBySlug retrieves a single post by its slug including author name and associated tags.
-func (m PostModel) GetBySlug(slug string) (*Post, error) {
+func (m PostModel) GetBySlug(ctx context.Context, slug string) (*Post, error) {
 	query := `
         SELECT
             bp.id,
@@ -154,9 +149,6 @@ func (m PostModel) GetBySlug(slug string) (*Post, error) {
             bp.id, u.name;
     `
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
 	var p Post
 	err := m.DB.QueryRow(ctx, query, slug).Scan(
 		&p.ID,
@@ -183,13 +175,11 @@ func (m PostModel) GetBySlug(slug string) (*Post, error) {
 }
 
 // Create inserts a new blog post and returns its ID.
-func (m PostModel) Create(p *Post) (int, error) {
+func (m PostModel) Create(ctx context.Context, p *Post) (int, error) {
 	var postID int
 	query := `INSERT INTO blog_posts(user_id, title, description, content, slug, is_published) 
 		  VALUES($1, $2, $3, $4, $5, $6) 
 		  RETURNING id`
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	err := m.DB.QueryRow(ctx, query, p.UserID, p.Title, p.Description, p.Content, p.Slug, p.IsPublished).Scan(&postID)
 	if err != nil {
@@ -200,10 +190,8 @@ func (m PostModel) Create(p *Post) (int, error) {
 }
 
 // AddTag associates a tag with a blog post.
-func (m PostModel) AddTag(postID, tagID int) error {
+func (m PostModel) AddTag(ctx context.Context, postID, tagID int) error {
 	query := `INSERT INTO blog_tag(blog_id, tag_id) VALUES($1, $2)`
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	args := []any{postID, tagID}
 
@@ -216,10 +204,7 @@ func (m PostModel) AddTag(postID, tagID int) error {
 }
 
 // Update updates the specific post.
-func (m PostModel) Update(p *Post) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
+func (m PostModel) Update(ctx context.Context, p *Post) error {
 	tx, err := m.DB.Begin(ctx)
 	if err != nil {
 		return err
@@ -300,14 +285,11 @@ func (m PostModel) Update(p *Post) error {
 
 // Publish sets the `is_published` field of a post to true, marking it as published.
 // Returns an error if the post doesn't exist or the update fails.
-func (m PostModel) Publish(postID int) error {
+func (m PostModel) Publish(ctx context.Context, postID int) error {
 	query := `UPDATE blog_posts 
           SET is_published = true,
 		created_at = NOW()
           WHERE id = $1`
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	_, err := m.DB.Exec(ctx, query, postID)
 	if err != nil {
@@ -322,11 +304,8 @@ func (m PostModel) Publish(postID int) error {
 }
 
 // Delete deletes the specific blog post.
-func (m PostModel) Delete(postID int) error {
+func (m PostModel) Delete(ctx context.Context, postID int) error {
 	query := `DELETE FROM blog_posts WHERE id = $1`
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	result, err := m.DB.Exec(ctx, query, postID)
 	if err != nil {
@@ -341,7 +320,7 @@ func (m PostModel) Delete(postID int) error {
 }
 
 // GetAll retrieves a paginated list of all blog posts with their tags.
-func (m PostModel) GetAll(filter Filter) ([]*Post, int, error) {
+func (m PostModel) GetAll(ctx context.Context, filter Filter) ([]*Post, int, error) {
 	query := fmt.Sprintf(`
 SELECT
     count(*) OVER(),
@@ -378,8 +357,6 @@ ORDER BY
     bp.%s %s, bp.id ASC
 LIMIT $1 OFFSET $2;
 `, filter.OrderBy, filter.Sort)
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	rows, err := m.DB.Query(ctx, query, filter.Limit, filter.Offset, filter.Tag, filter.IsPublished)
 	if err != nil {
@@ -422,15 +399,13 @@ LIMIT $1 OFFSET $2;
 // YearlyStatsList retrieves a list of years along with the number of posts created in each year.
 // It queries the `posts` table, groups by year extracted from the `created_at` column,
 // and returns the results in descending year order.
-func (m PostModel) YearlyStatsList() ([]YearlyStats, error) {
+func (m PostModel) YearlyStatsList(ctx context.Context) ([]YearlyStats, error) {
 	query := `
 		SELECT EXTRACT(YEAR FROM created_at)::INT AS year, COUNT(*) AS count
 		FROM blog_posts
 		GROUP BY year
 		ORDER BY year DESC;
 	`
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	rows, err := m.DB.Query(ctx, query)
 	if err != nil {
@@ -457,7 +432,7 @@ func (m PostModel) YearlyStatsList() ([]YearlyStats, error) {
 
 // GetByYear returns all blog posts created in the given year.
 // It filters the posts using the `created_at` timestamp column.
-func (m PostModel) GetByYear(year int) ([]Post, error) {
+func (m PostModel) GetByYear(ctx context.Context, year int) ([]Post, error) {
 	query := `
 	SELECT id, title, slug, created_at
 	FROM blog_posts
@@ -465,9 +440,6 @@ func (m PostModel) GetByYear(year int) ([]Post, error) {
 	  AND is_published = true
 	ORDER BY created_at DESC;
 `
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	rows, err := m.DB.Query(ctx, query, year)
 	if err != nil {
@@ -494,7 +466,7 @@ func (m PostModel) GetByYear(year int) ([]Post, error) {
 
 // PreviousID returns the ID of the most recent published post with an ID less than currentID.
 // If no such post exists, it returns 0 and nil error.
-func (m PostModel) PreviousID(currentID int) (int, error) {
+func (m PostModel) PreviousID(ctx context.Context, currentID int) (int, error) {
 	const query = `
 		SELECT id 
 		FROM blog_posts
@@ -502,9 +474,6 @@ func (m PostModel) PreviousID(currentID int) (int, error) {
 		ORDER BY id DESC
 		LIMIT 1;
 	`
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	var postID int
 
@@ -522,7 +491,7 @@ func (m PostModel) PreviousID(currentID int) (int, error) {
 
 // NextID returns the ID of the next published post with an ID greater than currentID.
 // If no such post exists, it returns 0 and nil error.
-func (m PostModel) NextID(currentID int) (int, error) {
+func (m PostModel) NextID(ctx context.Context, currentID int) (int, error) {
 	const query = `
 		SELECT id 
 		FROM blog_posts
@@ -530,9 +499,6 @@ func (m PostModel) NextID(currentID int) (int, error) {
 		ORDER BY id ASC
 		LIMIT 1;
 	`
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	var postID int
 
@@ -549,10 +515,7 @@ func (m PostModel) NextID(currentID int) (int, error) {
 }
 
 // UpdateViews increments the view count for a specific blog post by ID.
-func (m PostModel) UpdateViews(postID int) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
+func (m PostModel) UpdateViews(ctx context.Context, postID int) error {
 	query := `UPDATE blog_posts SET views = views + 1 WHERE id = $1`
 
 	_, err := m.DB.Exec(ctx, query, postID)
@@ -563,10 +526,7 @@ func (m PostModel) UpdateViews(postID int) error {
 }
 
 // GetTop10Posts fetches the top 10 blog posts by views.
-func (m PostModel) GetTop10Posts() ([]TopPost, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
+func (m PostModel) GetTop10Posts(ctx context.Context) ([]TopPost, error) {
 	query := `SELECT id, title, slug FROM blog_posts WHERE is_published = true ORDER BY views DESC LIMIT 10`
 
 	rows, err := m.DB.Query(ctx, query)
@@ -593,7 +553,7 @@ func (m PostModel) GetTop10Posts() ([]TopPost, error) {
 }
 
 // Search searches published posts using PostgreSQL Full-Text Search.
-func (m PostModel) Search(queryStr string, limit int) ([]SearchResult, error) {
+func (m PostModel) Search(ctx context.Context, queryStr string, limit int) ([]SearchResult, error) {
 	sqlQuery := `
 		SELECT
 			bp.id,
@@ -626,8 +586,6 @@ func (m PostModel) Search(queryStr string, limit int) ([]SearchResult, error) {
 			rank DESC, bp.created_at DESC
 		LIMIT $2;
 	`
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	rows, err := m.DB.Query(ctx, sqlQuery, queryStr, limit)
 	if err != nil {

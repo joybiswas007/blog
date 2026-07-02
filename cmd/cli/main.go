@@ -2,6 +2,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -65,7 +66,7 @@ func main() {
 	models := database.NewModels(db)
 
 	if app.deleteEmptyTags {
-		tags, err := models.Tags.GetAll()
+		tags, err := models.Tags.GetAll(context.Background())
 		if err != nil {
 			log.Panic(err)
 		}
@@ -99,7 +100,7 @@ func main() {
 		switch strings.ToLower(prompt) {
 		case "yes", "y":
 			for _, tag := range emptyTags {
-				err := models.Tags.Delete(tag.ID)
+				err := models.Tags.Delete(context.Background(), tag.ID)
 				if err != nil {
 					log.Panic(err)
 				}
@@ -123,7 +124,7 @@ func main() {
 	}
 
 	if app.password.reset {
-		user, err := models.Users.GetByEmail(app.email)
+		user, err := models.Users.GetByEmail(context.Background(), app.email)
 		if err != nil {
 			log.Panic(err)
 		}
@@ -136,7 +137,7 @@ func main() {
 			log.Panic(err)
 		}
 
-		err = models.Users.UpdatePassword(u)
+		err = models.Users.UpdatePassword(context.Background(), u)
 		if err != nil {
 			log.Panic(err)
 		}
@@ -160,7 +161,7 @@ func main() {
 		log.Panic(err)
 	}
 
-	_, err = models.Users.Insert(user)
+	_, err = models.Users.Insert(context.Background(), user)
 	if err != nil {
 		log.Panic(err)
 	}

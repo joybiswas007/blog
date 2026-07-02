@@ -36,13 +36,13 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := s.db.Users.GetByEmail(input.Email)
+	user, err := s.db.Users.GetByEmail(c.Request.Context(), input.Email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	userAttempts, err := s.db.Users.GetLoginAttempt(user.ID, c.ClientIP())
+	userAttempts, err := s.db.Users.GetLoginAttempt(c.Request.Context(), user.ID, c.ClientIP())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -66,7 +66,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		}
 		// Lift temp ban if ban time passed.
 		if time.Now().After(userAttempts.BannedUntil.Time) {
-			err := s.db.Users.ClearLoginAttemptBan(userAttempts.ID, userAttempts.UserID)
+			err := s.db.Users.ClearLoginAttemptBan(c.Request.Context(), userAttempts.ID, userAttempts.UserID)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
@@ -81,7 +81,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		if currentAttempt > int64(s.config.MaxLoginAttempts) {
 			bannedUntil = time.Now().Add(time.Hour * time.Duration(s.config.BanDuration))
 
-			err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, &bannedUntil)
+			err := s.db.Users.UpdateLoginAttempt(c.Request.Context(), userAttempts.ID, currentAttempt, &bannedUntil)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
@@ -93,7 +93,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		}
 
 		// Always update the attempt count on each request.
-		err := s.db.Users.UpdateLoginAttempt(userAttempts.ID, currentAttempt, nil)
+		err := s.db.Users.UpdateLoginAttempt(c.Request.Context(), userAttempts.ID, currentAttempt, nil)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -101,7 +101,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 
 	} else {
 		// No record exists, so create one.
-		aid, err := s.db.Users.LogAttempt(user.ID, c.ClientIP(), currentAttempt)
+		aid, err := s.db.Users.LogAttempt(c.Request.Context(), user.ID, c.ClientIP(), currentAttempt)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -127,7 +127,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 	}
 
 	// Successful login, reset all login_attempts restriction.
-	err = s.db.Users.ResetAllLoginAttempt(user.ID, attemptID)
+	err = s.db.Users.ResetAllLoginAttempt(c.Request.Context(), user.ID, attemptID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -196,7 +196,7 @@ func (s *APIV1Service) handleLoginAttemptsViewer(c *gin.Context) {
 		offset = 0
 	}
 
-	attempts, attemptsCount, err := s.db.Users.GetAllLoginAttempts(limit, offset)
+	attempts, attemptsCount, err := s.db.Users.GetAllLoginAttempts(c.Request.Context(), limit, offset)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

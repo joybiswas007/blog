@@ -47,7 +47,7 @@ func (s *APIV1Service) CheckJWT() gin.HandlerFunc {
 			return
 		}
 
-		u, err := s.db.Users.GetByID(int64(uid))
+		u, err := s.db.Users.GetByID(c.Request.Context(), int64(uid))
 		if err != nil || u.ID != int64(uid) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ErrUnauthorized})
 			return

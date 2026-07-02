@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -22,7 +21,7 @@ type Tag struct {
 }
 
 // Get retrieves a tag by its name.
-func (m TagModel) Get(tagName string) (*Tag, error) {
+func (m TagModel) Get(ctx context.Context, tagName string) (*Tag, error) {
 	query := `
 		SELECT 
 			id, 
@@ -32,9 +31,6 @@ func (m TagModel) Get(tagName string) (*Tag, error) {
 		WHERE 
 			name = $1
 	`
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	var t Tag
 	err := m.DB.QueryRow(ctx, query, tagName).Scan(&t.ID, &t.Name)
@@ -51,7 +47,7 @@ func (m TagModel) Get(tagName string) (*Tag, error) {
 }
 
 // Create inserts a new tag and returns its ID.
-func (m TagModel) Create(tagName string) (int, error) {
+func (m TagModel) Create(ctx context.Context, tagName string) (int, error) {
 	var tagID int
 
 	query := `
@@ -60,8 +56,6 @@ func (m TagModel) Create(tagName string) (int, error) {
 		VALUES($1) 
 		RETURNING id
 	`
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	err := m.DB.QueryRow(ctx, query, tagName).Scan(&tagID)
 	if err != nil {
@@ -72,7 +66,7 @@ func (m TagModel) Create(tagName string) (int, error) {
 }
 
 // GetAll retrieves all tags from the database.
-func (m TagModel) GetAll() ([]*Tag, error) {
+func (m TagModel) GetAll(ctx context.Context) ([]*Tag, error) {
 	query := `
 		SELECT 
 			t.id, 
@@ -87,8 +81,6 @@ func (m TagModel) GetAll() ([]*Tag, error) {
 		ORDER BY 
 			t.name
 	`
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	rows, err := m.DB.Query(ctx, query)
 	if err != nil {
@@ -115,11 +107,8 @@ func (m TagModel) GetAll() ([]*Tag, error) {
 }
 
 // Delete deletes a tag by its id.
-func (m TagModel) Delete(tagID int) error {
+func (m TagModel) Delete(ctx context.Context, tagID int) error {
 	query := `DELETE FROM tags WHERE id = $1`
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
 
 	_, err := m.DB.Exec(ctx, query, tagID)
 	if err != nil {

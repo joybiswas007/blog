@@ -42,7 +42,7 @@ func (s *APIV1Service) getPostByIDHandler(c *gin.Context) {
 		return
 	}
 
-	post, err := s.db.Posts.Get(pid)
+	post, err := s.db.Posts.Get(c.Request.Context(), pid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -68,7 +68,7 @@ func (s *APIV1Service) createPostHandler(c *gin.Context) {
 		return
 	}
 
-	exists, err := s.db.Posts.Exists(slug.Make(input.Title))
+	exists, err := s.db.Posts.Exists(c.Request.Context(), slug.Make(input.Title))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -83,12 +83,12 @@ func (s *APIV1Service) createPostHandler(c *gin.Context) {
 	var tagIDs []int
 	for _, tagName := range input.Tags {
 		var tagID int
-		tag, err := s.db.Tags.Get(tagName)
+		tag, err := s.db.Tags.Get(c.Request.Context(), tagName)
 		if err != nil {
 			switch {
 			// Create the tag if it doesn't exist
 			case errors.Is(err, sql.ErrNoRows):
-				tid, err := s.db.Tags.Create(tagName)
+				tid, err := s.db.Tags.Create(c.Request.Context(), tagName)
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 					return
@@ -120,7 +120,7 @@ func (s *APIV1Service) createPostHandler(c *gin.Context) {
 	}
 
 	// Create the post in the database
-	postID, err := s.db.Posts.Create(post)
+	postID, err := s.db.Posts.Create(c.Request.Context(), post)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -128,14 +128,14 @@ func (s *APIV1Service) createPostHandler(c *gin.Context) {
 
 	// Associate tags with the post
 	for _, tagID := range tagIDs {
-		err := s.db.Posts.AddTag(postID, tagID)
+		err := s.db.Posts.AddTag(c.Request.Context(), postID, tagID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 	}
 
-	createdPost, err := s.db.Posts.Get(postID)
+	createdPost, err := s.db.Posts.Get(c.Request.Context(), postID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -168,7 +168,7 @@ func (s *APIV1Service) updatePostHandler(c *gin.Context) {
 	updatedSlug := slug.Make(post.Title)
 	post.Slug = updatedSlug
 
-	err = s.db.Posts.Update(post)
+	err = s.db.Posts.Update(c.Request.Context(), post)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -177,7 +177,7 @@ func (s *APIV1Service) updatePostHandler(c *gin.Context) {
 	// delete all other cache key
 	deleteCacheKey(s.redisStore)
 
-	updatedPost, err := s.db.Posts.Get(pid)
+	updatedPost, err := s.db.Posts.Get(c.Request.Context(), pid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -196,7 +196,7 @@ func (s *APIV1Service) deletePostHandler(c *gin.Context) {
 		return
 	}
 
-	err = s.db.Posts.Delete(pid)
+	err = s.db.Posts.Delete(c.Request.Context(), pid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -214,14 +214,14 @@ func (s *APIV1Service) publishDraftHandler(c *gin.Context) {
 		return
 	}
 
-	post, err := s.db.Posts.Get(pid)
+	post, err := s.db.Posts.Get(c.Request.Context(), pid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	if !post.IsPublished {
-		err := s.db.Posts.Publish(post.ID)
+		err := s.db.Posts.Publish(c.Request.Context(), post.ID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

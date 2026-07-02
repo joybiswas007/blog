@@ -211,7 +211,7 @@ func getPosts(c *gin.Context, s *APIV1Service) ([]*database.Post, database.Filte
 		Sort:        sort,
 		IsPublished: isPublished,
 	}
-	posts, totalPost, err := s.db.Posts.GetAll(filter)
+	posts, totalPost, err := s.db.Posts.GetAll(c.Request.Context(), filter)
 	if err != nil {
 		return nil, database.Filter{}, 0, err
 	}

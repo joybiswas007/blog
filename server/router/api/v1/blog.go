@@ -52,7 +52,7 @@ func (s *APIV1Service) blogPostsHandler(c *gin.Context) {
 }
 
 func (s *APIV1Service) topPostsHandler(c *gin.Context) {
-	topPosts, err := s.db.Posts.GetTop10Posts()
+	topPosts, err := s.db.Posts.GetTop10Posts(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -63,7 +63,7 @@ func (s *APIV1Service) topPostsHandler(c *gin.Context) {
 
 func (s *APIV1Service) blogTagsHandler(c *gin.Context) {
 	// Fetch all tags from the database
-	tags, err := s.db.Tags.GetAll()
+	tags, err := s.db.Tags.GetAll(c.Request.Context())
 	if err != nil {
 		// Handle database error
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -83,7 +83,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 	}
 
 	// Fetch the post from the database
-	post, err := s.db.Posts.GetBySlug(slug)
+	post, err := s.db.Posts.GetBySlug(c.Request.Context(), slug)
 	if err != nil {
 		// Handle database error (e.g., post not found)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -94,7 +94,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 	)
 
 	// Fetch the previous post ID if exists
-	previousID, err := s.db.Posts.PreviousID(post.ID)
+	previousID, err := s.db.Posts.PreviousID(c.Request.Context(), post.ID)
 	if err != nil {
 		// Handle database error (e.g., post not found)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -103,7 +103,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 
 	// Fetch the previous post if ID exists
 	if previousID != 0 {
-		previousPost, err = s.db.Posts.Get(previousID)
+		previousPost, err = s.db.Posts.Get(c.Request.Context(), previousID)
 		if err != nil {
 			// Handle database error (e.g., post not found)
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -112,7 +112,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 	}
 
 	// Fetch the next post ID if exists
-	nextID, err := s.db.Posts.NextID(post.ID)
+	nextID, err := s.db.Posts.NextID(c.Request.Context(), post.ID)
 	if err != nil {
 		// Handle database error (e.g., post not found)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -121,7 +121,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 
 	// Fetch the next post if ID exists
 	if nextID != 0 {
-		nextPost, err = s.db.Posts.Get(nextID)
+		nextPost, err = s.db.Posts.Get(c.Request.Context(), nextID)
 		if err != nil {
 			// Handle database error (e.g., post not found)
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -129,7 +129,7 @@ func (s *APIV1Service) getBlogPostBySlugHandler(c *gin.Context) {
 		}
 	}
 	// Update Post views
-	err = s.db.Posts.UpdateViews(post.ID)
+	err = s.db.Posts.UpdateViews(c.Request.Context(), post.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -147,7 +147,7 @@ func (s *APIV1Service) rssHandler(c *gin.Context) {
 		IsPublished: true,
 	}
 
-	posts, _, err := s.db.Posts.GetAll(filter)
+	posts, _, err := s.db.Posts.GetAll(c.Request.Context(), filter)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -187,7 +187,7 @@ func (s *APIV1Service) rssHandler(c *gin.Context) {
 }
 
 func (s *APIV1Service) archivesHandler(c *gin.Context) {
-	lists, err := s.db.Posts.YearlyStatsList()
+	lists, err := s.db.Posts.YearlyStatsList(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -205,7 +205,7 @@ func (s *APIV1Service) archiveYearHandler(c *gin.Context) {
 		return
 	}
 
-	posts, err := s.db.Posts.GetByYear(year)
+	posts, err := s.db.Posts.GetByYear(c.Request.Context(), year)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -240,7 +240,7 @@ func (s *APIV1Service) siteMapHandler(c *gin.Context) {
 			IsPublished: true,
 		}
 
-		posts, _, err := s.db.Posts.GetAll(filter)
+		posts, _, err := s.db.Posts.GetAll(c.Request.Context(), filter)
 		if err != nil {
 			c.String(http.StatusInternalServerError, err.Error())
 			return
@@ -254,7 +254,7 @@ func (s *APIV1Service) siteMapHandler(c *gin.Context) {
 		offset += batchSize
 	}
 
-	tags, err := s.db.Tags.GetAll()
+	tags, err := s.db.Tags.GetAll(c.Request.Context())
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -303,7 +303,7 @@ func (s *APIV1Service) siteMapHandler(c *gin.Context) {
 	}
 
 	// Add archive by year URLs
-	lists, err := s.db.Posts.YearlyStatsList()
+	lists, err := s.db.Posts.YearlyStatsList(c.Request.Context())
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
@@ -351,7 +351,7 @@ func (s *APIV1Service) searchPostsHandler(c *gin.Context) {
 		return
 	}
 
-	results, err := s.db.Posts.Search(query, 10)
+	results, err := s.db.Posts.Search(c.Request.Context(), query, 10)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
