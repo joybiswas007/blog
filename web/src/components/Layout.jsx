@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import StatusBar from "@/components/StatusBar";
 import Sidebar from "@/components/Sidebar";
 import BackToTop from "@/components/BackToTop";
+import SearchModal from "@/components/SearchModal";
 
 const Layout = ({ children }) => {
   const author = "Joy Biswas";
@@ -27,6 +28,7 @@ const Layout = ({ children }) => {
 
       <StatusBar authorName={author} sourceCode={sourceCode} />
       <BackToTop />
+      <SearchModal />
     </div>
   );
 };

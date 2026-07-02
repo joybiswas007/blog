@@ -20,6 +20,7 @@ import (
 func registerBlogRoutes(rg *gin.RouterGroup, s *APIV1Service) {
 	posts := rg.Group("posts")
 	posts.GET("", cache.CacheByRequestURI(s.redisStore, 10*time.Minute), s.blogPostsHandler)
+	posts.GET("search", s.searchPostsHandler)
 	posts.GET(":slug", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.getBlogPostBySlugHandler)
 	posts.GET("top-posts", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.topPostsHandler)
 	posts.GET("tags", cache.CacheByRequestURI(s.redisStore, 30*time.Minute), s.blogTagsHandler)
@@ -340,4 +341,21 @@ func (s *APIV1Service) buildInfoHandler(c *gin.Context) {
 
 	runtimeVersion := runtime.Version()
 	c.JSON(http.StatusOK, gin.H{"go_version": runtimeVersion, "build_info": s.config.BuildInfo})
+}
+
+// searchPostsHandler handles search requests using full-text search.
+func (s *APIV1Service) searchPostsHandler(c *gin.Context) {
+	query := c.Query("q")
+	if query == "" {
+		c.JSON(http.StatusOK, []database.SearchResult{})
+		return
+	}
+
+	results, err := s.db.Posts.Search(query, 10)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, results)
 }

@@ -38,6 +38,15 @@ type TopPost struct {
 	Slug  string `json:"slug"`
 }
 
+// SearchResult represents a minimal post match for autocomplete queries.
+type SearchResult struct {
+	ID          int      `json:"id"`
+	Title       string   `json:"title"`
+	Description string   `json:"description,omitempty"`
+	Slug        string   `json:"slug"`
+	Tags        []string `json:"tags"`
+}
+
 // YearlyStats represents blog post statistics aggregated by year.
 type YearlyStats struct {
 	Year      int `json:"year"`       // Year of the posts
@@ -581,4 +590,65 @@ func (m PostModel) GetTop10Posts() ([]TopPost, error) {
 	}
 
 	return topPosts, nil
+}
+
+// Search searches published posts using PostgreSQL Full-Text Search.
+func (m PostModel) Search(queryStr string, limit int) ([]SearchResult, error) {
+	sqlQuery := `
+		SELECT
+			bp.id,
+			bp.title,
+			COALESCE(bp.description, '') AS description,
+			bp.slug,
+			COALESCE(ARRAY_AGG(t.name ORDER BY t.name), '{}') AS tags,
+			ts_rank(
+				setweight(to_tsvector('simple', bp.title), 'A') ||
+				setweight(to_tsvector('simple', COALESCE(bp.description, '')), 'B') ||
+				setweight(to_tsvector('simple', bp.content), 'C'),
+				websearch_to_tsquery('simple', $1)
+			) AS rank
+		FROM
+			blog_posts bp
+		LEFT JOIN
+			blog_tag bt ON bp.id = bt.blog_id
+		LEFT JOIN
+			tags t ON t.id = bt.tag_id
+		WHERE
+			bp.is_published = true
+			AND (
+				setweight(to_tsvector('simple', bp.title), 'A') ||
+				setweight(to_tsvector('simple', COALESCE(bp.description, '')), 'B') ||
+				setweight(to_tsvector('simple', bp.content), 'C')
+			) @@ websearch_to_tsquery('simple', $1)
+		GROUP BY
+			bp.id
+		ORDER BY
+			rank DESC, bp.created_at DESC
+		LIMIT $2;
+	`
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.Query(ctx, sqlQuery, queryStr, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var results []SearchResult
+	for rows.Next() {
+		var r SearchResult
+		var rank float32
+		err := rows.Scan(&r.ID, &r.Title, &r.Description, &r.Slug, &r.Tags, &rank)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, r)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
