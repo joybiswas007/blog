@@ -349,7 +349,7 @@ const Home = () => {
         {/* Footer info line */}
         <div className="text-[10px] text-[var(--color-text-muted)] text-center space-y-1">
           <div>
-            joyblog v1.2.2 • Press{" "}
+            Press{" "}
             <kbd className="text-[var(--color-syntax-keyword)] font-bold">
               /
             </kbd>{" "}
