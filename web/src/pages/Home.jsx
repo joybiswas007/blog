@@ -23,13 +23,15 @@ const Home = () => {
   const [latestPosts, setLatestPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Spaced Slant ASCII Logo for "JOY" to prevent letter overlap
+  // Neovim colon-style ASCII logo for "JOY"
   const asciiLogo = `
-      _       ____      __  __ 
-     | |     / __ \\     \\ \\/ / 
-  _  | |    / /  \\ \\     \\  /  
- / |_| |   / /___/ /     / /   
- \\____/    \\____/_/     /_/    
+      :::::::::::      ::::::::      :::::       ::: 
+         \`::\`         ::\`    \`::\`     \`::\`     ::\`   
+          ::         ::      ::       \`::\`  ::\`     
+          ::         ::      ::         \`::::\`      
+      ::  ::         ::      ::          \`::\`       
+     ::  ::          ::.    .::          \`::\`       
+      ::::            ::::::::           \`::\`       
   `;
 
   // Fetch the latest 5 posts on mount
@@ -111,9 +113,9 @@ const Home = () => {
     <>
       <SEO />
 
-      <div className="flex flex-col items-center justify-center min-h-[75vh] font-mono text-xs text-[var(--color-text-primary)] space-y-8 select-none py-8 sm:py-12 animate-[fadeIn_0.2s_ease-out]">
-        {/* ASCII Logo */}
-        <pre className="text-[var(--color-accent-primary)] font-bold text-[10px] sm:text-xs leading-none select-none overflow-x-auto whitespace-pre max-w-full text-center px-4">
+      <div className="flex flex-col items-center justify-center min-h-[75vh] font-mono text-xs text-[var(--color-text-primary)] space-y-6 select-none py-8 sm:py-12 animate-[fadeIn_0.2s_ease-out] w-full max-w-md mx-auto">
+        {/* ASCII Logo - Explicitly non-scrollable */}
+        <pre className="text-[var(--color-accent-primary)] font-bold text-[7px] sm:text-[10px] md:text-xs leading-none select-none overflow-hidden max-w-full text-center px-4">
           {asciiLogo}
         </pre>
 
@@ -122,13 +124,15 @@ const Home = () => {
           <h1 className="text-sm font-bold text-[var(--color-text-primary)]">
             {author}
           </h1>
-          <p className="text-[var(--color-syntax-string)]">Backend Developer</p>
+          <p className="text-[var(--color-syntax-string)] text-[11px]">
+            Backend Developer
+          </p>
         </div>
 
         {/* Actions Shortcuts Menu */}
-        <div className="w-full max-w-md bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded-md p-4 space-y-1">
+        <div className="w-full bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded-md p-4 space-y-1">
           <div className="text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider px-3 pb-2 border-b border-[var(--color-panel-border)] mb-2 select-none">
-            Dashboard / Actions
+            Actions
           </div>
 
           {/* Action: View Posts */}
@@ -302,9 +306,9 @@ const Home = () => {
         </div>
 
         {/* Recent Posts Section */}
-        <div className="w-full max-w-md bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded-md p-4 space-y-1">
+        <div className="w-full bg-[var(--color-sidebar-bg)] border border-[var(--color-panel-border)] rounded-md p-4 space-y-1">
           <div className="text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider px-3 pb-2 border-b border-[var(--color-panel-border)] mb-2 select-none">
-            Recent Posts / Files
+            Recent Posts
           </div>
 
           {loading && (
