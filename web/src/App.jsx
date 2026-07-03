@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PrivateRoute from "@/components/PrivateRoute";
 import Layout from "@/components/Layout";
 
+const Posts = lazy(() => import("@/pages/Posts"));
 const Home = lazy(() => import("@/pages/Home"));
-const Profile = lazy(() => import("@/pages/Profile"));
 const Post = lazy(() => import("@/pages/Post"));
 const Tags = lazy(() => import("@/pages/Tags"));
 const Archives = lazy(() => import("@/pages/Archives"));
@@ -30,8 +30,8 @@ const App = () => {
           }
         >
           <Routes>
-            <Route path="/" element={<Profile />} />
-            <Route path="/posts" element={<Home />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/posts" element={<Posts />} />
             <Route path="/posts/:slug" element={<Post />} />
             <Route path="/tags" element={<Tags />} />
             <Route path="/archives" element={<Archives />} />
