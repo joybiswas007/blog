@@ -1,7 +1,7 @@
 export default function SEO({
   title,
   description = "I am Joy Biswas, a backend developer who enjoys building and learning new things. Most of the time, I build things for my personal use and share them on GitHub. I love the challenges that come with the development process. When I am not coding, I enjoy reading technical blog posts, watching movies, or listening to music.",
-  keywords = "backend developer, go developer, golang developer, docker specialist, postgresql expert, rest api development, graphql api, microservices architecture, cli tools development, freelance developer, web security expert, javascript programming, node.js development, server-side development, database design, api integration, devops engineer, cloud deployment, containerization, software engineer, full stack developer, remote developer, tech consultant, web application development, system architecture, scalable applications, secure coding practices, automation tools, linux systems, git version control, agile development, n8n, ai",
+  keywords = "backend developer, go developer, golang developer, docker specialist, postgresql expert, rest api development, graphql api, microservices architecture, cli tools development, freelance developer, web security expert, javascript programming, node.js development, server-side development, database design, api integration, devops engineer, cloud deployment, containerization, software engineer, full stack developer, remote developer, tech consultant, web application development, system architecture, scalable applications, secure coding practices, automation tools, linux systems, git version control, agile development",
   ogType = "website"
 }) {
   const blogName = "Joy's Blog";

@@ -9,14 +9,16 @@ import {
   BsX,
   BsPencilSquare,
   BsShieldLock,
-  BsFileEarmarkText
+  BsFileEarmarkText,
+  BsHouseDoor
 } from "react-icons/bs";
 import { FiGithub, FiLinkedin, FiMail, FiLogOut } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 import { getAuthTokens, clearAuthTokens } from "@/utils/auth";
 
 const NAV_ITEMS = [
-  { label: "Posts", to: "/", icon: <BsFileText /> },
+  { label: "Home", to: "/", icon: <BsHouseDoor /> },
+  { label: "Posts", to: "/posts", icon: <BsFileText /> },
   { label: "Archives", to: "/archives", icon: <BsFolder2Open /> },
   { label: "Tags", to: "/tags", icon: <BsTag /> }
 ];

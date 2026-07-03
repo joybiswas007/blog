@@ -65,7 +65,7 @@ export const usePosts = () => {
       if (value !== undefined && value !== null && value !== "")
         searchParams.set(key, value);
     });
-    return `/?${searchParams.toString()}`;
+    return `/posts?${searchParams.toString()}`;
   };
 
   const handleSortChange = e => {

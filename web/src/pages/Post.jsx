@@ -9,10 +9,10 @@ import rehypeExternalLinks from "rehype-external-links";
 import SEO from "@/components/SEO";
 import CopyCodeButton from "@/components/CopyCodeButton";
 import {
-  TwitterShareButton,
+  XShareButton,
   LinkedinShareButton,
   BlueskyShareButton,
-  TwitterIcon,
+  XIcon,
   LinkedinIcon,
   BlueskyIcon
 } from "react-share";
@@ -81,11 +81,11 @@ const SocialShare = ({ url, title }) => (
       </span>
     </div>
     <div className="flex items-center gap-2">
-      <TwitterShareButton url={url} title={title}>
+      <XShareButton url={url} title={title}>
         <div className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[var(--color-hover-bg)] border border-[var(--color-active-bg)] hover:bg-[var(--color-active-bg)] hover:border-[var(--color-accent-primary)]">
-          <TwitterIcon size={20} round />
+          <XIcon size={20} round />
         </div>
-      </TwitterShareButton>
+      </XShareButton>
       <LinkedinShareButton url={url} title={title}>
         <div className="w-8 h-8 flex items-center justify-center rounded transition-all bg-[#2c313a] border border-[#353b45] hover:bg-[#353b45] hover:border-[#61afef]">
           <LinkedinIcon size={20} round />
@@ -162,7 +162,7 @@ const Post = () => {
         {/* Content skeleton */}
         <div className="space-y-4 mb-8">
           {/* Paragraphs */}
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+          {[1, 2, 3, 4, 5, 6].map(i => (
             <div key={i} className="space-y-2">
               <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-full"></div>
               <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-full"></div>
@@ -174,7 +174,7 @@ const Post = () => {
           <div className="h-32 bg-[var(--color-sidebar-bg)] rounded-lg animate-shimmer"></div>
 
           {/* More paragraphs */}
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div key={`p2-${i}`} className="space-y-2">
               <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-full"></div>
               <div className="h-4 bg-[var(--color-hover-bg)] rounded animate-shimmer w-5/6"></div>
@@ -255,7 +255,7 @@ const Post = () => {
               {post.tags.map((tag, index) => (
                 <Link
                   key={index}
-                  to={`/?tag=${tag}`}
+                  to={`/posts?tag=${tag}`}
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11px] no-underline font-mono bg-[rgba(97,175,239,0.1)] text-[var(--color-accent-primary)] border border-[rgba(97,175,239,0.2)] transition-all duration-150 hover:bg-[rgba(97,175,239,0.2)] hover:border-[var(--color-accent-primary)] hover:-translate-y-px"
                   aria-label={`Filter by tag ${tag}`}
                 >
@@ -280,7 +280,10 @@ const Post = () => {
             <Markdown
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[
-                [rehypeHighlight, { detect: true, ignoreMissing: true, subset: false }],
+                [
+                  rehypeHighlight,
+                  { detect: true, ignoreMissing: true, subset: false }
+                ],
                 [
                   rehypeExternalLinks,
                   {
@@ -298,7 +301,10 @@ const Post = () => {
                 h6: props => <HeadingRenderer level={6} {...props} />,
                 pre: ({ children, ...props }) => {
                   const codeContent = children?.props?.children || "";
-                  const codeString = typeof codeContent === "string" ? codeContent : String(codeContent);
+                  const codeString =
+                    typeof codeContent === "string"
+                      ? codeContent
+                      : String(codeContent);
 
                   return (
                     <pre {...props} className="group relative">
