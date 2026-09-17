@@ -120,7 +120,7 @@ func (s *APIV1Service) loginHandler(c *gin.Context) {
 		return
 	}
 
-	accessToken, refreshToken, err := generateTokens(user.ID, s)
+	accessToken, refreshToken, err := s.GenerateTokens(user.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -154,19 +154,12 @@ func (s *APIV1Service) refreshTokenHandler(c *gin.Context) {
 	}
 
 	// Check if the token has a "type" claim and if it's a "refresh" token.
-	tokenType, ok := claims["type"].(string)
-	if !ok || tokenType != TokenTypeRefresh {
+	if claims.Type != TokenTypeRefresh {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrInvalidFormat})
 		return
 	}
 
-	uid, ok := claims["user_id"].(float64)
-	if !ok || uid == 0 {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": ErrUnauthorized})
-		return
-	}
-
-	accessToken, refreshToken, err := generateTokens(int64(uid), s)
+	accessToken, refreshToken, err := s.GenerateTokens(claims.UserID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

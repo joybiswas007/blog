@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"maps"
 	"net/http"
 	"strconv"
 	"strings"
@@ -30,6 +29,24 @@ const (
 	TokenTypeAccess  = "access"  // Access token for API authentication
 	TokenTypeRefresh = "refresh" // Refresh token for obtaining new access tokens
 )
+
+type Claims struct {
+	UserID int64  `json:"user_id"`
+	Type   string `json:"type"`
+	jwt.RegisteredClaims
+}
+
+type CustomValidator struct {
+	validator *validator.Validate
+}
+
+func (cv *CustomValidator) Validate(i any) error {
+	if err := cv.validator.Struct(i); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // Authentication error messages returned by the auth middleware and handlers.
 var (
@@ -85,57 +102,43 @@ func getBearerToken(c *gin.Context) (string, error) {
 }
 
 // generateJWT creates a signed JSON Web Token (JWT) with the provided data as claims.
-// The token is signed using the provided secret key and the HS256 (HMAC-SHA256) algorithm.
-func generateJWT(data map[string]any, secretKey string) (string, error) {
-	// Create a new JWT token using the HS256 (HMAC-SHA256) signing method.
-	t := jwt.New(jwt.SigningMethodHS256)
+func generateJWT(claims Claims, secretKey string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	// Cast the token's claims to a MapClaims type to add custom data.
-	claims := t.Claims.(jwt.MapClaims)
-
-	// Add the provided key-value pairs to the token's claims.
-	maps.Copy(claims, data)
-
-	// Sign the token using the provided secret key.
-	token, err := t.SignedString([]byte(secretKey))
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
+	return token.SignedString([]byte(secretKey))
 }
 
 // parseJWT parses a JWT token and validates it, returning the claims if valid.
-func parseJWT(tokenString, secretKey string) (jwt.MapClaims, error) {
-	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
-		// Ensure the signing method is HMAC
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+func parseJWT(tokenString, secretKey string) (*Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(t *jwt.Token) (any, error) {
+		if t.Method != jwt.SigningMethodHS256 {
+			return nil, fmt.Errorf("unexpected signing method")
 		}
 
 		return []byte(secretKey), nil
 	})
-
 	if err != nil {
 		return nil, err
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
+	claims, ok := token.Claims.(*Claims)
 	if !ok || !token.Valid {
-		return nil, err
+		return nil, errors.New("invalid token")
 	}
 
 	return claims, nil
 }
 
-// generateTokens generates access and refresh tokens for a user and returns both tokens.
-func generateTokens(userID int64, s *APIV1Service) (accessToken, refreshToken string, err error) {
+// GenerateTokens generates access and refresh tokens for a employee and returns both tokens.
+func (s *APIV1Service) GenerateTokens(userID int64) (accessToken, refreshToken string, err error) {
 	// Access token config
-	accessExp := s.config.JWT.Exp
-	accessClaims := map[string]any{
-		"user_id": userID,
-		"type":    TokenTypeAccess,
-		"exp":     time.Now().Add(time.Hour * time.Duration(accessExp)).Unix(),
+	accessClaims := Claims{
+		UserID: userID,
+		Type:   TokenTypeAccess,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(s.config.JWT.Exp))),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
 	}
 
 	accessToken, err = generateJWT(accessClaims, s.config.JWT.Secret)
@@ -144,11 +147,13 @@ func generateTokens(userID int64, s *APIV1Service) (accessToken, refreshToken st
 	}
 
 	// Refresh token config
-	refreshExp := s.config.JWT.RefExp
-	refreshClaims := map[string]any{
-		"user_id": userID,
-		"type":    TokenTypeRefresh,
-		"exp":     time.Now().Add(time.Hour * time.Duration(refreshExp)).Unix(),
+	refreshClaims := Claims{
+		UserID: userID,
+		Type:   TokenTypeRefresh,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(s.config.JWT.RefExp))),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
 	}
 
 	refreshToken, err = generateJWT(refreshClaims, s.config.JWT.RefSecret)

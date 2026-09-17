@@ -2,7 +2,6 @@ package v1
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -28,33 +27,19 @@ func (s *APIV1Service) CheckJWT() gin.HandlerFunc {
 			return
 		}
 
-		// Check token type.
-		tokenType, ok := claims["type"].(string)
-		if !ok || tokenType != TokenTypeAccess {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ErrInvalidFormat})
+		if claims.Type != TokenTypeAccess {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]any{"error": "invalid authorization token"})
 			return
 		}
 
-		exp, ok := claims["exp"].(float64)
-		if !ok || time.Now().Unix() > int64(exp) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ErrTokenInvalidOrExpired})
-			return
-		}
-
-		uid, ok := claims["user_id"].(float64)
-		if !ok || uid == 0 {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ErrUnauthorized})
-			return
-		}
-
-		u, err := s.db.Users.GetByID(c.Request.Context(), int64(uid))
-		if err != nil || u.ID != int64(uid) {
+		u, err := s.db.Users.GetByID(c.Request.Context(), claims.UserID)
+		if err != nil || u.ID != claims.UserID {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ErrUnauthorized})
 			return
 		}
 
 		// Pass user ID to handlers.
-		c.Set("user_id", uid)
+		c.Set("user_id", claims.UserID)
 		c.Next()
 	}
 }
