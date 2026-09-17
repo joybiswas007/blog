@@ -1,6 +1,6 @@
 services:
   redis:
-    image: redis:8.6.3-alpine
+    image: redis:8.10.1-alpine3.23
     container_name: redis-alpine
     ports:
       - "6379:6379"
@@ -10,7 +10,7 @@ services:
       - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 3s
       retries: 3
@@ -22,7 +22,8 @@ services:
     image: blog-app
     container_name: blog-app
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     ports:
       - "8080:8080"
     volumes:
@@ -35,7 +36,7 @@ services:
     restart: unless-stopped
     healthcheck:
       test: curl -f http://127.0.0.1:8080/api/v1/healthz || exit 1
-      interval: 3600s
+      interval: 30s
       timeout: 5s
       retries: 3
       start_period: 40s
